@@ -1,0 +1,1175 @@
+
+/* =====================================
+   CRIAITOR 3D - IDENTIDADE VISUAL
+===================================== */
+
+:root {
+
+    --fundo: #110e17;
+
+    --lateral: #17101f;
+
+    --painel: #211928;
+
+    --painel-claro: #2a2033;
+
+    --borda: #473551;
+
+    --texto: #faf4ff;
+
+    --cinza: #b8a8c3;
+
+    --roxo: #b80bff;
+
+    --laranja: #ff8927;
+
+    --verde: #91e4b1;
+
+}
+
+
+/* CONFIGURAÇÕES GERAIS */
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+
+    margin: 0;
+
+    background: var(--fundo);
+
+    color: var(--texto);
+
+    font-family: "DM Sans", Arial, sans-serif;
+
+}
+
+button,
+input,
+textarea,
+select {
+
+    font-family: inherit;
+
+}
+
+button {
+    cursor: pointer;
+}
+
+img {
+    max-width: 100%;
+}
+
+em {
+
+    color: var(--laranja);
+
+    font-style: normal;
+
+}
+
+h1,
+h2,
+h3 {
+
+    font-family: "Space Grotesk", sans-serif;
+
+}
+
+p {
+    line-height: 1.6;
+}
+
+
+/* =====================================
+   ESTRUTURA DO PAINEL
+===================================== */
+
+.app {
+
+    min-height: 100vh;
+
+    display: grid;
+
+    grid-template-columns: 245px minmax(0, 1fr);
+
+}
+
+
+/* MENU LATERAL */
+
+.sidebar {
+
+    background: var(--lateral);
+
+    border-right: 1px solid var(--borda);
+
+    padding: 25px 15px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    min-height: 100vh;
+
+}
+
+.marca {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    margin-bottom: 40px;
+
+}
+
+.logo {
+
+    width: 60px;
+
+    height: 60px;
+
+    object-fit: cover;
+
+    border-radius: 12px;
+
+    background: black;
+
+}
+
+.marca h2 {
+
+    margin: 0;
+
+    font-size: 19px;
+
+}
+
+.marca span {
+
+    color: var(--laranja);
+
+    font-size: 9px;
+
+    font-weight: 800;
+
+    letter-spacing: 1px;
+
+}
+
+.menu-titulo {
+
+    color: #9684a0;
+
+    font-size: 10px;
+
+    letter-spacing: 2px;
+
+    margin: 10px 12px;
+
+}
+
+.menu {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 8px;
+
+}
+
+.menu-item {
+
+    width: 100%;
+
+    padding: 15px;
+
+    background: transparent;
+
+    color: #c6b8d1;
+
+    border: 1px solid transparent;
+
+    border-radius: 10px;
+
+    text-align: left;
+
+    font-size: 14px;
+
+    font-weight: 800;
+
+    transition: 0.2s;
+
+}
+
+.menu-item:hover {
+
+    background: #281c33;
+
+    color: white;
+
+}
+
+.menu-item.ativo {
+
+    background: linear-gradient(
+        90deg,
+        #54226c,
+        #342043
+    );
+
+    border-color: #75368e;
+
+    color: white;
+
+}
+
+.sidebar-rodape {
+
+    margin-top: auto;
+
+    background: #21172c;
+
+    border: 1px solid var(--borda);
+
+    border-radius: 12px;
+
+    padding: 15px;
+
+}
+
+.sidebar-rodape strong {
+
+    color: var(--verde);
+
+    font-size: 12px;
+
+}
+
+.sidebar-rodape p {
+
+    color: var(--cinza);
+
+    font-size: 11px;
+
+}
+
+
+/* =====================================
+   CONTEÚDO
+===================================== */
+
+.conteudo {
+
+    min-width: 0;
+
+}
+
+.topbar {
+
+    background: #160f1d;
+
+    border-bottom: 1px solid var(--borda);
+
+    min-height: 90px;
+
+    padding: 20px 35px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 20px;
+
+}
+
+.topbar small {
+
+    color: #9e89aa;
+
+    font-size: 10px;
+
+    letter-spacing: 1px;
+
+}
+
+.topbar h2 {
+
+    margin: 5px 0 0;
+
+    font-size: 21px;
+
+}
+
+main {
+
+    max-width: 1450px;
+
+    margin: auto;
+
+    padding: 30px 35px 70px;
+
+}
+
+.aviso {
+
+    background: #2d1f32;
+
+    border: 1px solid #74466d;
+
+    border-radius: 12px;
+
+    padding: 15px;
+
+    color: #ebd5e6;
+
+    font-size: 12px;
+
+    margin-bottom: 35px;
+
+}
+
+.pagina[hidden] {
+
+    display: none !important;
+
+}
+
+.cabecalho-pagina {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    gap: 25px;
+
+    margin-bottom: 30px;
+
+}
+
+.subtitulo {
+
+    color: #c78fdf;
+
+    font-size: 10px;
+
+    font-weight: 900;
+
+    letter-spacing: 2px;
+
+}
+
+.cabecalho-pagina h1 {
+
+    font-size: clamp(32px, 3.5vw, 48px);
+
+    letter-spacing: -2px;
+
+    margin: 12px 0;
+
+}
+
+.cabecalho-pagina p {
+
+    color: var(--cinza);
+
+    font-size: 14px;
+
+    margin: 0;
+
+}
+
+.data-atual {
+
+    padding: 13px;
+
+    background: var(--painel);
+
+    border: 1px solid var(--borda);
+
+    border-radius: 10px;
+
+    font-size: 12px;
+
+}
+
+
+/* =====================================
+   BOTÕES
+===================================== */
+
+.botao {
+
+    display: inline-flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    padding: 13px 19px;
+
+    border-radius: 10px;
+
+    border: 1px solid transparent;
+
+    font-size: 13px;
+
+    font-weight: 900;
+
+    text-align: center;
+
+    text-decoration: none;
+
+    transition: 0.2s;
+
+    white-space: nowrap;
+
+}
+
+.botao:hover {
+
+    transform: translateY(-2px);
+
+    filter: brightness(1.12);
+
+}
+
+.botao-laranja {
+
+    background: var(--laranja);
+
+    color: #201022;
+
+}
+
+.botao-secundario {
+
+    background: #2d2236;
+
+    border-color: #63466d;
+
+    color: white;
+
+}
+
+.botao-link {
+
+    border: none;
+
+    background: transparent;
+
+    color: var(--laranja);
+
+    font-weight: 900;
+
+}
+
+.grupo-botoes {
+
+    display: flex;
+
+    gap: 10px;
+
+    flex-wrap: wrap;
+
+}
+
+
+/* =====================================
+   INDICADORES
+===================================== */
+
+.indicadores {
+
+    display: grid;
+
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+
+    gap: 15px;
+
+    margin-bottom: 25px;
+
+}
+
+.indicador {
+
+    position: relative;
+
+    padding: 23px;
+
+    background: linear-gradient(
+        155deg,
+        #2e2038,
+        #201928
+    );
+
+    border: 1px solid #52365f;
+
+    border-radius: 17px;
+
+}
+
+.indicador span {
+
+    display: block;
+
+    color: #c0abc9;
+
+    font-size: 10px;
+
+    font-weight: 900;
+
+    letter-spacing: 1px;
+
+}
+
+.indicador strong {
+
+    display: block;
+
+    font-size: 43px;
+
+    margin: 14px 0 5px;
+
+}
+
+.indicador small {
+
+    color: var(--cinza);
+
+    font-size: 11px;
+
+}
+
+
+/* =====================================
+   PAINÉIS
+===================================== */
+
+.painel {
+
+    background: var(--painel);
+
+    border: 1px solid var(--borda);
+
+    border-radius: 16px;
+
+    padding: 25px;
+
+    margin-bottom: 20px;
+
+}
+
+.painel h2 {
+
+    margin-top: 0;
+
+}
+
+.painel p {
+
+    color: var(--cinza);
+
+    font-size: 14px;
+
+}
+
+.painel-cabecalho {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    margin-bottom: 20px;
+
+}
+
+.produto-recente {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 15px;
+
+    padding: 12px 0;
+
+    border-bottom: 1px solid var(--borda);
+
+}
+
+.produto-recente img {
+
+    width: 55px;
+
+    height: 55px;
+
+    object-fit: cover;
+
+    border-radius: 8px;
+
+}
+
+.produto-recente-info {
+
+    flex: 1;
+
+}
+
+.produto-recente-info strong {
+
+    display: block;
+
+    font-size: 14px;
+
+}
+
+.produto-recente-info span {
+
+    color: var(--cinza);
+
+    font-size: 12px;
+
+}
+
+.produto-recente b {
+
+    color: var(--laranja);
+
+}
+
+
+/* =====================================
+   TABELAS
+===================================== */
+
+.barra-ferramentas {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 15px;
+
+    margin-bottom: 20px;
+
+}
+
+.barra-ferramentas input {
+
+    background: var(--painel-claro);
+
+    border: 1px solid var(--borda);
+
+    border-radius: 10px;
+
+    color: white;
+
+    padding: 12px;
+
+    width: min(350px, 100%);
+
+}
+
+.barra-ferramentas span {
+
+    color: var(--cinza);
+
+    font-size: 12px;
+
+}
+
+.tabela-container {
+
+    width: 100%;
+
+    overflow-x: auto;
+
+}
+
+table {
+
+    width: 100%;
+
+    min-width: 690px;
+
+    border-collapse: collapse;
+
+    text-align: left;
+
+}
+
+th {
+
+    background: var(--painel-claro);
+
+    padding: 15px;
+
+    color: #b7a4c5;
+
+    font-size: 10px;
+
+    letter-spacing: 1px;
+
+}
+
+td {
+
+    padding: 15px;
+
+    border-bottom: 1px solid var(--borda);
+
+    font-size: 13px;
+
+}
+
+td strong {
+
+    display: block;
+
+}
+
+td small {
+
+    display: block;
+
+    color: var(--cinza);
+
+    font-size: 11px;
+
+}
+
+.produto-celula {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+}
+
+.produto-celula img {
+
+    width: 52px;
+
+    height: 52px;
+
+    object-fit: cover;
+
+    border-radius: 8px;
+
+}
+
+.etiqueta {
+
+    background: #3e294b;
+
+    color: #ddaae9;
+
+    border-radius: 8px;
+
+    padding: 7px 10px;
+
+    font-size: 11px;
+
+}
+
+.visivel {
+
+    color: #9af2ba;
+
+}
+
+.oculto {
+
+    color: #e5b5bc;
+
+}
+
+.botao-pequeno {
+
+    padding: 8px 10px;
+
+    margin: 3px;
+
+    background: #372741;
+
+    color: white;
+
+    border: 1px solid #634972;
+
+    border-radius: 7px;
+
+}
+
+.botao-excluir {
+
+    color: #ffb7b7;
+
+}
+
+
+/* =====================================
+   FORMULÁRIOS
+===================================== */
+
+.modal {
+
+    width: min(610px, calc(100vw - 24px));
+
+    max-height: 90vh;
+
+    overflow-y: auto;
+
+    background: #21172c;
+
+    color: white;
+
+    border: 1px solid #7d4d91;
+
+    border-radius: 18px;
+
+    padding: 25px;
+
+}
+
+.modal::backdrop {
+
+    background: rgba(0, 0, 0, 0.8);
+
+}
+
+.modal-cabecalho {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    margin-bottom: 25px;
+
+}
+
+.modal-cabecalho h2 {
+
+    margin: 0;
+
+}
+
+.fechar-modal {
+
+    background: #382641;
+
+    color: white;
+
+    border: 1px solid var(--borda);
+
+    border-radius: 8px;
+
+    width: 36px;
+
+    height: 36px;
+
+    font-size: 24px;
+
+}
+
+.campos {
+
+    display: grid;
+
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    gap: 15px;
+
+}
+
+.campo {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 8px;
+
+    color: #e8d7ee;
+
+    font-size: 12px;
+
+    font-weight: 800;
+
+}
+
+.campo-inteiro {
+
+    grid-column: 1 / -1;
+
+}
+
+.campo input,
+.campo textarea,
+.campo select {
+
+    width: 100%;
+
+    background: #302438;
+
+    border: 1px solid #6c5177;
+
+    border-radius: 9px;
+
+    color: white;
+
+    padding: 12px;
+
+    font-size: 13px;
+
+}
+
+.campo input:focus,
+.campo textarea:focus,
+.campo select:focus {
+
+    outline: 2px solid var(--laranja);
+
+}
+
+.checkbox-campo {
+
+    flex-direction: row;
+
+    align-items: center;
+
+}
+
+.checkbox-campo input {
+
+    width: auto;
+
+    accent-color: var(--roxo);
+
+}
+
+.modal-acoes {
+
+    display: flex;
+
+    justify-content: flex-end;
+
+    gap: 10px;
+
+    margin-top: 25px;
+
+}
+
+
+/* =====================================
+   NOTIFICAÇÕES
+===================================== */
+
+.notificacao {
+
+    position: fixed;
+
+    bottom: 25px;
+
+    left: 50%;
+
+    transform: translate(-50%, 100px);
+
+    background: #efdbfd;
+
+    color: #341548;
+
+    padding: 14px 20px;
+
+    border-radius: 10px;
+
+    font-weight: 800;
+
+    opacity: 0;
+
+    pointer-events: none;
+
+    transition: 0.3s;
+
+    z-index: 999;
+
+}
+
+.notificacao.visivel {
+
+    opacity: 1;
+
+    transform: translate(-50%, 0);
+
+}
+
+
+/* =====================================
+   RESPONSIVIDADE
+===================================== */
+
+@media (max-width: 1100px) {
+
+    .indicadores {
+
+        grid-template-columns: repeat(2, 1fr);
+
+    }
+
+    .app {
+
+        grid-template-columns: 205px minmax(0, 1fr);
+
+    }
+
+}
+
+
+@media (max-width: 720px) {
+
+    .app {
+
+        display: block;
+
+    }
+
+    .sidebar {
+
+        min-height: auto;
+
+        padding: 15px;
+
+    }
+
+    .marca {
+
+        margin-bottom: 15px;
+
+    }
+
+    .menu {
+
+        flex-direction: row;
+
+        overflow-x: auto;
+
+    }
+
+    .menu-item {
+
+        min-width: max-content;
+
+        font-size: 12px;
+
+        padding: 12px;
+
+    }
+
+    .menu-titulo,
+    .sidebar-rodape {
+
+        display: none;
+
+    }
+
+    .topbar {
+
+        padding: 15px;
+
+    }
+
+    main {
+
+        padding: 20px 15px;
+
+    }
+
+    .cabecalho-pagina {
+
+        flex-direction: column;
+
+        align-items: flex-start;
+
+    }
+
+    .painel {
+
+        padding: 15px;
+
+    }
+
+    .campos {
+
+        grid-template-columns: 1fr;
+
+    }
+
+    .campo-inteiro {
+
+        grid-column: auto;
+
+    }
+
+    .indicador {
+
+        padding: 15px;
+
+    }
+
+    .indicador strong {
+
+        font-size: 34px;
+
+    }
+
+    .indicador span {
+
+        font-size: 9px;
+
+    }
+
+}
+
+
+@media (max-width: 400px) {
+
+    .topbar {
+
+        flex-wrap: wrap;
+
+    }
+
+    .indicadores {
+
+        grid-template-columns: 1fr 1fr;
+
+    }
+
+    .grupo-botoes {
+
+        flex-direction: column;
+
+        width: 100%;
+
+    }
+
+}
