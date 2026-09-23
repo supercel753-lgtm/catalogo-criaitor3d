@@ -3,38 +3,139 @@
 <html lang="pt-BR">
 
 <head>
+
     <meta charset="UTF-8">
 
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-    <title>CriAItor 3D | Painel da Empresa</title>
+    <meta
+        name="theme-color"
+        content="#110e17"
+    >
 
-    <link rel="preconnect"
-          href="https://fonts.googleapis.com">
+    <title>
+        CriAItor 3D | Painel da Empresa
+    </title>
 
-    <link rel="preconnect"
-          href="https://fonts.gstatic.com"
-          crossorigin>
 
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap"
-          rel="stylesheet">
+    <!-- ==================================
+         FONTES
+    ================================== -->
 
-    <link rel="stylesheet" href="style.css">
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
 
-    <script src="catalogo.js" defer></script>
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
 
-    <script src="admin.js" defer></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+        rel="stylesheet"
+    >
+
+
+    <!-- ==================================
+         CSS DO PAINEL
+    ================================== -->
+
+    <link
+        rel="stylesheet"
+        href="style.css"
+    >
+
+
+    <!-- ==================================
+         PROTEÇÃO VISUAL DO PAINEL
+    ================================== -->
+
+    <style>
+
+        .app[hidden],
+        .tela-login[hidden] {
+            display: none !important;
+        }
+
+    </style>
+
+
+    <!-- ==================================
+         1. BIBLIOTECA SUPABASE
+    ================================== -->
+
+    <script
+        src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
+        defer>
+    </script>
+
+
+    <!-- ==================================
+         2. CONFIGURAÇÃO DO SUPABASE
+    ================================== -->
+
+    <script
+        src="supabase-config.js"
+        defer>
+    </script>
+
+
+    <!-- ==================================
+         3. CATÁLOGO INICIAL
+    ================================== -->
+
+    <script
+        src="catalogo.js"
+        defer>
+    </script>
+
+
+    <!-- ==================================
+         4. ADMINISTRAÇÃO
+    ================================== -->
+
+    <script
+        src="admin.js"
+        defer>
+    </script>
+
+
+    <!-- ==================================
+         5. SINCRONIZAÇÃO COM A LOJA
+    ================================== -->
+
+    <script
+        src="sync-empresa.js"
+        defer>
+    </script>
 
 </head>
 
-<body>
 
-    <div class="app">
+<body data-area="empresa">
 
-        <!-- MENU LATERAL -->
+
+    <!-- ==================================
+         PAINEL ADMINISTRATIVO
+    ================================== -->
+
+    <div class="app" hidden>
+
+
+        <!-- ==================================
+             MENU LATERAL
+        ================================== -->
 
         <aside class="sidebar">
+
+
+            <!-- LOGOTIPO -->
 
             <div class="marca">
 
@@ -44,23 +145,36 @@
                     class="logo"
                 >
 
-                <div>
-                    <h2>CriAItor 3D</h2>
 
-                    <span>PAINEL DA EMPRESA</span>
+                <div>
+
+                    <h2>
+                        CriAItor 3D
+                    </h2>
+
+                    <span>
+                        PAINEL DA EMPRESA
+                    </span>
+
                 </div>
 
             </div>
 
 
+            <!-- MENU PRINCIPAL -->
+
             <p class="menu-titulo">
+
                 MENU PRINCIPAL
+
             </p>
 
 
             <nav class="menu">
 
+
                 <button
+                    type="button"
                     class="menu-item ativo"
                     data-pagina="dashboard">
 
@@ -70,6 +184,7 @@
 
 
                 <button
+                    type="button"
                     class="menu-item"
                     data-pagina="produtos">
 
@@ -79,6 +194,7 @@
 
 
                 <button
+                    type="button"
                     class="menu-item"
                     data-pagina="pedidos">
 
@@ -88,50 +204,76 @@
 
 
                 <button
+                    type="button"
                     class="menu-item"
                     data-pagina="publicar">
 
-                    ↥ Publicar catálogo
+                    ↥ Sincronização
 
                 </button>
+
 
             </nav>
 
 
+            <!-- INFORMAÇÕES DA CONEXÃO -->
+
             <div class="sidebar-rodape">
 
-                <strong>● Modo local</strong>
+                <strong>
+
+                    ● CriAItor 3D
+
+                </strong>
+
 
                 <p>
-                    Os dados são armazenados
-                    neste navegador.
+
+                    Painel administrativo conectado
+                    ao catálogo compartilhado
+                    da loja virtual.
+
                 </p>
 
             </div>
 
+
         </aside>
 
 
-        <!-- CONTEÚDO PRINCIPAL -->
+
+        <!-- ==================================
+             CONTEÚDO PRINCIPAL
+        ================================== -->
 
         <div class="conteudo">
 
+
+            <!-- CABEÇALHO -->
+
             <header class="topbar">
+
 
                 <div>
 
                     <small>
+
                         CRIAITOR 3D / ADMINISTRAÇÃO
+
                     </small>
 
+
                     <h2 id="titulo-pagina">
+
                         Visão geral
+
                     </h2>
 
                 </div>
 
 
                 <button
+                    type="button"
                     class="botao botao-laranja"
                     id="novo-produto-topo">
 
@@ -139,143 +281,228 @@
 
                 </button>
 
+
+                <!-- O BOTÃO SAIR SERÁ
+                     ADICIONADO PELO JAVASCRIPT -->
+
+
             </header>
+
 
 
             <main>
 
+
+                <!-- ==================================
+                     AVISO DE SINCRONIZAÇÃO
+                ================================== -->
+
                 <div class="aviso">
 
-                    Este painel funciona localmente.
-                    Os pedidos recebidos pelo WhatsApp
-                    devem ser registrados manualmente.
+                    Os produtos e preços são
+                    compartilhados com a loja
+                    dos clientes pelo Supabase.
 
-                    As alterações no catálogo precisam
-                    ser exportadas para a loja dos clientes.
+                    Os pedidos recebidos pelo
+                    WhatsApp ainda devem ser
+                    registrados manualmente
+                    neste painel.
 
                 </div>
 
 
-                <!-- DASHBOARD -->
+
+                <!-- ==================================
+                     PÁGINA 1 - DASHBOARD
+                ================================== -->
 
                 <section
                     class="pagina ativa"
                     id="dashboard">
 
+
                     <div class="cabecalho-pagina">
+
 
                         <div>
 
                             <span class="subtitulo">
+
                                 SEU ESPAÇO DE CRIAÇÃO
+
                             </span>
 
+
                             <h1>
+
                                 Bem-vindo ao
+
                                 <em>atelier.</em>
+
                             </h1>
 
+
                             <p>
+
                                 Gerencie suas impressões 3D,
                                 produtos e pedidos.
+
                             </p>
 
                         </div>
+
 
                         <span
                             class="data-atual"
                             id="data-atual">
                         </span>
 
+
                     </div>
 
 
-                    <!-- INDICADORES -->
+
+                    <!-- ==================================
+                         INDICADORES
+                    ================================== -->
 
                     <div class="indicadores">
 
+
+                        <!-- PRODUTOS CADASTRADOS -->
+
                         <div class="indicador">
 
                             <span>
+
                                 PRODUTOS CADASTRADOS
+
                             </span>
+
 
                             <strong id="total-produtos">
+
                                 0
+
                             </strong>
 
+
                             <small>
+
                                 Produtos no catálogo
+
                             </small>
 
                         </div>
 
 
+
+                        <!-- PRODUTOS VISÍVEIS -->
+
                         <div class="indicador">
 
                             <span>
+
                                 PRODUTOS VISÍVEIS
+
                             </span>
+
 
                             <strong id="total-visiveis">
+
                                 0
+
                             </strong>
 
+
                             <small>
+
                                 Disponíveis na loja
+
                             </small>
 
                         </div>
 
 
+
+                        <!-- ESTOQUE -->
+
                         <div class="indicador">
 
                             <span>
+
                                 UNIDADES EM ESTOQUE
+
                             </span>
+
 
                             <strong id="total-estoque">
+
                                 0
+
                             </strong>
 
+
                             <small>
+
                                 Estoque informado
+
                             </small>
 
                         </div>
 
+
+
+                        <!-- PEDIDOS -->
 
                         <div class="indicador">
 
                             <span>
+
                                 PEDIDOS EM ABERTO
+
                             </span>
 
+
                             <strong id="total-pedidos">
+
                                 0
+
                             </strong>
 
+
                             <small>
+
                                 Pedidos pendentes
+
                             </small>
 
                         </div>
+
 
                     </div>
 
 
-                    <!-- PRODUTOS RECENTES -->
+
+                    <!-- ==================================
+                         PRODUTOS RECENTES
+                    ================================== -->
 
                     <div class="painel">
 
+
                         <div class="painel-cabecalho">
 
+
                             <h2>
+
                                 Suas criações
+
                             </h2>
 
 
                             <button
+                                type="button"
                                 class="botao-link"
                                 data-ir="produtos">
 
@@ -283,47 +510,69 @@
 
                             </button>
 
+
                         </div>
 
 
                         <div id="produtos-recentes">
 
+                            <!-- GERADO PELO ADMIN.JS -->
+
                         </div>
 
+
                     </div>
+
 
                 </section>
 
 
-                <!-- GERENCIAMENTO DE PRODUTOS -->
+
+                <!-- ==================================
+                     PÁGINA 2 - PRODUTOS
+                ================================== -->
 
                 <section
                     class="pagina"
                     id="produtos"
                     hidden>
 
+
                     <div class="cabecalho-pagina">
+
 
                         <div>
 
+
                             <span class="subtitulo">
+
                                 CATÁLOGO DE IMPRESSÃO 3D
+
                             </span>
 
+
                             <h1>
+
                                 Gerenciar
+
                                 <em>produtos.</em>
+
                             </h1>
 
+
                             <p>
+
                                 Cadastre modelos, preços,
                                 imagens e disponibilidade.
+
                             </p>
+
 
                         </div>
 
 
                         <button
+                            type="button"
                             class="botao botao-laranja"
                             id="novo-produto">
 
@@ -331,95 +580,150 @@
 
                         </button>
 
+
                     </div>
 
 
+
+                    <!-- ==================================
+                         TABELA DE PRODUTOS
+                    ================================== -->
+
                     <div class="painel">
 
+
                         <div class="barra-ferramentas">
+
 
                             <input
                                 type="search"
                                 id="buscar-produto"
                                 placeholder="Buscar produto..."
-                                aria-label="Buscar produto">
+                                aria-label="Buscar produto"
+                            >
+
 
                             <span id="contador-produtos">
+
                                 0 produtos
+
                             </span>
+
 
                         </div>
 
 
+
                         <div class="tabela-container">
 
+
                             <table>
+
 
                                 <thead>
 
                                     <tr>
 
-                                        <th>PRODUTO</th>
+                                        <th>
+                                            PRODUTO
+                                        </th>
 
-                                        <th>CATEGORIA</th>
+                                        <th>
+                                            CATEGORIA
+                                        </th>
 
-                                        <th>PREÇO</th>
+                                        <th>
+                                            PREÇO
+                                        </th>
 
-                                        <th>ESTOQUE</th>
+                                        <th>
+                                            ESTOQUE
+                                        </th>
 
-                                        <th>VISIBILIDADE</th>
+                                        <th>
+                                            VISIBILIDADE
+                                        </th>
 
-                                        <th>AÇÕES</th>
+                                        <th>
+                                            AÇÕES
+                                        </th>
 
                                     </tr>
 
                                 </thead>
 
 
+
                                 <tbody id="tabela-produtos">
+
+                                    <!-- PRODUTOS GERADOS
+                                         PELO JAVASCRIPT -->
 
                                 </tbody>
 
+
                             </table>
+
 
                         </div>
 
+
                     </div>
+
 
                 </section>
 
 
-                <!-- PEDIDOS -->
+
+                <!-- ==================================
+                     PÁGINA 3 - PEDIDOS
+                ================================== -->
 
                 <section
                     class="pagina"
                     id="pedidos"
                     hidden>
 
+
                     <div class="cabecalho-pagina">
+
 
                         <div>
 
+
                             <span class="subtitulo">
+
                                 ORGANIZAÇÃO INTERNA
+
                             </span>
 
+
                             <h1>
+
                                 Controle de
+
                                 <em>pedidos.</em>
+
                             </h1>
 
+
                             <p>
+
                                 Registre e acompanhe
                                 os pedidos dos clientes.
+
                             </p>
+
 
                         </div>
 
 
+
                         <div class="grupo-botoes">
 
+
                             <button
+                                type="button"
                                 class="botao botao-secundario"
                                 id="exportar-pedidos">
 
@@ -429,6 +733,7 @@
 
 
                             <button
+                                type="button"
                                 class="botao botao-laranja"
                                 id="novo-pedido">
 
@@ -436,121 +741,239 @@
 
                             </button>
 
+
                         </div>
+
 
                     </div>
 
 
+
+                    <!-- ==================================
+                         TABELA DE PEDIDOS
+                    ================================== -->
+
                     <div class="painel">
+
 
                         <div class="tabela-container">
 
+
                             <table>
+
 
                                 <thead>
 
+
                                     <tr>
 
-                                        <th>CLIENTE</th>
+                                        <th>
+                                            CLIENTE
+                                        </th>
 
-                                        <th>DESCRIÇÃO</th>
+                                        <th>
+                                            DESCRIÇÃO
+                                        </th>
 
-                                        <th>VALOR</th>
+                                        <th>
+                                            VALOR
+                                        </th>
 
-                                        <th>STATUS</th>
+                                        <th>
+                                            STATUS
+                                        </th>
 
-                                        <th>DATA</th>
+                                        <th>
+                                            DATA
+                                        </th>
 
-                                        <th>AÇÕES</th>
+                                        <th>
+                                            AÇÕES
+                                        </th>
 
                                     </tr>
+
 
                                 </thead>
 
 
+
                                 <tbody id="tabela-pedidos">
+
+                                    <!-- PEDIDOS GERADOS
+                                         PELO JAVASCRIPT -->
 
                                 </tbody>
 
+
                             </table>
+
 
                         </div>
 
+
                     </div>
+
 
                 </section>
 
 
-                <!-- PUBLICAÇÃO -->
+
+                <!-- ==================================
+                     PÁGINA 4 - SINCRONIZAÇÃO
+                ================================== -->
 
                 <section
                     class="pagina"
                     id="publicar"
                     hidden>
 
+
                     <div class="cabecalho-pagina">
+
 
                         <div>
 
+
                             <span class="subtitulo">
-                                VERSÃO DOS CLIENTES
+
+                                LOJA DOS CLIENTES
+
                             </span>
 
+
                             <h1>
-                                Publique seu
-                                <em>catálogo.</em>
+
+                                Catálogo
+
+                                <em>conectado.</em>
+
                             </h1>
 
+
                             <p>
-                                Atualize os produtos da
-                                sua loja virtual.
+
+                                Gerencie a sincronização
+                                das suas criações
+                                com a loja virtual.
+
                             </p>
 
+
                         </div>
+
 
                     </div>
 
 
+
+                    <!-- ==================================
+                         SINCRONIZAÇÃO AUTOMÁTICA
+                    ================================== -->
+
                     <div class="painel">
 
+
                         <h2>
-                            Exportar catálogo
+
+                            Sincronização com Supabase
+
                         </h2>
 
+
                         <p>
-                            Exporte os produtos cadastrados
-                            neste painel para atualizar
-                            a versão dos clientes.
+
+                            Após a integração dos arquivos
+                            JavaScript, as alterações
+                            realizadas nos produtos serão
+                            enviadas automaticamente ao
+                            banco de dados compartilhado.
+
+                        </p>
+
+
+                        <p>
+
+                            Os clientes receberão as
+                            informações atualizadas
+                            no catálogo da loja virtual.
+
+                        </p>
+
+
+                        <!-- O JAVASCRIPT PODE ADICIONAR
+                             AQUI O BOTÃO DE SINCRONIZAÇÃO -->
+
+
+                    </div>
+
+
+
+                    <!-- ==================================
+                         EXPORTAÇÃO MANUAL
+                    ================================== -->
+
+                    <div class="painel">
+
+
+                        <h2>
+
+                            Exportar catálogo
+
+                        </h2>
+
+
+                        <p>
+
+                            Mantenha uma cópia
+                            do catálogo em JavaScript
+                            para utilização como backup.
+
                         </p>
 
 
                         <button
-                            class="botao botao-laranja"
+                            type="button"
+                            class="botao botao-secundario"
                             id="exportar-catalogo">
 
                             Exportar catalogo.js
 
                         </button>
 
+
                     </div>
 
 
+
+                    <!-- ==================================
+                         BACKUP
+                    ================================== -->
+
                     <div class="painel">
 
+
                         <h2>
+
                             Backup dos dados
+
                         </h2>
 
+
                         <p>
+
                             Salve uma cópia dos produtos
-                            e pedidos cadastrados
-                            neste navegador.
+                            e pedidos cadastrados.
+
                         </p>
+
 
 
                         <div class="grupo-botoes">
 
+
                             <button
+                                type="button"
                                 class="botao botao-secundario"
                                 id="baixar-backup">
 
@@ -559,103 +982,157 @@
                             </button>
 
 
+
                             <label class="botao botao-secundario">
 
+
                                 Restaurar backup
+
 
                                 <input
                                     type="file"
                                     id="restaurar-backup"
                                     accept=".json,application/json"
-                                    hidden>
+                                    hidden
+                                >
+
 
                             </label>
 
+
                         </div>
+
 
                     </div>
 
+
                 </section>
+
 
             </main>
 
+
         </div>
+
 
     </div>
 
 
-    <!-- FORMULÁRIO DE PRODUTO -->
+
+    <!-- ==================================
+         FORMULÁRIO DE PRODUTOS
+    ================================== -->
 
     <dialog
         class="modal"
-        id="modal-produto">
+        id="modal-produto"
+        aria-labelledby="titulo-modal-produto">
+
 
         <form id="form-produto">
 
+
+            <!-- CABEÇALHO -->
+
             <div class="modal-cabecalho">
 
+
                 <h2 id="titulo-modal-produto">
+
                     Novo produto
+
                 </h2>
 
 
                 <button
                     type="button"
                     class="fechar-modal"
-                    data-fechar="modal-produto">
+                    data-fechar="modal-produto"
+                    aria-label="Fechar formulário">
 
                     ×
 
                 </button>
 
+
             </div>
 
 
+
+            <!-- CAMPOS -->
+
             <div class="campos">
+
+
+                <!-- NOME -->
 
                 <label class="campo campo-inteiro">
 
+
                     Nome do produto
+
 
                     <input
                         type="text"
                         name="nome"
                         maxlength="100"
-                        required>
+                        required
+                    >
+
 
                 </label>
 
 
+
+                <!-- CATEGORIA -->
+
                 <label class="campo">
 
+
                     Categoria
+
 
                     <input
                         type="text"
                         name="categoria"
                         maxlength="45"
-                        required>
+                        placeholder="Ex.: Articulados"
+                        required
+                    >
+
 
                 </label>
 
 
+
+                <!-- PREÇO -->
+
                 <label class="campo">
 
+
                     Preço (R$)
+
 
                     <input
                         type="number"
                         name="preco"
                         min="0"
                         step="0.01"
-                        required>
+                        required
+                    >
+
 
                 </label>
 
 
+
+                <!-- ESTOQUE -->
+
                 <label class="campo">
 
+
                     Estoque
+
 
                     <input
                         type="number"
@@ -663,76 +1140,117 @@
                         min="0"
                         step="1"
                         value="0"
-                        required>
+                        required
+                    >
+
 
                 </label>
 
 
+
+                <!-- PRAZO -->
+
                 <label class="campo">
 
+
                     Prazo de produção
+
 
                     <input
                         type="text"
                         name="prazo"
                         maxlength="80"
-                        value="Produção sob encomenda">
+                        value="Produção sob encomenda"
+                    >
+
 
                 </label>
 
 
+
+                <!-- IMAGEM -->
+
                 <label class="campo campo-inteiro">
 
-                    Caminho da imagem
+
+                    Caminho ou URL da imagem
+
 
                     <input
                         type="text"
                         name="imagem"
                         maxlength="500"
-                        placeholder="assets/produto.jpg">
+                        placeholder="assets/produto.jpg"
+                    >
+
 
                 </label>
 
 
+
+                <!-- DESCRIÇÃO -->
+
                 <label class="campo campo-inteiro">
 
-                    Descrição
+
+                    Descrição do produto
+
 
                     <textarea
                         name="descricao"
                         rows="3"
-                        maxlength="300">
-                    </textarea>
+                        maxlength="300"
+                    ></textarea>
+
 
                 </label>
 
 
+
+                <!-- DISPONIBILIDADE -->
+
                 <label class="campo checkbox-campo">
+
 
                     <input
                         type="checkbox"
                         name="disponivel"
-                        checked>
+                        checked
+                    >
 
-                    Mostrar na loja
+
+                    Mostrar produto na loja
+
 
                 </label>
 
+
+
+                <!-- DESTAQUE -->
 
                 <label class="campo checkbox-campo">
 
+
                     <input
                         type="checkbox"
-                        name="destaque">
+                        name="destaque"
+                    >
+
 
                     Produto em destaque
 
+
                 </label>
+
 
             </div>
 
 
+
+            <!-- BOTÕES -->
+
             <div class="modal-acoes">
+
 
                 <button
                     type="button"
@@ -742,6 +1260,7 @@
                     Cancelar
 
                 </button>
+
 
 
                 <button
@@ -752,119 +1271,202 @@
 
                 </button>
 
+
             </div>
 
+
         </form>
+
 
     </dialog>
 
 
-    <!-- FORMULÁRIO DE PEDIDOS -->
+
+    <!-- ==================================
+         FORMULÁRIO DE PEDIDOS
+    ================================== -->
 
     <dialog
         class="modal"
-        id="modal-pedido">
+        id="modal-pedido"
+        aria-label="Registrar pedido">
+
 
         <form id="form-pedido">
 
+
+            <!-- CABEÇALHO -->
+
             <div class="modal-cabecalho">
 
+
                 <h2>
+
                     Registrar pedido
+
                 </h2>
 
 
                 <button
                     type="button"
                     class="fechar-modal"
-                    data-fechar="modal-pedido">
+                    data-fechar="modal-pedido"
+                    aria-label="Fechar formulário">
 
                     ×
 
                 </button>
 
+
             </div>
 
 
+
+            <!-- CAMPOS -->
+
             <div class="campos">
+
+
+                <!-- CLIENTE -->
 
                 <label class="campo">
 
+
                     Nome do cliente
+
 
                     <input
                         type="text"
                         name="cliente"
                         maxlength="100"
-                        required>
+                        required
+                    >
+
 
                 </label>
 
 
+
+                <!-- CONTATO -->
+
                 <label class="campo">
 
+
                     Contato
+
 
                     <input
                         type="text"
                         name="contato"
-                        maxlength="120">
+                        maxlength="120"
+                    >
+
 
                 </label>
 
 
+
+                <!-- PRODUTOS SOLICITADOS -->
+
                 <label class="campo campo-inteiro">
 
+
                     Produtos solicitados
+
 
                     <textarea
                         name="itens"
                         rows="3"
                         maxlength="500"
-                        required>
-                    </textarea>
+                        required
+                    ></textarea>
+
 
                 </label>
 
 
+
+                <!-- VALOR -->
+
                 <label class="campo">
 
+
                     Valor (R$)
+
 
                     <input
                         type="number"
                         name="valor"
                         min="0"
                         step="0.01"
-                        required>
+                        required
+                    >
+
 
                 </label>
 
+
+
+                <!-- STATUS -->
 
                 <label class="campo">
 
+
                     Status
+
 
                     <select name="status">
 
-                        <option>Novo</option>
 
-                        <option>Em produção</option>
+                        <option value="Novo">
 
-                        <option>Pronto</option>
+                            Novo
 
-                        <option>Entregue</option>
+                        </option>
 
-                        <option>Cancelado</option>
+
+                        <option value="Em produção">
+
+                            Em produção
+
+                        </option>
+
+
+                        <option value="Pronto">
+
+                            Pronto
+
+                        </option>
+
+
+                        <option value="Entregue">
+
+                            Entregue
+
+                        </option>
+
+
+                        <option value="Cancelado">
+
+                            Cancelado
+
+                        </option>
+
 
                     </select>
 
+
                 </label>
+
 
             </div>
 
 
+
+            <!-- BOTÕES -->
+
             <div class="modal-acoes">
+
 
                 <button
                     type="button"
@@ -876,6 +1478,7 @@
                 </button>
 
 
+
                 <button
                     type="submit"
                     class="botao botao-laranja">
@@ -884,12 +1487,20 @@
 
                 </button>
 
+
             </div>
+
 
         </form>
 
+
     </dialog>
 
+
+
+    <!-- ==================================
+         NOTIFICAÇÕES
+    ================================== -->
 
     <div
         class="notificacao"
@@ -897,6 +1508,7 @@
         role="status"
         aria-live="polite">
     </div>
+
 
 </body>
 
