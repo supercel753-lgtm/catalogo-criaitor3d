@@ -16,9 +16,13 @@
         content="#110e17"
     >
 
-    <title>
-        CriAItor 3D | Painel da Empresa
-    </title>
+    <meta
+        name="description"
+        content="Painel administrativo da CriAItor 3D."
+    >
+
+    <title>CriAItor 3D | Painel da Empresa</title>
+
 
     <!-- LOGO DA ABA -->
 
@@ -27,6 +31,7 @@
         type="image/png"
         href="assets/logo-criaitor3d.png"
     >
+
 
     <!-- FONTES -->
 
@@ -46,9 +51,14 @@
         rel="stylesheet"
     >
 
+
     <!-- CSS -->
 
-    <link rel="stylesheet" href="style.css">
+    <link
+        rel="stylesheet"
+        href="style.css"
+    >
+
 
     <!-- SUPABASE -->
 
@@ -57,12 +67,14 @@
         defer>
     </script>
 
+
     <!-- CONFIGURAÇÃO -->
 
     <script
         src="supabase-config.js"
         defer>
     </script>
+
 
     <!-- CATÁLOGO INICIAL -->
 
@@ -71,6 +83,7 @@
         defer>
     </script>
 
+
     <!-- PAINEL ADMINISTRATIVO -->
 
     <script
@@ -78,12 +91,14 @@
         defer>
     </script>
 
-    <!-- UPLOAD DAS FOTOGRAFIAS -->
+
+    <!-- UPLOAD DE FOTOGRAFIAS DOS PRODUTOS -->
 
     <script
         src="fotos-empresa.js"
         defer>
     </script>
+
 
     <!-- SINCRONIZAÇÃO COM A LOJA -->
 
@@ -94,13 +109,19 @@
 
 </head>
 
+
 <body data-area="empresa">
 
-    <!-- PAINEL ADMINISTRATIVO -->
+    <!-- =====================================
+         PAINEL ADMINISTRATIVO
+    ===================================== -->
 
     <div class="app" hidden>
 
-        <!-- MENU LATERAL -->
+
+        <!-- =================================
+             MENU LATERAL
+        ================================= -->
 
         <aside class="sidebar">
 
@@ -116,6 +137,9 @@
                 >
 
             </div>
+
+
+            <!-- MENU -->
 
             <p class="menu-titulo">
                 MENU PRINCIPAL
@@ -157,6 +181,9 @@
 
             </nav>
 
+
+            <!-- RODAPÉ DO MENU -->
+
             <div class="sidebar-rodape">
 
                 <strong>
@@ -165,9 +192,9 @@
 
                 <p>
 
-                    Gerenciamento de produtos
-                    e integração com a loja
-                    virtual pelo Supabase.
+                    Painel administrativo
+                    conectado à loja virtual
+                    pelo Supabase.
 
                 </p>
 
@@ -175,9 +202,13 @@
 
         </aside>
 
-        <!-- CONTEÚDO -->
+
+        <!-- =================================
+             CONTEÚDO PRINCIPAL
+        ================================= -->
 
         <div class="conteudo">
+
 
             <!-- CABEÇALHO -->
 
@@ -203,7 +234,11 @@
                     + Novo produto
                 </button>
 
+                <!-- BOTÃO SAIR:
+                     CRIADO PELO sync-empresa.js -->
+
             </header>
+
 
             <main>
 
@@ -215,17 +250,16 @@
                     são compartilhados com a loja
                     dos clientes pelo Supabase.
 
-                    O logotipo da empresa é
-                    gerenciado diretamente
-                    pelo GitHub.
-
-                    Os pedidos recebidos pelo
-                    WhatsApp devem ser
-                    registrados manualmente.
+                    Os pedidos recebidos pelo WhatsApp
+                    devem ser registrados manualmente
+                    neste painel.
 
                 </div>
 
-                <!-- DASHBOARD -->
+
+                <!-- =============================
+                     DASHBOARD
+                ============================= -->
 
                 <section
                     class="pagina ativa"
@@ -263,6 +297,7 @@
                         ></span>
 
                     </div>
+
 
                     <!-- INDICADORES -->
 
@@ -334,13 +369,16 @@
 
                     </div>
 
+
                     <!-- PRODUTOS RECENTES -->
 
                     <div class="painel">
 
                         <div class="painel-cabecalho">
 
-                            <h2>Suas criações</h2>
+                            <h2>
+                                Suas criações
+                            </h2>
 
                             <button
                                 type="button"
@@ -358,7 +396,10 @@
 
                 </section>
 
-                <!-- PRODUTOS -->
+
+                <!-- =============================
+                     PRODUTOS
+                ============================= -->
 
                 <section
                     class="pagina"
@@ -385,8 +426,8 @@
                             <p>
 
                                 Cadastre novas criações,
-                                adicione fotografias e
-                                atualize preços e estoque.
+                                adicione fotografias,
+                                altere preços e estoque.
 
                             </p>
 
@@ -402,7 +443,8 @@
 
                     </div>
 
-                    <!-- TABELA -->
+
+                    <!-- LISTAGEM DE PRODUTOS -->
 
                     <div class="painel">
 
@@ -420,6 +462,7 @@
                             </span>
 
                         </div>
+
 
                         <div class="tabela-container">
 
@@ -445,8 +488,7 @@
 
                                 </thead>
 
-                                <tbody id="tabela-produtos">
-                                </tbody>
+                                <tbody id="tabela-produtos"></tbody>
 
                             </table>
 
@@ -456,7 +498,10 @@
 
                 </section>
 
-                <!-- PEDIDOS -->
+
+                <!-- =============================
+                     PEDIDOS
+                ============================= -->
 
                 <section
                     class="pagina"
@@ -511,6 +556,9 @@
 
                     </div>
 
+
+                    <!-- LISTAGEM DE PEDIDOS -->
+
                     <div class="painel">
 
                         <div class="tabela-container">
@@ -537,8 +585,7 @@
 
                                 </thead>
 
-                                <tbody id="tabela-pedidos">
-                                </tbody>
+                                <tbody id="tabela-pedidos"></tbody>
 
                             </table>
 
@@ -548,7 +595,10 @@
 
                 </section>
 
-                <!-- SINCRONIZAÇÃO -->
+
+                <!-- =============================
+                     SINCRONIZAÇÃO
+                ============================= -->
 
                 <section
                     class="pagina"
@@ -575,14 +625,15 @@
                             <p>
 
                                 Gerencie a sincronização
-                                das suas criações
-                                com a loja virtual.
+                                dos produtos com a
+                                loja virtual.
 
                             </p>
 
                         </div>
 
                     </div>
+
 
                     <!-- SUPABASE -->
 
@@ -594,32 +645,38 @@
 
                         <p>
 
-                            As alterações realizadas nos
-                            produtos são enviadas ao banco
-                            de dados compartilhado quando
-                            você salva.
+                            Os produtos e preços são
+                            atualizados na loja dos clientes
+                            quando você salva as alterações.
 
                         </p>
 
                         <p>
 
-                            As fotografias são armazenadas
-                            no Supabase Storage, no bucket
-                            projetos.
+                            As fotografias dos produtos
+                            ficam armazenadas no bucket
+                            projetos do Supabase Storage.
 
                         </p>
 
+                        <!-- BOTÕES DE IMPORTAÇÃO E
+                             RECARREGAMENTO ADICIONADOS
+                             PELO sync-empresa.js -->
+
                     </div>
+
 
                     <!-- EXPORTAÇÃO -->
 
                     <div class="painel">
 
-                        <h2>Exportar catálogo</h2>
+                        <h2>
+                            Exportar catálogo
+                        </h2>
 
                         <p>
 
-                            Salve uma cópia dos produtos
+                            Salve uma cópia do catálogo
                             em formato JavaScript.
 
                         </p>
@@ -634,11 +691,14 @@
 
                     </div>
 
+
                     <!-- BACKUP -->
 
                     <div class="painel">
 
-                        <h2>Backup dos dados</h2>
+                        <h2>
+                            Backup dos dados
+                        </h2>
 
                         <p>
 
@@ -682,7 +742,10 @@
 
     </div>
 
-    <!-- FORMULÁRIO DE PRODUTOS -->
+
+    <!-- =====================================
+         FORMULÁRIO DE PRODUTOS
+    ===================================== -->
 
     <dialog
         class="modal"
@@ -691,6 +754,8 @@
     >
 
         <form id="form-produto">
+
+            <!-- CABEÇALHO -->
 
             <div class="modal-cabecalho">
 
@@ -708,6 +773,9 @@
                 </button>
 
             </div>
+
+
+            <!-- CAMPOS -->
 
             <div class="campos">
 
@@ -727,6 +795,7 @@
 
                 </label>
 
+
                 <!-- CATEGORIA -->
 
                 <label class="campo">
@@ -742,6 +811,7 @@
                     >
 
                 </label>
+
 
                 <!-- PREÇO -->
 
@@ -760,6 +830,7 @@
 
                 </label>
 
+
                 <!-- ESTOQUE -->
 
                 <label class="campo">
@@ -777,6 +848,7 @@
 
                 </label>
 
+
                 <!-- PRAZO -->
 
                 <label class="campo">
@@ -792,16 +864,28 @@
 
                 </label>
 
-                <!-- IMAGEM DO PRODUTO -->
+
+                <!-- FOTOGRAFIA -->
 
                 <!--
-                    O fotos-empresa.js adicionará
-                    automaticamente a área de upload
-                    neste formulário.
+                    O arquivo fotos-empresa.js
+                    adiciona automaticamente
+                    a área de upload aqui.
+
+                    Funcionalidades:
+
+                    - Arrastar e soltar;
+                    - Selecionar do computador;
+                    - Colar com Ctrl + V;
+                    - Pré-visualizar;
+                    - Enviar ao Supabase.
 
                     Bucket: projetos
                     Pasta: catalogo
                 -->
+
+
+                <!-- CAMPO INTERNO DA IMAGEM -->
 
                 <label
                     class="campo campo-inteiro campo-url-legado"
@@ -819,6 +903,7 @@
 
                 </label>
 
+
                 <!-- DESCRIÇÃO -->
 
                 <label class="campo campo-inteiro">
@@ -834,6 +919,7 @@
 
                 </label>
 
+
                 <!-- DISPONIBILIDADE -->
 
                 <label class="campo checkbox-campo">
@@ -847,6 +933,7 @@
                     Mostrar produto na loja
 
                 </label>
+
 
                 <!-- DESTAQUE -->
 
@@ -862,6 +949,9 @@
                 </label>
 
             </div>
+
+
+            <!-- BOTÕES -->
 
             <div class="modal-acoes">
 
@@ -886,7 +976,10 @@
 
     </dialog>
 
-    <!-- FORMULÁRIO DE PEDIDOS -->
+
+    <!-- =====================================
+         FORMULÁRIO DE PEDIDOS
+    ===================================== -->
 
     <dialog
         class="modal"
@@ -898,7 +991,9 @@
 
             <div class="modal-cabecalho">
 
-                <h2>Registrar pedido</h2>
+                <h2>
+                    Registrar pedido
+                </h2>
 
                 <button
                     type="button"
@@ -913,6 +1008,8 @@
 
             <div class="campos">
 
+                <!-- CLIENTE -->
+
                 <label class="campo">
 
                     Nome do cliente
@@ -926,6 +1023,9 @@
 
                 </label>
 
+
+                <!-- CONTATO -->
+
                 <label class="campo">
 
                     Contato
@@ -937,6 +1037,9 @@
                     >
 
                 </label>
+
+
+                <!-- PRODUTOS SOLICITADOS -->
 
                 <label class="campo campo-inteiro">
 
@@ -951,6 +1054,9 @@
 
                 </label>
 
+
+                <!-- VALOR -->
+
                 <label class="campo">
 
                     Valor (R$)
@@ -964,6 +1070,9 @@
                     >
 
                 </label>
+
+
+                <!-- STATUS -->
 
                 <label class="campo">
 
@@ -997,6 +1106,9 @@
 
             </div>
 
+
+            <!-- BOTÕES -->
+
             <div class="modal-acoes">
 
                 <button
@@ -1019,6 +1131,7 @@
         </form>
 
     </dialog>
+
 
     <!-- NOTIFICAÇÕES -->
 
