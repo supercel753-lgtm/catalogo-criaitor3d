@@ -1,244 +1,169 @@
 
-// ======================================
-// CRIAITOR 3D - ADMINISTRAÇÃO
-// ======================================
+/*
+==========================================
+CRIAITOR 3D
+PAINEL ADMINISTRATIVO
+==========================================
+*/
 
 "use strict";
 
 
+// ==========================================
 // CONFIGURAÇÕES
-
-const CHAVE_PRODUTOS = "criaitor3d_produtos_v1";
+// ==========================================
 
 const CHAVE_PEDIDOS = "criaitor3d_pedidos_v1";
 
 const IMAGEM_PADRAO = "assets/logo-criaitor3d.png";
 
 const STATUS_PEDIDOS = [
-
     "Novo",
     "Em produção",
     "Pronto",
     "Entregue",
     "Cancelado"
-
 ];
 
 const moeda = new Intl.NumberFormat("pt-BR", {
-
     style: "currency",
-
     currency: "BRL"
-
 });
 
 const $ = id => document.getElementById(id);
 
 
-// ======================================
-// ARMAZENAMENTO LOCAL
-// ======================================
+// ==========================================
+// DADOS
+// ==========================================
 
-function lerDados(chave, padrao) {
+// Produtos vêm do Supabase.
 
-    try {
+let produtos = [];
 
-        const dados = JSON.parse(
-            localStorage.getItem(chave)
-        );
 
-        return Array.isArray(dados)
-            ? dados
-            : padrao;
+// Pedidos continuam armazenados localmente.
 
-    } catch {
+let pedidos = [];
 
-        return padrao;
+try {
+    const salvos = JSON.parse(
+        localStorage.getItem(CHAVE_PEDIDOS)
+    );
 
+    if (Array.isArray(salvos)) {
+        pedidos = salvos;
     }
 
+} catch (erro) {
+    console.error(erro);
 }
 
 
-const catalogoInicial =
-    window.CRIAITOR_CATALOGO?.produtos || [];
-
-
-let produtos = lerDados(
-
-    CHAVE_PRODUTOS,
-
-    catalogoInicial.map(p => ({ ...p }))
-
-);
-
-
-let pedidos = lerDados(
-
-    CHAVE_PEDIDOS,
-
-    []
-
-);
-
-
-function gravarDados(chave, dados) {
-
-    try {
-
-        localStorage.setItem(
-
-            chave,
-
-            JSON.stringify(dados)
-
-        );
-
-        return true;
-
-    } catch {
-
-        alert(
-            "Não foi possível salvar os dados neste navegador."
-        );
-
-        return false;
-
-    }
-
-}
-
-
-function salvarProdutos() {
-
-    return gravarDados(CHAVE_PRODUTOS, produtos);
-
-}
-
-
-function salvarPedidos() {
-
-    return gravarDados(CHAVE_PEDIDOS, pedidos);
-
-}
-
-
-// ======================================
+// ==========================================
 // FUNÇÕES AUXILIARES
-// ======================================
+// ==========================================
 
 function formatarPreco(valor) {
-
     return moeda.format(Number(valor) || 0);
-
 }
 
 
 function gerarId() {
-
-    return "criaitor-" +
+    return "produto-" +
         Date.now().toString(36) +
         "-" +
         Math.random().toString(36).slice(2, 9);
-
 }
 
 
-function criarElemento(tag, conteudo = "", classe = "") {
+function elemento(tag, texto = "", classe = "") {
 
-    const elemento = document.createElement(tag);
+    const el = document.createElement(tag);
 
-    elemento.textContent = String(conteudo ?? "");
+    el.textContent = String(texto ?? "");
 
     if (classe) {
-
-        elemento.className = classe;
-
+        el.className = classe;
     }
 
-    return elemento;
-
+    return el;
 }
 
 
-function criarFoto(produto) {
+function criarImagem(produto) {
 
-    const imagem = document.createElement("img");
+    const img = document.createElement("img");
 
-    imagem.alt = produto.nome || "Produto";
+    img.alt = produto.nome || "Produto";
 
-    imagem.loading = "lazy";
+    img.loading = "lazy";
 
     const caminho = String(produto.imagem || "");
 
-    imagem.src = /^(https?:\/\/|assets\/)[^\s]*$/i.test(caminho)
+    img.src = /^(https:\/\/|assets\/)[^\s]*$/i.test(caminho)
         ? caminho
         : IMAGEM_PADRAO;
 
-    imagem.onerror = () => {
+    img.onerror = () => {
 
-        imagem.onerror = null;
+        img.onerror = null;
 
-        imagem.src = IMAGEM_PADRAO;
+        img.src = IMAGEM_PADRAO;
 
     };
 
-    return imagem;
-
+    return img;
 }
 
 
-let tempoNotificacao;
+function campo(formulario, nome) {
+    return formulario.elements.namedItem(nome);
+}
 
+
+// ==========================================
+// NOTIFICAÇÕES
+// ==========================================
+
+let temporizadorNotificacao;
 
 function notificar(mensagem) {
 
-    const elemento = $("notificacao");
+    const aviso = $("notificacao");
 
-    clearTimeout(tempoNotificacao);
+    clearTimeout(temporizadorNotificacao);
 
-    elemento.textContent = mensagem;
+    aviso.textContent = mensagem;
 
-    elemento.classList.add("visivel");
+    aviso.classList.add("visivel");
 
-    tempoNotificacao = setTimeout(() => {
-
-        elemento.classList.remove("visivel");
-
+    temporizadorNotificacao = setTimeout(() => {
+        aviso.classList.remove("visivel");
     }, 3500);
 
 }
 
 
-// ======================================
+// ==========================================
 // NAVEGAÇÃO
-// ======================================
+// ==========================================
 
 function mostrarPagina(pagina) {
 
-    const paginasPermitidas = [
+    const titulos = {
+        dashboard: "Visão geral",
+        produtos: "Produtos",
+        pedidos: "Pedidos",
+        publicar: "Sincronização"
+    };
 
-        "dashboard",
-        "produtos",
-        "pedidos",
-        "publicar"
-
-    ];
-
-    if (!paginasPermitidas.includes(pagina)) {
-
-        return;
-
-    }
+    if (!titulos[pagina]) return;
 
 
     document.querySelectorAll(".pagina").forEach(secao => {
 
-        const ativa = secao.id === pagina;
-
-        secao.hidden = !ativa;
-
-        secao.classList.toggle("ativa", ativa);
+        secao.hidden = secao.id !== pagina;
 
     });
 
@@ -246,27 +171,11 @@ function mostrarPagina(pagina) {
     document.querySelectorAll(".menu-item").forEach(botao => {
 
         botao.classList.toggle(
-
             "ativo",
-
             botao.dataset.pagina === pagina
-
         );
 
     });
-
-
-    const titulos = {
-
-        dashboard: "Visão geral",
-
-        produtos: "Produtos",
-
-        pedidos: "Pedidos",
-
-        publicar: "Publicar catálogo"
-
-    };
 
 
     $("titulo-pagina").textContent = titulos[pagina];
@@ -296,9 +205,9 @@ document.querySelectorAll("[data-ir]").forEach(botao => {
 });
 
 
-// ======================================
+// ==========================================
 // DASHBOARD
-// ======================================
+// ==========================================
 
 function atualizarDashboard() {
 
@@ -306,40 +215,21 @@ function atualizarDashboard() {
 
 
     $("total-visiveis").textContent = produtos.filter(
-
         produto => produto.disponivel
-
     ).length;
 
 
     $("total-estoque").textContent = produtos.reduce(
-
-        (total, produto) => {
-
-            return total + Math.max(
-
-                0,
-
-                Number(produto.estoque) || 0
-
-            );
-
-        },
-
+        (total, produto) =>
+            total + Math.max(0, Number(produto.estoque) || 0),
         0
-
     );
 
 
     $("total-pedidos").textContent = pedidos.filter(
-
-        pedido => {
-
-            return pedido.status !== "Entregue" &&
-                   pedido.status !== "Cancelado";
-
-        }
-
+        pedido =>
+            pedido.status !== "Entregue" &&
+            pedido.status !== "Cancelado"
     ).length;
 
 
@@ -348,58 +238,30 @@ function atualizarDashboard() {
     area.replaceChildren();
 
 
-    produtos.slice(0, 4).forEach(produto => {
+    produtos.slice(0, 5).forEach(produto => {
 
-        const linha = criarElemento(
-
+        const linha = elemento(
             "div",
-
             "",
-
             "produto-recente"
-
         );
 
-
-        const imagem = criarFoto(produto);
-
-
-        const informacoes = criarElemento(
-
+        const informacoes = elemento(
             "div",
-
             "",
-
             "produto-recente-info"
-
         );
-
 
         informacoes.append(
-
-            criarElemento("strong", produto.nome),
-
-            criarElemento("span", produto.categoria)
-
+            elemento("strong", produto.nome),
+            elemento("span", produto.categoria)
         );
-
 
         linha.append(
-
-            imagem,
-
+            criarImagem(produto),
             informacoes,
-
-            criarElemento(
-
-                "b",
-
-                formatarPreco(produto.preco)
-
-            )
-
+            elemento("b", formatarPreco(produto.preco))
         );
-
 
         area.appendChild(linha);
 
@@ -408,9 +270,9 @@ function atualizarDashboard() {
 }
 
 
-// ======================================
+// ==========================================
 // LISTAGEM DE PRODUTOS
-// ======================================
+// ==========================================
 
 function atualizarTabelaProdutos() {
 
@@ -428,15 +290,10 @@ function atualizarTabelaProdutos() {
     const filtrados = produtos.filter(produto => {
 
         const texto = [
-
             produto.nome,
-
             produto.categoria,
-
             produto.descricao
-
         ].join(" ").toLocaleLowerCase("pt-BR");
-
 
         return texto.includes(pesquisa);
 
@@ -444,7 +301,6 @@ function atualizarTabelaProdutos() {
 
 
     $("contador-produtos").textContent =
-
         `${filtrados.length} de ${produtos.length} produtos`;
 
 
@@ -453,161 +309,105 @@ function atualizarTabelaProdutos() {
         const linha = document.createElement("tr");
 
 
-        // Nome e imagem
+        // PRODUTO
 
-        const celulaProduto =
-            document.createElement("td");
+        const celulaProduto = document.createElement("td");
 
-
-        const conteudoProduto = criarElemento(
-
+        const conteudo = elemento(
             "div",
-
             "",
-
             "produto-celula"
-
         );
-
 
         const informacoes = document.createElement("div");
 
-
         informacoes.append(
-
-            criarElemento("strong", produto.nome),
-
-            criarElemento("small", produto.prazo || "")
-
+            elemento("strong", produto.nome),
+            elemento("small", produto.prazo || "")
         );
 
-
-        conteudoProduto.append(
-
-            criarFoto(produto),
-
+        conteudo.append(
+            criarImagem(produto),
             informacoes
-
         );
 
+        celulaProduto.appendChild(conteudo);
 
-        celulaProduto.appendChild(conteudoProduto);
 
-
-        // Categoria
+        // CATEGORIA
 
         const categoria = document.createElement("td");
 
         categoria.appendChild(
-
-            criarElemento(
-
-                "span",
-
-                produto.categoria,
-
-                "etiqueta"
-
-            )
-
+            elemento("span", produto.categoria, "etiqueta")
         );
 
 
-        // Preço
+        // PREÇO
 
-        const preco = criarElemento(
-
+        const preco = elemento(
             "td",
-
             formatarPreco(produto.preco)
-
         );
 
 
-        // Estoque
+        // ESTOQUE
 
-        const estoque = criarElemento(
-
+        const estoque = elemento(
             "td",
-
             produto.estoque
-
         );
 
 
-        // Visibilidade
+        // VISIBILIDADE
 
-        const visibilidade = criarElemento(
-
+        const visibilidade = elemento(
             "td",
-
             produto.disponivel ? "Visível" : "Oculto",
-
             produto.disponivel ? "visivel" : "oculto"
-
         );
 
 
-        // Ações
+        // AÇÕES
 
         const acoes = document.createElement("td");
 
-
-        const editar = criarElemento(
-
+        const editar = elemento(
             "button",
-
             "Editar",
-
             "botao-pequeno"
-
         );
 
+        editar.type = "button";
 
         editar.addEventListener("click", () => {
-
             abrirFormularioProduto(produto.id);
-
         });
 
 
-        const excluir = criarElemento(
-
+        const excluir = elemento(
             "button",
-
             "Excluir",
-
             "botao-pequeno botao-excluir"
-
         );
 
+        excluir.type = "button";
 
         excluir.addEventListener("click", () => {
-
             excluirProduto(produto.id);
-
         });
 
 
         acoes.append(editar, excluir);
 
-
         linha.append(
-
             celulaProduto,
-
             categoria,
-
             preco,
-
             estoque,
-
             visibilidade,
-
             acoes
-
         );
-
 
         tabela.appendChild(linha);
 
@@ -616,18 +416,11 @@ function atualizarTabelaProdutos() {
 }
 
 
-// ======================================
-// CADASTRO E EDIÇÃO DE PRODUTOS
-// ======================================
+// ==========================================
+// CADASTRAR E EDITAR PRODUTOS
+// ==========================================
 
 let produtoEmEdicao = null;
-
-
-function campo(formulario, nome) {
-
-    return formulario.elements.namedItem(nome);
-
-}
 
 
 function abrirFormularioProduto(id = null) {
@@ -639,18 +432,18 @@ function abrirFormularioProduto(id = null) {
     produtoEmEdicao = id;
 
 
+    const produto = produtos.find(
+        item => item.id === id
+    );
+
+
     $("titulo-modal-produto").textContent =
-
-        id ? "Editar produto" : "Novo produto";
-
-
-    const produto = produtos.find(item => item.id === id);
+        produto ? "Editar produto" : "Novo produto";
 
 
     if (produto) {
 
         [
-
             "nome",
             "categoria",
             "preco",
@@ -658,7 +451,6 @@ function abrirFormularioProduto(id = null) {
             "prazo",
             "imagem",
             "descricao"
-
         ].forEach(nome => {
 
             campo(formulario, nome).value =
@@ -683,237 +475,214 @@ function abrirFormularioProduto(id = null) {
 
 
 $("novo-produto").addEventListener("click", () => {
-
     abrirFormularioProduto();
-
 });
 
 
 $("novo-produto-topo").addEventListener("click", () => {
-
     abrirFormularioProduto();
-
 });
 
 
 $("buscar-produto").addEventListener(
-
     "input",
-
     atualizarTabelaProdutos
-
 );
 
 
-// SALVAR PRODUTO
+// ==========================================
+// SALVAR PRODUTO NO SUPABASE
+// ==========================================
 
-$("form-produto").addEventListener("submit", evento => {
+$("form-produto").addEventListener(
+    "submit",
+    async evento => {
 
-    evento.preventDefault();
+        evento.preventDefault();
 
+        const formulario = evento.currentTarget;
 
-    const formulario = evento.currentTarget;
-
-
-    if (!formulario.reportValidity()) {
-
-        return;
-
-    }
-
-
-    const preco = Number(
-
-        campo(formulario, "preco").value
-
-    );
-
-
-    const estoque = Number(
-
-        campo(formulario, "estoque").value
-
-    );
-
-
-    if (
-
-        !Number.isFinite(preco) ||
-
-        preco < 0 ||
-
-        !Number.isSafeInteger(estoque) ||
-
-        estoque < 0
-
-    ) {
-
-        notificar("Informe preço e estoque válidos.");
-
-        return;
-
-    }
-
-
-    const imagem = campo(
-
-        formulario,
-
-        "imagem"
-
-    ).value.trim();
-
-
-    if (
-
-        imagem &&
-
-        !/^(https?:\/\/|assets\/)[^\s]*$/i.test(imagem)
-
-    ) {
-
-        notificar(
-
-            "Use assets/nome.jpg ou uma URL HTTP/HTTPS."
-
+        const preco = Number(
+            campo(formulario, "preco").value
         );
 
-        return;
+        const estoque = Number(
+            campo(formulario, "estoque").value
+        );
+
+
+        if (
+            !Number.isFinite(preco) ||
+            preco < 0 ||
+            !Number.isSafeInteger(estoque) ||
+            estoque < 0
+        ) {
+
+            notificar("Informe preço e estoque válidos.");
+
+            return;
+
+        }
+
+
+        const imagem = campo(
+            formulario,
+            "imagem"
+        ).value.trim();
+
+
+        if (
+            imagem &&
+            !/^(https:\/\/|assets\/)[^\s]*$/i.test(imagem)
+        ) {
+
+            notificar(
+                "Use assets/foto.jpg ou uma URL HTTPS."
+            );
+
+            return;
+
+        }
+
+
+        const anterior = produtos.find(
+            item => item.id === produtoEmEdicao
+        );
+
+
+        const registro = {
+
+            id: anterior?.id || gerarId(),
+
+            nome: campo(formulario, "nome").value.trim(),
+
+            categoria: campo(
+                formulario,
+                "categoria"
+            ).value.trim(),
+
+            preco: Math.round(preco * 100) / 100,
+
+            estoque,
+
+            prazo: campo(
+                formulario,
+                "prazo"
+            ).value.trim(),
+
+            imagem: imagem || IMAGEM_PADRAO,
+
+            descricao: campo(
+                formulario,
+                "descricao"
+            ).value.trim(),
+
+            disponivel: campo(
+                formulario,
+                "disponivel"
+            ).checked,
+
+            destaque: campo(
+                formulario,
+                "destaque"
+            ).checked
+
+        };
+
+
+        if (!registro.nome || !registro.categoria) {
+
+            notificar("Preencha o nome e a categoria.");
+
+            return;
+
+        }
+
+
+        const novaLista = anterior
+
+            ? produtos.map(item =>
+                item.id === anterior.id ? registro : item
+            )
+
+            : [registro, ...produtos];
+
+
+        // ENVIA PARA O SUPABASE
+
+        const botao = formulario.querySelector(
+            '[type="submit"]'
+        );
+
+        botao.disabled = true;
+
+        try {
+
+            const salvo =
+                await window.CRIAITOR_SYNC.salvarProdutos(
+                    novaLista
+                );
+
+
+            if (!salvo) return;
+
+
+            produtos = novaLista;
+
+
+            $("modal-produto").close();
+
+
+            atualizarTudo();
+
+
+            mostrarPagina("produtos");
+
+
+            notificar(
+                "Produto salvo e catálogo atualizado!"
+            );
+
+        } finally {
+
+            botao.disabled = false;
+
+        }
 
     }
+);
 
 
-    const anterior = produtos.find(
-
-        item => item.id === produtoEmEdicao
-
-    );
-
-
-    const registro = {
-
-        id: anterior?.id || gerarId(),
-
-        nome: campo(formulario, "nome").value.trim(),
-
-        categoria: campo(
-            formulario,
-            "categoria"
-        ).value.trim(),
-
-        preco: Math.round(preco * 100) / 100,
-
-        estoque: estoque,
-
-        prazo: campo(
-            formulario,
-            "prazo"
-        ).value.trim(),
-
-        imagem: imagem || IMAGEM_PADRAO,
-
-        descricao: campo(
-            formulario,
-            "descricao"
-        ).value.trim(),
-
-        disponivel: campo(
-            formulario,
-            "disponivel"
-        ).checked,
-
-        destaque: campo(
-            formulario,
-            "destaque"
-        ).checked
-
-    };
-
-
-    if (!registro.nome || !registro.categoria) {
-
-        notificar("Preencha o nome e a categoria.");
-
-        return;
-
-    }
-
-
-    const novaLista = anterior
-
-        ? produtos.map(item =>
-
-            item.id === anterior.id
-
-                ? registro
-
-                : item
-
-        )
-
-        : [registro, ...produtos];
-
-
-    if (!gravarDados(CHAVE_PRODUTOS, novaLista)) {
-
-        return;
-
-    }
-
-
-    produtos = novaLista;
-
-
-    $("modal-produto").close();
-
-
-    atualizarTudo();
-
-
-    mostrarPagina("produtos");
-
-
-    notificar("Produto salvo com sucesso!");
-
-});
-
-
+// ==========================================
 // EXCLUIR PRODUTO
+// ==========================================
 
-function excluirProduto(id) {
+async function excluirProduto(id) {
 
     const produto = produtos.find(
-
         item => item.id === id
-
     );
-
 
     if (!produto) return;
 
 
-    const confirmar = confirm(
-
-        `Deseja excluir o produto "${produto.nome}"?`
-
-    );
-
-
-    if (!confirmar) return;
+    if (!confirm(
+        `Deseja excluir "${produto.nome}"?`
+    )) return;
 
 
     const novaLista = produtos.filter(
-
         item => item.id !== id
-
     );
 
 
-    if (!gravarDados(CHAVE_PRODUTOS, novaLista)) {
+    const salvo =
+        await window.CRIAITOR_SYNC.salvarProdutos(
+            novaLista
+        );
 
-        return;
 
-    }
+    if (!salvo) return;
 
 
     produtos = novaLista;
@@ -922,16 +691,37 @@ function excluirProduto(id) {
     atualizarTudo();
 
 
-    notificar("Produto excluído.");
+    notificar("Produto excluído da loja!");
 
 }
 
 
-// ======================================
-// GERENCIAMENTO DE PEDIDOS
-// ======================================
+// ==========================================
+// PEDIDOS
+// ==========================================
 
-let pedidoEmEdicao = null;
+function salvarPedidos() {
+
+    try {
+
+        localStorage.setItem(
+            CHAVE_PEDIDOS,
+            JSON.stringify(pedidos)
+        );
+
+        return true;
+
+    } catch (erro) {
+
+        console.error(erro);
+
+        alert("Não foi possível salvar os pedidos.");
+
+        return false;
+
+    }
+
+}
 
 
 function atualizarTabelaPedidos() {
@@ -946,46 +736,23 @@ function atualizarTabelaPedidos() {
         const linha = document.createElement("tr");
 
 
-        // Cliente
-
         const cliente = document.createElement("td");
 
-
         cliente.append(
-
-            criarElemento("strong", pedido.cliente),
-
-            criarElemento("small", pedido.contato)
-
+            elemento("strong", pedido.cliente),
+            elemento("small", pedido.contato || "")
         );
 
 
-        // Descrição
+        const itens = elemento("td", pedido.itens);
 
-        const itens = criarElemento(
-
+        const valor = elemento(
             "td",
-
-            pedido.itens
-
-        );
-
-
-        // Valor
-
-        const valor = criarElemento(
-
-            "td",
-
             formatarPreco(pedido.valor)
-
         );
 
-
-        // Status
 
         const status = document.createElement("td");
-
 
         const seletor = document.createElement("select");
 
@@ -994,13 +761,13 @@ function atualizarTabelaPedidos() {
 
         STATUS_PEDIDOS.forEach(opcao => {
 
-            const elemento = document.createElement("option");
+            const option = document.createElement("option");
 
-            elemento.value = opcao;
+            option.value = opcao;
 
-            elemento.textContent = opcao;
+            option.textContent = opcao;
 
-            seletor.appendChild(elemento);
+            seletor.appendChild(option);
 
         });
 
@@ -1010,25 +777,21 @@ function atualizarTabelaPedidos() {
 
         seletor.addEventListener("change", () => {
 
-            const statusAnterior = pedido.status;
+            const anterior = pedido.status;
 
             pedido.status = seletor.value;
 
-
             if (!salvarPedidos()) {
 
-                pedido.status = statusAnterior;
+                pedido.status = anterior;
 
-                seletor.value = statusAnterior;
+                seletor.value = anterior;
 
                 return;
 
             }
 
-
             atualizarDashboard();
-
-            notificar("Status atualizado.");
 
         });
 
@@ -1036,54 +799,50 @@ function atualizarTabelaPedidos() {
         status.appendChild(seletor);
 
 
-        // Data
-
-        const data = criarElemento(
-
+        const data = elemento(
             "td",
-
             pedido.data || "—"
-
         );
 
-
-        // Ações
 
         const acoes = document.createElement("td");
 
 
-        const editar = criarElemento(
-
+        const editar = elemento(
             "button",
-
             "Editar",
-
             "botao-pequeno"
-
         );
 
-
         editar.addEventListener("click", () => {
-
             abrirFormularioPedido(pedido.id);
-
         });
 
 
-        const excluir = criarElemento(
-
+        const excluir = elemento(
             "button",
-
             "Excluir",
-
             "botao-pequeno botao-excluir"
-
         );
-
 
         excluir.addEventListener("click", () => {
 
-            excluirPedido(pedido.id);
+            if (!confirm("Excluir este pedido?")) return;
+
+            const novaLista = pedidos.filter(
+                item => item.id !== pedido.id
+            );
+
+            const anterior = pedidos;
+
+            pedidos = novaLista;
+
+            if (!salvarPedidos()) {
+                pedidos = anterior;
+                return;
+            }
+
+            atualizarTudo();
 
         });
 
@@ -1092,19 +851,12 @@ function atualizarTabelaPedidos() {
 
 
         linha.append(
-
             cliente,
-
             itens,
-
             valor,
-
             status,
-
             data,
-
             acoes
-
         );
 
 
@@ -1115,7 +867,12 @@ function atualizarTabelaPedidos() {
 }
 
 
-// ABRIR FORMULÁRIO
+// ==========================================
+// CADASTRO DE PEDIDOS
+// ==========================================
+
+let pedidoEmEdicao = null;
+
 
 function abrirFormularioPedido(id = null) {
 
@@ -1127,22 +884,18 @@ function abrirFormularioPedido(id = null) {
 
 
     const pedido = pedidos.find(
-
         item => item.id === id
-
     );
 
 
     if (pedido) {
 
         [
-
             "cliente",
             "contato",
             "itens",
             "valor",
             "status"
-
         ].forEach(nome => {
 
             campo(formulario, nome).value =
@@ -1159,33 +912,19 @@ function abrirFormularioPedido(id = null) {
 
 
 $("novo-pedido").addEventListener("click", () => {
-
     abrirFormularioPedido();
-
 });
 
-
-// SALVAR PEDIDO
 
 $("form-pedido").addEventListener("submit", evento => {
 
     evento.preventDefault();
 
-
     const formulario = evento.currentTarget;
 
 
-    if (!formulario.reportValidity()) {
-
-        return;
-
-    }
-
-
     const valor = Number(
-
         campo(formulario, "valor").value
-
     );
 
 
@@ -1199,9 +938,7 @@ $("form-pedido").addEventListener("submit", evento => {
 
 
     const anterior = pedidos.find(
-
         item => item.id === pedidoEmEdicao
-
     );
 
 
@@ -1239,7 +976,7 @@ $("form-pedido").addEventListener("submit", evento => {
 
     if (!registro.cliente || !registro.itens) {
 
-        notificar("Preencha o cliente e os produtos.");
+        notificar("Preencha os dados do pedido.");
 
         return;
 
@@ -1249,26 +986,24 @@ $("form-pedido").addEventListener("submit", evento => {
     const novaLista = anterior
 
         ? pedidos.map(item =>
-
-            item.id === anterior.id
-
-                ? registro
-
-                : item
-
+            item.id === anterior.id ? registro : item
         )
 
         : [...pedidos, registro];
 
 
-    if (!gravarDados(CHAVE_PEDIDOS, novaLista)) {
+    const listaAnterior = pedidos;
+
+    pedidos = novaLista;
+
+
+    if (!salvarPedidos()) {
+
+        pedidos = listaAnterior;
 
         return;
 
     }
-
-
-    pedidos = novaLista;
 
 
     $("modal-pedido").close();
@@ -1277,101 +1012,44 @@ $("form-pedido").addEventListener("submit", evento => {
     atualizarTudo();
 
 
-    mostrarPagina("pedidos");
-
-
-    notificar("Pedido registrado com sucesso!");
+    notificar("Pedido registrado!");
 
 });
 
 
-// EXCLUIR PEDIDO
-
-function excluirPedido(id) {
-
-    const pedido = pedidos.find(item => item.id === id);
-
-
-    if (!pedido) return;
-
-
-    const confirmar = confirm(
-
-        `Deseja excluir o pedido de "${pedido.cliente}"?`
-
-    );
-
-
-    if (!confirmar) return;
-
-
-    const novaLista = pedidos.filter(
-
-        item => item.id !== id
-
-    );
-
-
-    if (!gravarDados(CHAVE_PEDIDOS, novaLista)) {
-
-        return;
-
-    }
-
-
-    pedidos = novaLista;
-
-
-    atualizarTudo();
-
-
-    notificar("Pedido excluído.");
-
-}
-
-
-// ======================================
+// ==========================================
 // FECHAR FORMULÁRIOS
-// ======================================
+// ==========================================
 
 document.querySelectorAll("[data-fechar]").forEach(botao => {
 
     botao.addEventListener("click", () => {
 
-        const modal = $(botao.dataset.fechar);
-
-        modal.close();
+        $(botao.dataset.fechar).close();
 
     });
 
 });
 
 
-// ======================================
-// EXPORTAÇÃO DE ARQUIVOS
-// ======================================
+// ==========================================
+// EXPORTAR ARQUIVOS
+// ==========================================
 
 function baixarArquivo(nome, conteudo, tipo) {
 
     const arquivo = new Blob(
-
         [conteudo],
-
         { type: tipo }
-
     );
-
 
     const url = URL.createObjectURL(arquivo);
 
-
     const link = document.createElement("a");
-
 
     link.href = url;
 
     link.download = nome;
-
 
     document.body.appendChild(link);
 
@@ -1379,52 +1057,24 @@ function baixarArquivo(nome, conteudo, tipo) {
 
     link.remove();
 
-
     setTimeout(() => {
-
         URL.revokeObjectURL(url);
-
     }, 1500);
 
 }
 
 
-// EXPORTAR CATÁLOGO PARA A LOJA
+// ==========================================
+// EXPORTAR CATÁLOGO
+// ==========================================
 
 $("exportar-catalogo").addEventListener("click", () => {
-
-    const produtosPublicos = produtos.map(produto => ({
-
-        id: String(produto.id),
-
-        nome: String(produto.nome),
-
-        categoria: String(produto.categoria),
-
-        descricao: String(produto.descricao || ""),
-
-        preco: Number(produto.preco) || 0,
-
-        estoque: Number(produto.estoque) || 0,
-
-        prazo: String(produto.prazo || ""),
-
-        imagem: String(produto.imagem || IMAGEM_PADRAO),
-
-        destaque: Boolean(produto.destaque),
-
-        disponivel: Boolean(produto.disponivel)
-
-    }));
-
 
     const catalogo = {
 
         versao: 1,
 
-        atualizadoEm: new Date().toISOString(),
-
-        produtos: produtosPublicos
+        produtos
 
     };
 
@@ -1434,35 +1084,23 @@ $("exportar-catalogo").addEventListener("click", () => {
         "window.CRIAITOR_CATALOGO = " +
 
         JSON.stringify(catalogo, null, 2)
-
             .replace(/</g, "\\u003c") +
 
         ";\n";
 
 
     baixarArquivo(
-
         "catalogo.js",
-
         codigo,
-
         "text/javascript;charset=utf-8"
-
-    );
-
-
-    notificar(
-
-        "Catálogo exportado! Atualize o arquivo na loja dos clientes."
-
     );
 
 });
 
 
-// ======================================
+// ==========================================
 // BACKUP
-// ======================================
+// ==========================================
 
 $("baixar-backup").addEventListener("click", () => {
 
@@ -1472,39 +1110,31 @@ $("baixar-backup").addEventListener("click", () => {
 
         versao: 1,
 
-        produtos: produtos,
+        produtos,
 
-        pedidos: pedidos
+        pedidos
 
     };
 
 
     baixarArquivo(
-
         "criaitor3d-backup.json",
-
         JSON.stringify(backup, null, 2),
-
         "application/json;charset=utf-8"
-
     );
-
-
-    notificar("Backup exportado com sucesso!");
 
 });
 
 
+// ==========================================
 // RESTAURAR BACKUP
+// ==========================================
 
 $("restaurar-backup").addEventListener(
-
     "change",
-
     async evento => {
 
         const arquivo = evento.target.files?.[0];
-
 
         if (!arquivo) return;
 
@@ -1512,72 +1142,37 @@ $("restaurar-backup").addEventListener(
         try {
 
             if (arquivo.size > 3000000) {
-
-                throw new Error(
-
-                    "Arquivo muito grande. Limite de 3 MB."
-
-                );
-
+                throw new Error("Arquivo muito grande.");
             }
 
 
-            const conteudo = await arquivo.text();
-
-
-            const backup = JSON.parse(conteudo);
+            const backup = JSON.parse(
+                await arquivo.text()
+            );
 
 
             if (
-
                 backup.tipo !== "criaitor3d-backup" ||
-
                 !Array.isArray(backup.produtos) ||
-
-                !Array.isArray(backup.pedidos)
-
+                !Array.isArray(backup.pedidos) ||
+                backup.produtos.length > 200
             ) {
 
-                throw new Error("Arquivo de backup incompatível.");
+                throw new Error("Backup incompatível.");
 
             }
 
 
-            if (
-
-                backup.produtos.length > 1000 ||
-
-                backup.pedidos.length > 10000
-
-            ) {
-
-                throw new Error(
-
-                    "O backup excede o limite de registros."
-
-                );
-
-            }
-
-
-            const produtosValidos = backup.produtos.every(p =>
+            const validos = backup.produtos.every(p =>
 
                 p &&
-
                 typeof p.id === "string" &&
-
                 typeof p.nome === "string" &&
-
                 typeof p.categoria === "string" &&
-
                 Number.isFinite(p.preco) &&
-
                 p.preco >= 0 &&
-
                 Number.isSafeInteger(p.estoque) &&
-
                 p.estoque >= 0 &&
-
                 typeof p.disponivel === "boolean"
 
             );
@@ -1586,63 +1181,51 @@ $("restaurar-backup").addEventListener(
             const pedidosValidos = backup.pedidos.every(p =>
 
                 p &&
-
                 typeof p.id === "string" &&
-
                 typeof p.cliente === "string" &&
-
                 typeof p.itens === "string" &&
-
                 Number.isFinite(p.valor) &&
-
                 p.valor >= 0 &&
-
                 STATUS_PEDIDOS.includes(p.status)
 
             );
 
 
-            if (!produtosValidos || !pedidosValidos) {
+            if (!validos || !pedidosValidos) {
 
                 throw new Error(
-
-                    "O backup contém dados inválidos."
-
+                    "O backup contém registros inválidos."
                 );
 
             }
 
 
-            const confirmar = confirm(
-
-                "Restaurar backup? Os produtos e pedidos locais serão substituídos."
-
-            );
+            if (!confirm(
+                "Restaurar backup? O catálogo da loja será substituído."
+            )) return;
 
 
-            if (!confirmar) return;
-
-
-            if (
-
-                !gravarDados(CHAVE_PRODUTOS, backup.produtos) ||
-
-                !gravarDados(CHAVE_PEDIDOS, backup.pedidos)
-
-            ) {
-
-                throw new Error(
-
-                    "Não foi possível gravar o backup."
-
+            const salvo =
+                await window.CRIAITOR_SYNC.salvarProdutos(
+                    backup.produtos
                 );
 
-            }
+
+            if (!salvo) return;
 
 
             produtos = backup.produtos;
 
             pedidos = backup.pedidos;
+
+
+            if (!salvarPedidos()) {
+
+                alert(
+                    "O catálogo foi restaurado na nuvem, mas não foi possível salvar os pedidos locais."
+                );
+
+            }
 
 
             atualizarTudo();
@@ -1652,13 +1235,9 @@ $("restaurar-backup").addEventListener(
 
         } catch (erro) {
 
-            alert(
+            console.error(erro);
 
-                "Erro ao restaurar backup: " +
-
-                erro.message
-
-            );
+            alert("Erro ao restaurar: " + erro.message);
 
         } finally {
 
@@ -1667,41 +1246,24 @@ $("restaurar-backup").addEventListener(
         }
 
     }
-
 );
 
 
-// ======================================
-// EXPORTAR PEDIDOS EM CSV
-// ======================================
-
-function formatarCelulaCSV(valor) {
-
-    let texto = String(valor ?? "");
-
-
-    // Impede que dados de clientes sejam
-    // interpretados como fórmulas na planilha.
-
-    if (/^\s*[=+\-@]/.test(texto)) {
-
-        texto = "'" + texto;
-
-    }
-
-
-    return '"' + texto.replace(/"/g, '""') + '"';
-
-}
-
+// ==========================================
+// EXPORTAR PEDIDOS CSV
+// ==========================================
 
 $("exportar-pedidos").addEventListener("click", () => {
 
-    if (pedidos.length === 0) {
+    function celula(valor) {
 
-        notificar("Não há pedidos para exportar.");
+        let texto = String(valor ?? "");
 
-        return;
+        if (/^\s*[=+\-@]/.test(texto)) {
+            texto = "'" + texto;
+        }
+
+        return '"' + texto.replace(/"/g, '""') + '"';
 
     }
 
@@ -1709,28 +1271,21 @@ $("exportar-pedidos").addEventListener("click", () => {
     const linhas = [
 
         [
-
             "Cliente",
             "Contato",
             "Itens",
-            "Valor (R$)",
+            "Valor",
             "Status",
             "Data"
-
         ],
 
         ...pedidos.map(pedido => [
 
             pedido.cliente,
-
             pedido.contato,
-
             pedido.itens,
-
             pedido.valor,
-
             pedido.status,
-
             pedido.data
 
         ])
@@ -1738,34 +1293,23 @@ $("exportar-pedidos").addEventListener("click", () => {
     ];
 
 
-    const csv = "\uFEFF" +
-
-        linhas.map(linha =>
-
-            linha.map(formatarCelulaCSV).join(";")
-
-        ).join("\r\n");
+    const csv = "\uFEFF" + linhas
+        .map(linha => linha.map(celula).join(";"))
+        .join("\r\n");
 
 
     baixarArquivo(
-
         "criaitor3d-pedidos.csv",
-
         csv,
-
         "text/csv;charset=utf-8"
-
     );
-
-
-    notificar("Pedidos exportados com sucesso!");
 
 });
 
 
-// ======================================
-// ATUALIZAR O PAINEL
-// ======================================
+// ==========================================
+// ATUALIZAR PAINEL
+// ==========================================
 
 function atualizarTudo() {
 
@@ -1778,22 +1322,50 @@ function atualizarTudo() {
 }
 
 
-// DATA ATUAL
+// ==========================================
+// INTEGRAÇÃO COM O SUPABASE
+// ==========================================
+
+// O sync-empresa.js utilizará estas funções
+// depois de validar o login.
+
+window.CRIAITOR_APP = {
+
+    aplicarProdutos(lista) {
+
+        produtos = lista.map(produto => ({
+            ...produto
+        }));
+
+        atualizarTudo();
+
+    },
+
+
+    obterProdutos() {
+
+        return produtos.map(produto => ({
+            ...produto
+        }));
+
+    }
+
+};
+
+
+// ==========================================
+// INICIALIZAÇÃO
+// ==========================================
 
 $("data-atual").textContent =
-
     new Date().toLocaleDateString("pt-BR", {
 
         day: "numeric",
-
         month: "long",
-
         year: "numeric"
 
     });
 
-
-// INICIALIZAÇÃO
 
 atualizarTudo();
 
