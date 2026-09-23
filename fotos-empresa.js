@@ -24,7 +24,7 @@ automaticamente no cadastro do produto.
 // CONFIGURAÇÕES
 // ==========================================
 
-const FOTO_BUCKET = "produtos";
+const FOTO_BUCKET = "projetos";
 
 const FOTO_PASTA = "catalogo";
 
