@@ -1549,3 +1549,97 @@ td small {
     }
 
 }
+
+/* ==========================================
+   CRIAITOR 3D
+   LOGOTIPO OFICIAL DO PAINEL
+========================================== */
+
+.logo-criaitor {
+
+    display: block;
+
+    background-image: url("assets/logo-criaitor3d.png");
+
+    background-color: #000000;
+
+    background-size: contain;
+
+    background-position: center;
+
+    background-repeat: no-repeat;
+
+    aspect-ratio: 1 / 1;
+
+    border: none;
+
+    border-radius: 0;
+
+    flex-shrink: 0;
+
+    cursor: default;
+
+    user-select: none;
+
+    -webkit-user-select: none;
+
+}
+
+
+/* LOGO DO MENU LATERAL */
+
+.sidebar .logo-painel {
+
+    width: 190px;
+
+    height: 190px;
+
+    max-width: 100%;
+
+    margin: 0 auto;
+
+}
+
+
+/* CENTRALIZAR A LOGO */
+
+.sidebar .marca {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 10px 0;
+
+    margin-bottom: 25px;
+
+}
+
+
+/* RESPONSIVIDADE */
+
+@media (max-width: 1100px) {
+
+    .sidebar .logo-painel {
+
+        width: 155px;
+
+        height: 155px;
+
+    }
+
+}
+
+@media (max-width: 720px) {
+
+    .sidebar .logo-painel {
+
+        width: 125px;
+
+        height: 125px;
+
+    }
+
+}
