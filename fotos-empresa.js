@@ -2,17 +2,20 @@
 /*
 ==========================================
 CRIAITOR 3D
-UPLOAD DE FOTOGRAFIAS DOS PRODUTOS
+SISTEMA DE UPLOAD DE FOTOGRAFIAS
 ==========================================
 
-Este arquivo adiciona upload de imagens
-ao formulário administrativo existente.
+RECURSOS:
 
-As fotografias são enviadas ao
-Supabase Storage.
+1. Arrastar e soltar imagens do computador.
+2. Copiar e colar imagens com Ctrl + V.
+3. Selecionar fotografias do HD ou celular.
+4. Pré-visualização da imagem.
+5. Envio automático ao Supabase Storage.
+6. Integração com o cadastro de produtos.
 
-O endereço da imagem é inserido
-automaticamente no cadastro do produto.
+BUCKET: projetos
+PASTA: catalogo
 
 ==========================================
 */
@@ -21,7 +24,7 @@ automaticamente no cadastro do produto.
 
 
 // ==========================================
-// CONFIGURAÇÕES
+// 1. CONFIGURAÇÕES
 // ==========================================
 
 const FOTO_BUCKET = "projetos";
@@ -30,8 +33,6 @@ const FOTO_PASTA = "catalogo";
 
 const FOTO_TAMANHO_MAXIMO = 5 * 1024 * 1024;
 
-
-// Formatos permitidos.
 
 const FOTO_FORMATOS = {
 
@@ -45,7 +46,7 @@ const FOTO_FORMATOS = {
 
 
 // ==========================================
-// ELEMENTOS DO FORMULÁRIO
+// 2. LOCALIZAR FORMULÁRIO EXISTENTE
 // ==========================================
 
 const formularioFotos = document.getElementById(
@@ -53,185 +54,298 @@ const formularioFotos = document.getElementById(
 );
 
 
-const campoEnderecoFoto = formularioFotos.querySelector(
+const campoImagem = formularioFotos.querySelector(
     '[name="imagem"]'
 );
 
 
-const campoOriginalFoto =
-    campoEnderecoFoto.closest("label");
+const campoImagemOriginal = campoImagem.closest(
+    "label"
+);
 
 
 // ==========================================
-// CRIAR ÁREA DE UPLOAD
+// 3. OCULTAR O CAMPO ANTIGO DE URL
 // ==========================================
 
-const areaUpload = document.createElement("div");
+// O campo de endereço continuará existindo
+// para que o admin.js consiga salvar a URL
+// retornada pelo Supabase.
+//
+// Entretanto, o usuário não precisará
+// visualizar nem preencher esse campo.
 
-areaUpload.className = "area-upload-fotos";
+campoImagemOriginal.classList.add(
+    "campo-url-legado"
+);
 
 
-areaUpload.innerHTML = `
+// ==========================================
+// 4. CRIAR INTERFACE DE UPLOAD
+// ==========================================
 
-    <label for="arquivo-foto-produto">
+const areaFotos = document.createElement("div");
 
+areaFotos.className = "area-fotos-empresa";
+
+
+areaFotos.innerHTML = `
+
+    <h3>
         Fotografia do produto
-
-    </label>
-
-
-    <input
-
-        type="file"
-
-        id="arquivo-foto-produto"
-
-        accept="image/jpeg,image/png,image/webp"
-
-    >
+    </h3>
 
 
-    <p class="upload-instrucao">
+    <p class="descricao-upload">
 
-        Selecione uma fotografia do computador
-        ou celular.
-
-        Formatos aceitos: JPG, PNG e WEBP.
-
-        Tamanho máximo: 5 MB.
+        Adicione uma fotografia do seu produto
+        diretamente do computador ou celular.
 
     </p>
 
 
-    <div class="visualizacao-foto">
+    <!-- ÁREA PRINCIPAL DE UPLOAD -->
 
-        <img
+    <div
+        class="zona-upload"
+        id="zona-upload"
+        role="button"
+        tabindex="0"
+        aria-label="Selecionar fotografia do produto"
+    >
 
-            id="preview-foto-produto"
+        <div class="icone-upload">
 
-            alt="Pré-visualização da fotografia"
+            ⬆
 
-            hidden
+        </div>
 
-        >
+
+        <strong>
+
+            Arraste sua fotografia para cá
+
+        </strong>
+
+
+        <span>
+
+            Ou copie uma imagem e pressione Ctrl + V
+
+        </span>
+
+
+        <div class="botao-escolher-foto">
+
+            Escolher imagem do computador
+
+        </div>
+
+
+        <small>
+
+            JPG, PNG ou WEBP — máximo de 5 MB
+
+        </small>
 
     </div>
 
 
+    <!-- SELETOR DE ARQUIVOS -->
+
+    <input
+        type="file"
+        id="input-foto-produto"
+        accept="image/jpeg,image/png,image/webp"
+        aria-label="Selecionar fotografia"
+        hidden
+    >
+
+
+    <!-- PRÉ-VISUALIZAÇÃO -->
+
+    <div
+        class="preview-container"
+        id="preview-container"
+        hidden
+    >
+
+        <img
+            id="preview-foto"
+            alt="Pré-visualização da fotografia selecionada"
+        >
+
+
+        <div class="preview-informacoes">
+
+            <span id="nome-arquivo"></span>
+
+
+            <button
+                type="button"
+                class="botao-trocar-foto"
+                id="trocar-foto"
+            >
+
+                Trocar fotografia
+
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- MENSAGEM DE STATUS -->
+
     <p
-
-        id="status-upload-foto"
-
+        class="status-foto"
+        id="status-foto"
         role="status"
-
         aria-live="polite"
-
     ></p>
 
 `;
 
 
-// Coloca a área de upload acima
-// do campo de endereço da imagem.
+// Coloca o upload no lugar do campo de URL.
 
-campoOriginalFoto.parentNode.insertBefore(
+campoImagemOriginal.parentNode.insertBefore(
 
-    areaUpload,
+    areaFotos,
 
-    campoOriginalFoto
+    campoImagemOriginal
 
 );
 
 
 // ==========================================
-// ELEMENTOS DE UPLOAD
+// 5. ELEMENTOS DA INTERFACE
 // ==========================================
 
-const campoArquivoFoto = document.getElementById(
-    "arquivo-foto-produto"
+const zonaUpload = document.getElementById(
+    "zona-upload"
+);
+
+
+const inputFoto = document.getElementById(
+    "input-foto-produto"
+);
+
+
+const previewContainer = document.getElementById(
+    "preview-container"
 );
 
 
 const previewFoto = document.getElementById(
-    "preview-foto-produto"
+    "preview-foto"
+);
+
+
+const nomeArquivo = document.getElementById(
+    "nome-arquivo"
+);
+
+
+const trocarFoto = document.getElementById(
+    "trocar-foto"
 );
 
 
 const statusFoto = document.getElementById(
-    "status-upload-foto"
+    "status-foto"
+);
+
+
+const modalProduto = document.getElementById(
+    "modal-produto"
 );
 
 
 // ==========================================
-// ESTADO DO UPLOAD
+// 6. ESTADO DO UPLOAD
 // ==========================================
 
-let fotoEmUpload = false;
+let arquivoSelecionado = null;
 
-let urlPreviewTemporaria = null;
+let enderecoPreviewTemporario = null;
+
+let uploadEmAndamento = false;
 
 
 // ==========================================
-// MENSAGENS
+// 7. MENSAGENS DE STATUS
 // ==========================================
 
-function informarStatusFoto(mensagem, erro = false) {
+function mostrarStatusFoto(mensagem, erro = false) {
 
     statusFoto.textContent = mensagem;
 
-    statusFoto.style.color = erro
 
-        ? "#ff8e8e"
+    statusFoto.classList.toggle(
 
-        : "#91e4b1";
+        "erro",
+
+        erro
+
+    );
 
 }
 
 
 // ==========================================
-// REMOVER PREVIEW TEMPORÁRIO
+// 8. LIMPAR PRÉ-VISUALIZAÇÃO
 // ==========================================
 
-function limparPreviewTemporario() {
+function limparPreviewFoto() {
 
-    if (urlPreviewTemporaria) {
+    if (enderecoPreviewTemporario) {
 
         URL.revokeObjectURL(
 
-            urlPreviewTemporaria
+            enderecoPreviewTemporario
 
         );
 
-        urlPreviewTemporaria = null;
+
+        enderecoPreviewTemporario = null;
 
     }
+
+
+    previewFoto.removeAttribute("src");
+
+
+    previewContainer.hidden = true;
+
+
+    nomeArquivo.textContent = "";
 
 }
 
 
 // ==========================================
-// EXIBIR PREVIEW
+// 9. MOSTRAR PRÉ-VISUALIZAÇÃO
 // ==========================================
 
 function mostrarPreviewFoto(arquivoOuURL) {
 
-    limparPreviewTemporario();
+    limparPreviewFoto();
 
 
     if (!arquivoOuURL) {
-
-        previewFoto.hidden = true;
-
-        previewFoto.removeAttribute("src");
 
         return;
 
     }
 
 
+    // IMAGEM LOCAL
+
     if (arquivoOuURL instanceof File) {
 
-        urlPreviewTemporaria =
+        enderecoPreviewTemporario =
 
             URL.createObjectURL(
 
@@ -240,9 +354,19 @@ function mostrarPreviewFoto(arquivoOuURL) {
             );
 
 
-        previewFoto.src = urlPreviewTemporaria;
+        previewFoto.src = enderecoPreviewTemporario;
 
-    } else {
+
+        nomeArquivo.textContent =
+
+            arquivoOuURL.name || "Imagem colada";
+
+    }
+
+
+    // IMAGEM JÁ CADASTRADA
+
+    else {
 
         const endereco = String(
 
@@ -261,8 +385,6 @@ function mostrarPreviewFoto(arquivoOuURL) {
 
         ) {
 
-            previewFoto.hidden = true;
-
             return;
 
         }
@@ -270,106 +392,534 @@ function mostrarPreviewFoto(arquivoOuURL) {
 
         previewFoto.src = endereco;
 
+
+        nomeArquivo.textContent =
+
+            "Fotografia atual do produto";
+
     }
 
 
-    previewFoto.hidden = false;
+    previewContainer.hidden = false;
 
 }
 
 
 // ==========================================
-// SELECIONAR FOTOGRAFIA
+// 10. VALIDAR ARQUIVO
 // ==========================================
 
-campoArquivoFoto.addEventListener(
+function validarArquivoFoto(arquivo) {
 
-    "change",
+    if (!arquivo) {
 
-    () => {
+        throw new Error(
 
-        const arquivo = campoArquivoFoto.files?.[0];
+            "Nenhuma fotografia foi selecionada."
 
+        );
 
-        if (!arquivo) {
-
-            mostrarPreviewFoto(
-
-                campoEnderecoFoto.value.trim()
-
-            );
-
-            informarStatusFoto("");
-
-            return;
-
-        }
+    }
 
 
-        // Verifica o formato.
+    if (!FOTO_FORMATOS[arquivo.type]) {
 
-        if (!FOTO_FORMATOS[arquivo.type]) {
+        throw new Error(
 
-            informarStatusFoto(
+            "Formato inválido. Utilize JPG, PNG ou WEBP."
 
-                "Formato inválido. Use JPG, PNG ou WEBP.",
+        );
 
-                true
-
-            );
+    }
 
 
-            campoArquivoFoto.value = "";
+    if (
+
+        arquivo.size <= 0 ||
+
+        arquivo.size > FOTO_TAMANHO_MAXIMO
+
+    ) {
+
+        throw new Error(
+
+            "A fotografia deve ter no máximo 5 MB."
+
+        );
+
+    }
 
 
-            mostrarPreviewFoto(
+    return true;
 
-                campoEnderecoFoto.value.trim()
-
-            );
-
-            return;
-
-        }
+}
 
 
-        // Verifica o tamanho.
+// ==========================================
+// 11. SELECIONAR UMA FOTOGRAFIA
+// ==========================================
 
-        if (arquivo.size > FOTO_TAMANHO_MAXIMO) {
+function selecionarFotografia(arquivo) {
 
-            informarStatusFoto(
+    if (uploadEmAndamento) {
 
-                "A fotografia deve ter no máximo 5 MB.",
+        return;
 
-                true
-
-            );
-
-
-            campoArquivoFoto.value = "";
+    }
 
 
-            mostrarPreviewFoto(
+    try {
 
-                campoEnderecoFoto.value.trim()
-
-            );
-
-            return;
-
-        }
+        validarArquivoFoto(arquivo);
 
 
-        // Exibe a fotografia selecionada.
+        arquivoSelecionado = arquivo;
+
 
         mostrarPreviewFoto(arquivo);
 
 
-        informarStatusFoto(
+        mostrarStatusFoto(
 
             "Fotografia selecionada. " +
 
-            "Ela será enviada ao salvar o produto."
+            "Clique em Salvar produto para publicar."
+
+        );
+
+    } catch (erro) {
+
+        mostrarStatusFoto(
+
+            erro.message,
+
+            true
+
+        );
+
+    }
+
+}
+
+
+// ==========================================
+// 12. SELECIONAR ARQUIVO DO HD
+// ==========================================
+
+function abrirSeletorArquivos() {
+
+    if (uploadEmAndamento) {
+
+        return;
+
+    }
+
+
+    inputFoto.click();
+
+}
+
+
+// Clicar na área de upload.
+
+zonaUpload.addEventListener(
+
+    "click",
+
+    abrirSeletorArquivos
+
+);
+
+
+// Enter ou espaço também abrem o seletor.
+
+zonaUpload.addEventListener(
+
+    "keydown",
+
+    evento => {
+
+        if (
+
+            evento.key === "Enter" ||
+
+            evento.key === " "
+
+        ) {
+
+            evento.preventDefault();
+
+
+            abrirSeletorArquivos();
+
+        }
+
+    }
+
+);
+
+
+// Botão para trocar fotografia.
+
+trocarFoto.addEventListener(
+
+    "click",
+
+    abrirSeletorArquivos
+
+);
+
+
+// Receber imagem escolhida no HD.
+
+inputFoto.addEventListener(
+
+    "change",
+
+    evento => {
+
+        const arquivo =
+
+            evento.target.files?.[0];
+
+
+        if (arquivo) {
+
+            selecionarFotografia(arquivo);
+
+        }
+
+
+        // Permite selecionar novamente
+        // o mesmo arquivo posteriormente.
+
+        inputFoto.value = "";
+
+    }
+
+);
+
+
+// ==========================================
+// 13. ARRASTAR E SOLTAR
+// ==========================================
+
+// Quando o usuário começa a arrastar
+// um arquivo sobre a área de upload.
+
+zonaUpload.addEventListener(
+
+    "dragenter",
+
+    evento => {
+
+        evento.preventDefault();
+
+
+        if (!uploadEmAndamento) {
+
+            zonaUpload.classList.add(
+
+                "arrastando"
+
+            );
+
+        }
+
+    }
+
+);
+
+
+// Enquanto a imagem estiver sobre a área.
+
+zonaUpload.addEventListener(
+
+    "dragover",
+
+    evento => {
+
+        evento.preventDefault();
+
+
+        evento.dataTransfer.dropEffect =
+
+            uploadEmAndamento ? "none" : "copy";
+
+
+        if (!uploadEmAndamento) {
+
+            zonaUpload.classList.add(
+
+                "arrastando"
+
+            );
+
+        }
+
+    }
+
+);
+
+
+// Quando o arquivo sair da área.
+
+zonaUpload.addEventListener(
+
+    "dragleave",
+
+    evento => {
+
+        evento.preventDefault();
+
+
+        if (
+
+            !zonaUpload.contains(
+
+                evento.relatedTarget
+
+            )
+
+        ) {
+
+            zonaUpload.classList.remove(
+
+                "arrastando"
+
+            );
+
+        }
+
+    }
+
+);
+
+
+// Quando o usuário soltar a fotografia.
+
+zonaUpload.addEventListener(
+
+    "drop",
+
+    evento => {
+
+        evento.preventDefault();
+
+
+        zonaUpload.classList.remove(
+
+            "arrastando"
+
+        );
+
+
+        if (uploadEmAndamento) {
+
+            return;
+
+        }
+
+
+        const arquivos =
+
+            evento.dataTransfer.files;
+
+
+        if (!arquivos.length) {
+
+            mostrarStatusFoto(
+
+                "Arraste um arquivo de imagem do computador.",
+
+                true
+
+            );
+
+
+            return;
+
+        }
+
+
+        if (arquivos.length > 1) {
+
+            mostrarStatusFoto(
+
+                "Selecione apenas uma fotografia por produto.",
+
+                true
+
+            );
+
+
+            return;
+
+        }
+
+
+        selecionarFotografia(
+
+            arquivos[0]
+
+        );
+
+    }
+
+);
+
+
+// Impede que o navegador abra uma imagem
+// quando ela for solta fora da área de upload,
+// enquanto o cadastro estiver aberto.
+
+document.addEventListener(
+
+    "dragover",
+
+    evento => {
+
+        if (
+
+            modalProduto.open &&
+
+            Array.from(
+
+                evento.dataTransfer?.types || []
+
+            ).includes("Files")
+
+        ) {
+
+            evento.preventDefault();
+
+        }
+
+    }
+
+);
+
+
+document.addEventListener(
+
+    "drop",
+
+    evento => {
+
+        if (
+
+            modalProduto.open &&
+
+            Array.from(
+
+                evento.dataTransfer?.types || []
+
+            ).includes("Files")
+
+        ) {
+
+            evento.preventDefault();
+
+        }
+
+    }
+
+);
+
+
+// ==========================================
+// 14. COPIAR E COLAR IMAGENS
+// ==========================================
+
+// Permite colar fotografias copiadas
+// de um editor, captura de tela ou arquivo.
+//
+// Funciona com Ctrl + V no Windows
+// e Command + V no Mac.
+
+document.addEventListener(
+
+    "paste",
+
+    evento => {
+
+        // Somente quando o formulário
+        // de produtos estiver aberto.
+
+        if (!modalProduto.open) {
+
+            return;
+
+        }
+
+
+        if (uploadEmAndamento) {
+
+            return;
+
+        }
+
+
+        const clipboard = evento.clipboardData;
+
+
+        if (!clipboard) {
+
+            return;
+
+        }
+
+
+        let arquivoImagem = null;
+
+
+        // Procurar uma imagem no conteúdo
+        // copiado pelo usuário.
+
+        for (const item of clipboard.items) {
+
+            if (
+
+                item.kind === "file" &&
+
+                item.type.startsWith("image/")
+
+            ) {
+
+                arquivoImagem = item.getAsFile();
+
+
+                if (arquivoImagem) {
+
+                    break;
+
+                }
+
+            }
+
+        }
+
+
+        // Se não encontrou uma imagem,
+        // deixa a colagem de textos funcionar
+        // normalmente nos demais campos.
+
+        if (!arquivoImagem) {
+
+            return;
+
+        }
+
+
+        // Impede que a imagem seja colada
+        // dentro de um campo de texto.
+
+        evento.preventDefault();
+
+
+        selecionarFotografia(
+
+            arquivoImagem
 
         );
 
@@ -379,40 +929,16 @@ campoArquivoFoto.addEventListener(
 
 
 // ==========================================
-// ATUALIZAR PREVIEW AO DIGITAR URL
+// 15. REINICIAR UPLOAD AO ABRIR PRODUTO
 // ==========================================
 
-campoEnderecoFoto.addEventListener(
-
-    "change",
-
-    () => {
-
-        if (!campoArquivoFoto.files?.length) {
-
-            mostrarPreviewFoto(
-
-                campoEnderecoFoto.value.trim()
-
-            );
-
-        }
-
-    }
-
-);
-
-
-// ==========================================
-// REINICIAR ÁREA DE UPLOAD
-// ==========================================
-
-// O admin.js utiliza form.reset() quando
-// o usuário abre o cadastro ou edita
-// um produto.
+// O admin.js executa form.reset()
+// quando um produto é aberto para cadastro
+// ou edição.
 //
-// Este evento limpa a fotografia selecionada
-// anteriormente e atualiza o preview.
+// Aqui limpamos a seleção anterior e
+// mostramos a fotografia já cadastrada,
+// caso o produto esteja sendo editado.
 
 formularioFotos.addEventListener(
 
@@ -420,19 +946,36 @@ formularioFotos.addEventListener(
 
     () => {
 
-        limparPreviewTemporario();
+        arquivoSelecionado = null;
 
 
-        informarStatusFoto("");
+        inputFoto.value = "";
+
+
+        limparPreviewFoto();
+
+
+        mostrarStatusFoto("");
+
+
+        zonaUpload.classList.remove(
+
+            "arrastando"
+
+        );
 
 
         queueMicrotask(() => {
 
-            mostrarPreviewFoto(
+            if (campoImagem.value.trim()) {
 
-                campoEnderecoFoto.value.trim()
+                mostrarPreviewFoto(
 
-            );
+                    campoImagem.value.trim()
+
+                );
+
+            }
 
         });
 
@@ -442,41 +985,15 @@ formularioFotos.addEventListener(
 
 
 // ==========================================
-// ENVIAR FOTOGRAFIA AO SUPABASE
+// 16. ENVIAR FOTOGRAFIA AO SUPABASE
 // ==========================================
 
 async function enviarFotografiaSupabase(arquivo) {
 
-    // Verificação adicional do formato.
-
-    const extensao = FOTO_FORMATOS[arquivo.type];
+    validarArquivoFoto(arquivo);
 
 
-    if (!extensao) {
-
-        throw new Error(
-
-            "Formato de imagem não permitido."
-
-        );
-
-    }
-
-
-    // Verificação adicional do tamanho.
-
-    if (arquivo.size > FOTO_TAMANHO_MAXIMO) {
-
-        throw new Error(
-
-            "A fotografia excede o limite de 5 MB."
-
-        );
-
-    }
-
-
-    // O usuário precisa estar autenticado.
+    // Confirmar login administrativo.
 
     const {
 
@@ -499,19 +1016,19 @@ async function enviarFotografiaSupabase(arquivo) {
 
         throw new Error(
 
-            "Faça login como administrador " +
-
-            "antes de enviar fotografias."
+            "Faça login como administrador para enviar imagens."
 
         );
 
     }
 
 
-    // Cria um nome exclusivo para cada foto.
-    //
-    // Isso evita sobrescrever arquivos antigos
-    // e problemas de cache nas imagens.
+    // Gerar nome exclusivo para a fotografia.
+
+    const extensao =
+
+        FOTO_FORMATOS[arquivo.type];
+
 
     const nomeArquivo =
 
@@ -524,7 +1041,7 @@ async function enviarFotografiaSupabase(arquivo) {
 
 
     // ======================================
-    // REALIZAR UPLOAD
+    // ENVIAR ARQUIVO AO STORAGE
     // ======================================
 
     const {
@@ -545,9 +1062,9 @@ async function enviarFotografiaSupabase(arquivo) {
 
             {
 
-                cacheControl: "3600",
-
                 contentType: arquivo.type,
+
+                cacheControl: "3600",
 
                 upsert: false
 
@@ -564,7 +1081,7 @@ async function enviarFotografiaSupabase(arquivo) {
 
 
     // ======================================
-    // OBTER URL PÚBLICA
+    // OBTER ENDEREÇO DA IMAGEM
     // ======================================
 
     const resultado = window.sb.storage
@@ -578,42 +1095,37 @@ async function enviarFotografiaSupabase(arquivo) {
         );
 
 
-    const urlPublica =
+    const enderecoPublico =
 
         resultado.data.publicUrl;
 
 
-    if (!urlPublica) {
+    if (!enderecoPublico) {
 
         throw new Error(
 
-            "A fotografia foi enviada, " +
-
-            "mas não foi possível obter sua URL."
+            "A imagem foi enviada, mas não foi possível obter sua URL."
 
         );
 
     }
 
 
-    return urlPublica;
+    return enderecoPublico;
 
 }
 
 
 // ==========================================
-// INTEGRAR AO BOTÃO SALVAR PRODUTO
+// 17. INTEGRAR AO SALVAMENTO DO PRODUTO
 // ==========================================
 
-// O admin.js já possui um evento submit
-// responsável por salvar os produtos.
+// Quando o usuário clicar em Salvar:
 //
-// Este evento é executado antes dele.
-//
-// Quando uma foto é selecionada:
-// 1. Aguarda o upload;
-// 2. Preenche o campo de imagem;
-// 3. Executa o salvamento original.
+// 1. Se houver uma nova imagem, realiza upload.
+// 2. Preenche o campo oculto de imagem.
+// 3. Executa o salvamento normal do admin.js.
+// 4. O admin.js publica o produto no catálogo.
 
 formularioFotos.addEventListener(
 
@@ -621,35 +1133,33 @@ formularioFotos.addEventListener(
 
     async evento => {
 
-        const arquivo = campoArquivoFoto.files?.[0];
+        // Sem imagem nova:
+        // mantém a fotografia existente
+        // e permite o salvamento normal.
 
-
-        // Sem nova fotografia:
-        // deixa o admin.js salvar normalmente.
-
-        if (!arquivo) {
+        if (!arquivoSelecionado) {
 
             return;
 
         }
 
 
-        // Interrompe o envio original enquanto
-        // a fotografia está sendo enviada.
+        // Interromper temporariamente
+        // o salvamento original.
 
         evento.preventDefault();
 
         evento.stopImmediatePropagation();
 
 
-        if (fotoEmUpload) {
+        if (uploadEmAndamento) {
 
             return;
 
         }
 
 
-        fotoEmUpload = true;
+        uploadEmAndamento = true;
 
 
         const botaoSalvar = formularioFotos.querySelector(
@@ -662,7 +1172,14 @@ formularioFotos.addEventListener(
         botaoSalvar.disabled = true;
 
 
-        informarStatusFoto(
+        zonaUpload.classList.add(
+
+            "enviando"
+
+        );
+
+
+        mostrarStatusFoto(
 
             "Enviando fotografia ao Supabase..."
 
@@ -674,43 +1191,42 @@ formularioFotos.addEventListener(
 
         try {
 
-            // ==================================
-            // UPLOAD
-            // ==================================
+            // Realizar upload.
 
             const urlFoto =
 
                 await enviarFotografiaSupabase(
 
-                    arquivo
+                    arquivoSelecionado
 
                 );
 
 
-            // ==================================
-            // PREENCHER URL AUTOMATICAMENTE
-            // ==================================
+            // Guardar endereço no campo oculto.
 
-            campoEnderecoFoto.value = urlFoto;
+            campoImagem.value = urlFoto;
 
 
-            // Remove a seleção para que
-            // o próximo submit prossiga
-            // diretamente para o admin.js.
+            // Limpar arquivo pendente.
 
-            campoArquivoFoto.value = "";
+            arquivoSelecionado = null;
 
 
-            // Exibe a imagem hospedada.
-
-            mostrarPreviewFoto(urlFoto);
+            inputFoto.value = "";
 
 
-            informarStatusFoto(
+            // Mostrar a foto hospedada.
 
-                "Fotografia enviada! " +
+            mostrarPreviewFoto(
 
-                "Salvando o produto..."
+                urlFoto
+
+            );
+
+
+            mostrarStatusFoto(
+
+                "Fotografia enviada! Salvando produto..."
 
             );
 
@@ -721,16 +1237,16 @@ formularioFotos.addEventListener(
 
             console.error(
 
-                "Erro no upload da fotografia:",
+                "Erro ao enviar fotografia:",
 
                 erro
 
             );
 
 
-            informarStatusFoto(
+            mostrarStatusFoto(
 
-                "Não foi possível enviar a fotografia. " +
+                "Não foi possível enviar a imagem: " +
 
                 erro.message,
 
@@ -740,24 +1256,31 @@ formularioFotos.addEventListener(
 
         } finally {
 
-            fotoEmUpload = false;
+            uploadEmAndamento = false;
+
 
             botaoSalvar.disabled = false;
+
+
+            zonaUpload.classList.remove(
+
+                "enviando"
+
+            );
 
         }
 
 
-        // ==================================
-        // SALVAR PRODUTO
-        // ==================================
-
-        // O admin.js continuará o salvamento,
-        // incluindo a URL da fotografia
-        // no catálogo compartilhado.
+        // Executa o salvamento normal
+        // depois que a foto estiver hospedada.
 
         if (uploadConcluido) {
 
-            formularioFotos.requestSubmit();
+            formularioFotos.requestSubmit(
+
+                botaoSalvar
+
+            );
 
         }
 
@@ -769,138 +1292,28 @@ formularioFotos.addEventListener(
 
 
 // ==========================================
-// ESTILOS DA ÁREA DE UPLOAD
+// 18. ATUALIZAR PREVIEW DA IMAGEM EXISTENTE
 // ==========================================
 
-const estilosFotos = document.createElement("style");
+// Caso uma URL seja alterada por outro código,
+// atualiza a pré-visualização.
 
+campoImagem.addEventListener(
 
-estilosFotos.textContent = `
+    "change",
 
-.area-upload-fotos {
+    () => {
 
-    grid-column: 1 / -1;
+        if (!arquivoSelecionado) {
 
-    padding: 18px;
+            mostrarPreviewFoto(
 
-    border: 1px dashed #8554a1;
+                campoImagem.value.trim()
 
-    border-radius: 12px;
+            );
 
-    background: #30243a;
+        }
 
-}
+    }
 
-
-.area-upload-fotos > label {
-
-    display: block;
-
-    margin-bottom: 12px;
-
-    color: #f4e4ff;
-
-    font-size: 13px;
-
-    font-weight: 800;
-
-}
-
-
-.area-upload-fotos input[type="file"] {
-
-    width: 100%;
-
-    padding: 12px;
-
-    background: #21172c;
-
-    border: 1px solid #6c5177;
-
-    border-radius: 9px;
-
-    color: white;
-
-    font-size: 12px;
-
-}
-
-
-.upload-instrucao {
-
-    margin-top: 12px;
-
-    color: #b8a8c3;
-
-    font-size: 11px;
-
-    line-height: 1.6;
-
-}
-
-
-.visualizacao-foto {
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    margin-top: 15px;
-
-}
-
-
-#preview-foto-produto {
-
-    display: block;
-
-    width: 100%;
-
-    max-width: 260px;
-
-    max-height: 260px;
-
-    object-fit: contain;
-
-    border: 1px solid #714188;
-
-    border-radius: 12px;
-
-    background: #17101f;
-
-}
-
-
-#preview-foto-produto[hidden] {
-
-    display: none;
-
-}
-
-
-#status-upload-foto {
-
-    margin-bottom: 0;
-
-    font-size: 12px;
-
-    font-weight: 700;
-
-}
-
-
-.form-login button:disabled,
-#form-produto button:disabled {
-
-    opacity: 0.55;
-
-    cursor: wait;
-
-}
-
-`;
-
-
-document.head.appendChild(estilosFotos);
+);
