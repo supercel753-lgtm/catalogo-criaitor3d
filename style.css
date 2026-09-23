@@ -1173,3 +1173,348 @@ td small {
     }
 
 }
+
+/* ==========================================
+   CRIAITOR 3D
+   UPLOAD DE FOTOGRAFIAS
+========================================== */
+
+
+/* OCULTAR CAMPO ANTIGO DE URL */
+
+.campo-url-legado {
+
+    display: none !important;
+
+}
+
+
+/* ÁREA PRINCIPAL */
+
+.area-fotos-empresa {
+
+    grid-column: 1 / -1;
+
+    width: 100%;
+
+    margin: 10px 0;
+
+}
+
+
+.area-fotos-empresa h3 {
+
+    margin: 0 0 8px;
+
+    color: #ffffff;
+
+    font-size: 17px;
+
+}
+
+
+.descricao-upload {
+
+    margin-bottom: 15px;
+
+    color: #b8a8c3;
+
+    font-size: 12px;
+
+}
+
+
+/* ARRASTAR E SOLTAR */
+
+.zona-upload {
+
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: center;
+
+    align-items: center;
+
+    gap: 12px;
+
+    min-height: 220px;
+
+    padding: 25px;
+
+    background: #261b30;
+
+    border: 2px dashed #8950ab;
+
+    border-radius: 16px;
+
+    color: white;
+
+    text-align: center;
+
+    cursor: pointer;
+
+    transition:
+
+        background 0.2s,
+
+        border-color 0.2s,
+
+        transform 0.2s;
+
+}
+
+
+.zona-upload:hover {
+
+    background: #34233f;
+
+    border-color: #ff8927;
+
+}
+
+
+.zona-upload:focus-visible {
+
+    outline: 3px solid #ff8927;
+
+    outline-offset: 4px;
+
+}
+
+
+/* ARQUIVO SOBRE A ÁREA */
+
+.zona-upload.arrastando {
+
+    background: #432352;
+
+    border-color: #ff8927;
+
+    transform: scale(1.01);
+
+}
+
+
+/* DURANTE O UPLOAD */
+
+.zona-upload.enviando {
+
+    opacity: 0.6;
+
+    pointer-events: none;
+
+    cursor: wait;
+
+}
+
+
+/* ÍCONE */
+
+.icone-upload {
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    width: 65px;
+
+    height: 65px;
+
+    border-radius: 50%;
+
+    background: #4c2b61;
+
+    color: #ff8927;
+
+    font-size: 35px;
+
+    font-weight: 900;
+
+}
+
+
+/* TEXTOS */
+
+.zona-upload strong {
+
+    color: white;
+
+    font-size: 15px;
+
+}
+
+
+.zona-upload span {
+
+    color: #b8a8c3;
+
+    font-size: 12px;
+
+}
+
+
+.zona-upload small {
+
+    color: #b8a8c3;
+
+    font-size: 11px;
+
+}
+
+
+/* BOTÃO DE ESCOLHER ARQUIVO */
+
+.botao-escolher-foto {
+
+    padding: 12px 20px;
+
+    background: #ff8927;
+
+    color: #211025;
+
+    border-radius: 10px;
+
+    font-size: 13px;
+
+    font-weight: 900;
+
+    pointer-events: none;
+
+}
+
+
+/* PRÉ-VISUALIZAÇÃO */
+
+.preview-container {
+
+    margin-top: 20px;
+
+    padding: 15px;
+
+    background: #1b1323;
+
+    border: 1px solid #63466d;
+
+    border-radius: 13px;
+
+}
+
+
+.preview-container[hidden] {
+
+    display: none !important;
+
+}
+
+
+#preview-foto {
+
+    display: block;
+
+    width: 100%;
+
+    max-width: 300px;
+
+    max-height: 300px;
+
+    margin: 0 auto;
+
+    object-fit: contain;
+
+    border-radius: 10px;
+
+}
+
+
+/* INFORMAÇÕES DA IMAGEM */
+
+.preview-informacoes {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    flex-wrap: wrap;
+
+    gap: 12px;
+
+    margin-top: 15px;
+
+}
+
+
+#nome-arquivo {
+
+    color: #d8c4e8;
+
+    font-size: 12px;
+
+    overflow-wrap: anywhere;
+
+}
+
+
+/* TROCAR FOTOGRAFIA */
+
+.botao-trocar-foto {
+
+    padding: 10px 15px;
+
+    background: #3b2849;
+
+    color: white;
+
+    border: 1px solid #8950ab;
+
+    border-radius: 9px;
+
+    font-size: 12px;
+
+    font-weight: 800;
+
+}
+
+
+.botao-trocar-foto:hover {
+
+    background: #4e3560;
+
+}
+
+
+/* STATUS DO UPLOAD */
+
+.status-foto {
+
+    margin-top: 12px;
+
+    color: #91e4b1;
+
+    font-size: 12px;
+
+    font-weight: 700;
+
+}
+
+
+.status-foto.erro {
+
+    color: #ff8e8e;
+
+}
+
+
+/* BOTÃO SALVAR DURANTE O UPLOAD */
+
+#form-produto button:disabled {
+
+    opacity: 0.5;
+
+    cursor: wait;
+
+}
