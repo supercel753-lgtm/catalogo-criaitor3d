@@ -4,9 +4,9 @@
 
 <head>
 
-    <!-- =====================================
+    <!-- ======================================
          CONFIGURAÇÕES GERAIS
-    ===================================== -->
+    ====================================== -->
 
     <meta charset="UTF-8">
 
@@ -30,11 +30,13 @@
     </title>
 
 
-    <!-- =====================================
-         LOGO OFICIAL DA EMPRESA
+    <!-- ======================================
+         LOGO OFICIAL
 
-         Arquivo armazenado no GitHub.
-    ===================================== -->
+         Arquivo armazenado no GitHub:
+
+         assets/logo-criaitor3d.jpg
+    ====================================== -->
 
     <link
         rel="icon"
@@ -43,9 +45,9 @@
     >
 
 
-    <!-- =====================================
+    <!-- ======================================
          FONTES
-    ===================================== -->
+    ====================================== -->
 
     <link
         rel="preconnect"
@@ -64,22 +66,19 @@
     >
 
 
-    <!-- =====================================
-         CSS PRINCIPAL
-
-         Responsável pelo visual completo
-         do painel administrativo.
-    ===================================== -->
+    <!-- ======================================
+         CSS DO PAINEL
+    ====================================== -->
 
     <link
         rel="stylesheet"
-        href="style.css"
+        href="./style.css"
     >
 
 
-    <!-- =====================================
+    <!-- ======================================
          1. BIBLIOTECA SUPABASE
-    ===================================== -->
+    ====================================== -->
 
     <script
         src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
@@ -87,87 +86,52 @@
     ></script>
 
 
-    <!-- =====================================
+    <!-- ======================================
          2. CONFIGURAÇÃO DO SUPABASE
-
-         Contém:
-         - URL do projeto;
-         - Chave pública;
-         - UID administrativa;
-         - Inicialização de window.sb.
-    ===================================== -->
+    ====================================== -->
 
     <script
-        src="supabase-config.js"
+        src="./supabase-config.js"
         defer
     ></script>
 
 
-    <!-- =====================================
-         3. CATÁLOGO LOCAL
-
-         Contém:
-         - Configurações do catálogo;
-         - Estrutura dos produtos;
-         - Funções auxiliares.
-    ===================================== -->
+    <!-- ======================================
+         3. CATÁLOGO
+    ====================================== -->
 
     <script
-        src="catalogo.js"
+        src="./catalogo.js"
         defer
     ></script>
 
 
-    <!-- =====================================
+    <!-- ======================================
          4. PAINEL ADMINISTRATIVO
-
-         Contém:
-         - Login e logout;
-         - Cadastro de produtos;
-         - Edição e exclusão;
-         - Estoque;
-         - Pedidos;
-         - Indicadores;
-         - Backup.
-    ===================================== -->
+    ====================================== -->
 
     <script
-        src="admin.js"
+        src="./admin.js"
         defer
     ></script>
 
 
-    <!-- =====================================
-         5. FOTOGRAFIAS DOS PRODUTOS
-
-         Contém:
-         - Arrastar e soltar;
-         - Seleção do computador;
-         - Colar imagens;
-         - Pré-visualização;
-         - Upload para o Supabase.
-
-         Bucket: projetos
-         Pasta: catalogo
-    ===================================== -->
+    <!-- ======================================
+         5. UPLOAD DE FOTOGRAFIAS
+    ====================================== -->
 
     <script
-        src="fotos-empresa.js"
+        src="./fotos-empresa.js"
         defer
     ></script>
 
 
-    <!-- =====================================
+    <!-- ======================================
          6. SINCRONIZAÇÃO DO CATÁLOGO
-
-         Contém:
-         - Recarregamento do catálogo;
-         - Verificação de atualizações;
-         - Conexão Supabase Realtime.
-    ===================================== -->
+    ====================================== -->
 
     <script
-        src="sync-empresa.js"
+        src="./sync-empresa.js"
         defer
     ></script>
 
@@ -177,9 +141,28 @@
 <body data-area="empresa">
 
 
-    <!-- =====================================
+    <!-- ======================================
+         AVISO PARA JAVASCRIPT DESATIVADO
+    ====================================== -->
+
+    <noscript>
+
+        <p>
+
+            O painel da CriAItor 3D necessita
+            de JavaScript para funcionar.
+
+            Ative o JavaScript no navegador
+            e atualize a página.
+
+        </p>
+
+    </noscript>
+
+
+    <!-- ======================================
          PAINEL ADMINISTRATIVO
-    ===================================== -->
+    ====================================== -->
 
     <div
         class="app"
@@ -188,19 +171,19 @@
     >
 
 
-        <!-- =================================
+        <!-- ==================================
              MENU LATERAL
-        ================================= -->
+        ================================== -->
 
         <aside class="sidebar">
 
 
-            <!-- LOGO OFICIAL -->
+            <!-- LOGO DA EMPRESA -->
 
             <div class="marca">
 
                 <img
-                    src="assets/logo-criaitor3d.jpg"
+                    src="./assets/logo-criaitor3d.jpg"
                     alt="CriAItor 3D"
                     class="logo-empresa"
                     draggable="false"
@@ -209,12 +192,16 @@
             </div>
 
 
-            <!-- MENU PRINCIPAL -->
+            <!-- TÍTULO DO MENU -->
 
             <p class="menu-titulo">
+
                 MENU PRINCIPAL
+
             </p>
 
+
+            <!-- NAVEGAÇÃO -->
 
             <nav
                 class="menu"
@@ -265,7 +252,6 @@
 
                 </button>
 
-
             </nav>
 
 
@@ -274,7 +260,9 @@
             <div class="sidebar-rodape">
 
                 <strong>
+
                     ● CriAItor 3D
+
                 </strong>
 
 
@@ -288,18 +276,17 @@
 
             </div>
 
-
         </aside>
 
 
-        <!-- =================================
-             CONTEÚDO DO PAINEL
-        ================================= -->
+        <!-- ==================================
+             CONTEÚDO PRINCIPAL
+        ================================== -->
 
         <div class="conteudo">
 
 
-            <!-- CABEÇALHO SUPERIOR -->
+            <!-- CABEÇALHO -->
 
             <header class="topbar">
 
@@ -322,6 +309,8 @@
                 </div>
 
 
+                <!-- NOVO PRODUTO -->
+
                 <button
                     type="button"
                     class="botao botao-laranja"
@@ -334,22 +323,21 @@
 
 
                 <!--
-                    O admin.js adiciona
-                    automaticamente o botão Sair.
+                    O admin.js adicionará
+                    o botão Sair neste cabeçalho.
                 -->
-
 
             </header>
 
 
-            <!-- =================================
-                 CONTEÚDO PRINCIPAL
-            ================================= -->
+            <!-- ==================================
+                 CONTEÚDO DAS PÁGINAS
+            ================================== -->
 
             <main>
 
 
-                <!-- AVISO -->
+                <!-- AVISO DO PAINEL -->
 
                 <div class="aviso">
 
@@ -358,22 +346,25 @@
                     com a loja dos clientes
                     por meio do Supabase.
 
-                    Os pedidos recebidos pelo
-                    WhatsApp podem ser registrados
-                    manualmente neste painel.
+                    A logo oficial da empresa
+                    é carregada diretamente
+                    da pasta assets do GitHub.
 
                 </div>
 
 
-                <!-- =================================
-                     PÁGINA 1 - VISÃO GERAL
-                ================================= -->
+                <!-- ==================================
+                     PÁGINA 1
+                     VISÃO GERAL
+                ================================== -->
 
                 <section
                     class="pagina ativa"
                     id="dashboard"
                 >
 
+
+                    <!-- TÍTULO -->
 
                     <div class="cabecalho-pagina">
 
@@ -411,16 +402,17 @@
                             id="data-atual"
                         ></span>
 
-
                     </div>
 
 
-                    <!-- INDICADORES -->
+                    <!-- ==================================
+                         INDICADORES
+                    ================================== -->
 
                     <div class="indicadores">
 
 
-                        <!-- TOTAL DE PRODUTOS -->
+                        <!-- PRODUTOS CADASTRADOS -->
 
                         <div class="indicador">
 
@@ -527,11 +519,12 @@
 
                         </div>
 
-
                     </div>
 
 
-                    <!-- PRODUTOS RECENTES -->
+                    <!-- ==================================
+                         PRODUTOS RECENTES
+                    ================================== -->
 
                     <div class="painel">
 
@@ -556,27 +549,24 @@
 
                             </button>
 
-
                         </div>
 
 
-                        <!--
-                            O admin.js insere os
-                            produtos neste elemento.
-                        -->
+                        <div id="produtos-recentes">
 
-                        <div id="produtos-recentes"></div>
+                            Carregando produtos...
 
+                        </div>
 
                     </div>
-
 
                 </section>
 
 
-                <!-- =================================
-                     PÁGINA 2 - PRODUTOS
-                ================================= -->
+                <!-- ==================================
+                     PÁGINA 2
+                     PRODUTOS
+                ================================== -->
 
                 <section
                     class="pagina"
@@ -584,6 +574,8 @@
                     hidden
                 >
 
+
+                    <!-- TÍTULO -->
 
                     <div class="cabecalho-pagina">
 
@@ -617,6 +609,8 @@
                         </div>
 
 
+                        <!-- CADASTRAR PRODUTO -->
+
                         <button
                             type="button"
                             class="botao botao-laranja"
@@ -627,11 +621,12 @@
 
                         </button>
 
-
                     </div>
 
 
-                    <!-- LISTAGEM DE PRODUTOS -->
+                    <!-- ==================================
+                         LISTAGEM DOS PRODUTOS
+                    ================================== -->
 
                     <div class="painel">
 
@@ -655,7 +650,6 @@
 
                             </span>
 
-
                         </div>
 
 
@@ -671,46 +665,58 @@
 
                                     <tr>
 
-                                        <th>PRODUTO</th>
+                                        <th>
+                                            PRODUTO
+                                        </th>
 
-                                        <th>CATEGORIA</th>
+                                        <th>
+                                            CATEGORIA
+                                        </th>
 
-                                        <th>PREÇO</th>
+                                        <th>
+                                            PREÇO
+                                        </th>
 
-                                        <th>ESTOQUE</th>
+                                        <th>
+                                            ESTOQUE
+                                        </th>
 
-                                        <th>VISIBILIDADE</th>
+                                        <th>
+                                            VISIBILIDADE
+                                        </th>
 
-                                        <th>AÇÕES</th>
+                                        <th>
+                                            AÇÕES
+                                        </th>
 
                                     </tr>
 
                                 </thead>
 
 
-                                <!--
-                                    O admin.js carrega os
-                                    produtos do Supabase.
-                                -->
+                                <tbody id="tabela-produtos">
 
-                                <tbody id="tabela-produtos"></tbody>
+                                    <!--
+                                        Produtos carregados
+                                        automaticamente
+                                        pelo admin.js.
+                                    -->
 
+                                </tbody>
 
                             </table>
 
-
                         </div>
 
-
                     </div>
-
 
                 </section>
 
 
-                <!-- =================================
-                     PÁGINA 3 - PEDIDOS
-                ================================= -->
+                <!-- ==================================
+                     PÁGINA 3
+                     PEDIDOS
+                ================================== -->
 
                 <section
                     class="pagina"
@@ -718,6 +724,8 @@
                     hidden
                 >
 
+
+                    <!-- TÍTULO -->
 
                     <div class="cabecalho-pagina">
 
@@ -743,12 +751,15 @@
                             <p>
 
                                 Registre e acompanhe
-                                os pedidos dos clientes.
+                                os pedidos recebidos
+                                dos clientes.
 
                             </p>
 
                         </div>
 
+
+                        <!-- BOTÕES -->
 
                         <div class="grupo-botoes">
 
@@ -774,14 +785,14 @@
 
                             </button>
 
-
                         </div>
-
 
                     </div>
 
 
-                    <!-- LISTAGEM DE PEDIDOS -->
+                    <!-- ==================================
+                         LISTAGEM DE PEDIDOS
+                    ================================== -->
 
                     <div class="painel">
 
@@ -796,41 +807,57 @@
 
                                     <tr>
 
-                                        <th>CLIENTE</th>
+                                        <th>
+                                            CLIENTE
+                                        </th>
 
-                                        <th>DESCRIÇÃO</th>
+                                        <th>
+                                            DESCRIÇÃO
+                                        </th>
 
-                                        <th>VALOR</th>
+                                        <th>
+                                            VALOR
+                                        </th>
 
-                                        <th>STATUS</th>
+                                        <th>
+                                            STATUS
+                                        </th>
 
-                                        <th>DATA</th>
+                                        <th>
+                                            DATA
+                                        </th>
 
-                                        <th>AÇÕES</th>
+                                        <th>
+                                            AÇÕES
+                                        </th>
 
                                     </tr>
 
                                 </thead>
 
 
-                                <tbody id="tabela-pedidos"></tbody>
+                                <tbody id="tabela-pedidos">
 
+                                    <!--
+                                        Pedidos carregados
+                                        pelo admin.js.
+                                    -->
+
+                                </tbody>
 
                             </table>
 
-
                         </div>
 
-
                     </div>
-
 
                 </section>
 
 
-                <!-- =================================
-                     PÁGINA 4 - SINCRONIZAÇÃO
-                ================================= -->
+                <!-- ==================================
+                     PÁGINA 4
+                     SINCRONIZAÇÃO
+                ================================== -->
 
                 <section
                     class="pagina"
@@ -838,6 +865,8 @@
                     hidden
                 >
 
+
+                    <!-- TÍTULO -->
 
                     <div class="cabecalho-pagina">
 
@@ -863,17 +892,19 @@
                             <p>
 
                                 Gerencie a sincronização
-                                dos produtos com a loja virtual.
+                                dos produtos com a
+                                loja virtual.
 
                             </p>
 
                         </div>
 
-
                     </div>
 
 
-                    <!-- SUPABASE -->
+                    <!-- ==================================
+                         CONEXÃO SUPABASE
+                    ================================== -->
 
                     <div class="painel">
 
@@ -888,9 +919,8 @@
                         <p>
 
                             Os produtos, preços e estoque
-                            são atualizados na loja
-                            quando você salva as alterações
-                            no catálogo.
+                            são compartilhados com a loja
+                            dos clientes pelo Supabase.
 
                         </p>
 
@@ -905,15 +935,17 @@
 
 
                         <!--
-                            O sync-empresa.js adiciona
-                            os controles de sincronização.
+                            O sync-empresa.js adicionará
+                            os controles de sincronização
+                            neste painel.
                         -->
-
 
                     </div>
 
 
-                    <!-- EXPORTAR CATÁLOGO -->
+                    <!-- ==================================
+                         EXPORTAR CATÁLOGO
+                    ================================== -->
 
                     <div class="painel">
 
@@ -928,7 +960,8 @@
                         <p>
 
                             Salve uma cópia dos produtos
-                            cadastrados em formato JavaScript.
+                            cadastrados em formato
+                            JavaScript.
 
                         </p>
 
@@ -943,11 +976,12 @@
 
                         </button>
 
-
                     </div>
 
 
-                    <!-- BACKUP -->
+                    <!-- ==================================
+                         BACKUP
+                    ================================== -->
 
                     <div class="painel">
 
@@ -994,15 +1028,11 @@
                                     hidden
                                 >
 
-
                             </label>
-
 
                         </div>
 
-
                     </div>
-
 
                 </section>
 
@@ -1016,9 +1046,9 @@
     </div>
 
 
-    <!-- =====================================
+    <!-- ======================================
          FORMULÁRIO DE PRODUTOS
-    ===================================== -->
+    ====================================== -->
 
     <dialog
         class="modal"
@@ -1030,7 +1060,7 @@
         <form id="form-produto">
 
 
-            <!-- CABEÇALHO -->
+            <!-- CABEÇALHO DO FORMULÁRIO -->
 
             <div class="modal-cabecalho">
 
@@ -1053,16 +1083,17 @@
 
                 </button>
 
-
             </div>
 
 
-            <!-- CAMPOS -->
+            <!-- ==================================
+                 CAMPOS DO PRODUTO
+            ================================== -->
 
             <div class="campos">
 
 
-                <!-- NOME -->
+                <!-- NOME DO PRODUTO -->
 
                 <label class="campo campo-inteiro">
 
@@ -1077,7 +1108,6 @@
                         placeholder="Ex.: Dragão articulado"
                         required
                     >
-
 
                 </label>
 
@@ -1097,7 +1127,6 @@
                         placeholder="Ex.: Articulados"
                         required
                     >
-
 
                 </label>
 
@@ -1119,7 +1148,6 @@
                         required
                     >
 
-
                 </label>
 
 
@@ -1140,11 +1168,10 @@
                         required
                     >
 
-
                 </label>
 
 
-                <!-- PRAZO -->
+                <!-- PRAZO DE PRODUÇÃO -->
 
                 <label class="campo">
 
@@ -1159,30 +1186,23 @@
                         value="Produção sob encomenda"
                     >
 
-
                 </label>
 
 
-                <!-- =================================
-                     FOTOGRAFIAS DOS PRODUTOS
-                ================================= -->
+                <!-- ==================================
+                     FOTOGRAFIA DO PRODUTO
 
-                <!--
-                    O fotos-empresa.js cria
-                    automaticamente a área para:
+                     A área de upload será criada
+                     automaticamente pelo arquivo:
 
-                    - Arrastar imagens;
-                    - Selecionar do computador;
-                    - Colar fotografias;
-                    - Pré-visualizar;
-                    - Enviar ao Supabase.
+                     fotos-empresa.js
 
-                    A interface será inserida
-                    antes do campo abaixo.
-                -->
+                     Bucket: projetos
+                     Pasta: catalogo
+                ================================== -->
 
 
-                <!-- CAMPO INTERNO DA IMAGEM -->
+                <!-- CAMPO INTERNO DA URL -->
 
                 <label
                     class="campo campo-inteiro campo-url-legado"
@@ -1199,7 +1219,6 @@
                         tabindex="-1"
                         readonly
                     >
-
 
                 </label>
 
@@ -1219,7 +1238,6 @@
                         placeholder="Descreva seu produto..."
                     ></textarea>
 
-
                 </label>
 
 
@@ -1237,7 +1255,6 @@
 
                     Mostrar produto na loja
 
-
                 </label>
 
 
@@ -1254,14 +1271,14 @@
 
                     Produto em destaque
 
-
                 </label>
-
 
             </div>
 
 
-            <!-- BOTÕES -->
+            <!-- ==================================
+                 BOTÕES DO FORMULÁRIO
+            ================================== -->
 
             <div class="modal-acoes">
 
@@ -1287,19 +1304,16 @@
 
                 </button>
 
-
             </div>
 
-
         </form>
-
 
     </dialog>
 
 
-    <!-- =====================================
+    <!-- ======================================
          FORMULÁRIO DE PEDIDOS
-    ===================================== -->
+    ====================================== -->
 
     <dialog
         class="modal"
@@ -1334,11 +1348,12 @@
 
                 </button>
 
-
             </div>
 
 
-            <!-- CAMPOS -->
+            <!-- ==================================
+                 CAMPOS DO PEDIDO
+            ================================== -->
 
             <div class="campos">
 
@@ -1358,7 +1373,6 @@
                         required
                     >
 
-
                 </label>
 
 
@@ -1375,7 +1389,6 @@
                         name="contato"
                         maxlength="120"
                     >
-
 
                 </label>
 
@@ -1395,7 +1408,6 @@
                         required
                     ></textarea>
 
-
                 </label>
 
 
@@ -1414,7 +1426,6 @@
                         step="0.01"
                         required
                     >
-
 
                 </label>
 
@@ -1464,17 +1475,16 @@
 
                         </option>
 
-
                     </select>
 
-
                 </label>
-
 
             </div>
 
 
-            <!-- BOTÕES -->
+            <!-- ==================================
+                 BOTÕES DO FORMULÁRIO
+            ================================== -->
 
             <div class="modal-acoes">
 
@@ -1499,19 +1509,16 @@
 
                 </button>
 
-
             </div>
 
-
         </form>
-
 
     </dialog>
 
 
-    <!-- =====================================
-         NOTIFICAÇÕES DO SISTEMA
-    ===================================== -->
+    <!-- ======================================
+         NOTIFICAÇÕES
+    ====================================== -->
 
     <div
         class="notificacao"
@@ -1519,7 +1526,6 @@
         role="status"
         aria-live="polite"
     ></div>
-
 
 </body>
 
