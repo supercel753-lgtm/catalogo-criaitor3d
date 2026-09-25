@@ -4,5431 +4,1522 @@
 
 <head>
 
-<meta charset="UTF-8">
+    <!-- =====================================
+         CONFIGURAÇÕES GERAIS
+    ===================================== -->
 
-<meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
->
+    <meta charset="UTF-8">
 
-<meta
-    name="theme-color"
-    content="#100c15"
->
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-<title>CriAItor 3D | Painel da Empresa</title>
+    <meta
+        name="theme-color"
+        content="#100c15"
+    >
 
-<!-- LOGO DO GITHUB -->
+    <meta
+        name="description"
+        content="Painel administrativo da CriAItor 3D. Gerenciamento de produtos, fotografias, estoque e pedidos."
+    >
 
-<link
-    rel="icon"
-    type="image/jpeg"
-    href="assets/logo-criaitor3d.jpg"
->
+    <title>
+        CriAItor 3D | Painel Administrativo
+    </title>
 
-<!-- FONTES -->
 
-<link
-    rel="preconnect"
-    href="https://fonts.googleapis.com"
->
+    <!-- =====================================
+         LOGO OFICIAL DA EMPRESA
 
-<link
-    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap"
-    rel="stylesheet"
->
+         Arquivo armazenado no GitHub.
+    ===================================== -->
 
-<!-- ==========================================
-     CSS INTEGRADO
-========================================== -->
+    <link
+        rel="icon"
+        type="image/jpeg"
+        href="assets/logo-criaitor3d.jpg"
+    >
 
-<style>
 
-:root {
+    <!-- =====================================
+         FONTES
+    ===================================== -->
 
-    --fundo: #100c15;
-    --sidebar: #17101f;
-    --painel: #211829;
-    --painel-claro: #302438;
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
 
-    --roxo: #b12bff;
-    --roxo-claro: #d267ff;
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
 
-    --laranja: #ff8927;
-    --laranja-claro: #ffb45e;
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+        rel="stylesheet"
+    >
 
-    --texto: #f7f0fa;
-    --cinza: #b8a8c3;
 
-    --borda: #493550;
+    <!-- =====================================
+         CSS PRINCIPAL
 
-    --verde: #91e4b1;
-    --vermelho: #ff8e8e;
+         Responsável pelo visual completo
+         do painel administrativo.
+    ===================================== -->
 
-}
+    <link
+        rel="stylesheet"
+        href="style.css"
+    >
 
-/* CONFIGURAÇÕES GERAIS */
 
-* {
+    <!-- =====================================
+         1. BIBLIOTECA SUPABASE
+    ===================================== -->
 
-    box-sizing: border-box;
+    <script
+        src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
+        defer
+    ></script>
 
-}
 
-body {
+    <!-- =====================================
+         2. CONFIGURAÇÃO DO SUPABASE
 
-    margin: 0;
+         Contém:
+         - URL do projeto;
+         - Chave pública;
+         - UID administrativa;
+         - Inicialização de window.sb.
+    ===================================== -->
 
-    min-height: 100vh;
+    <script
+        src="supabase-config.js"
+        defer
+    ></script>
 
-    background: var(--fundo);
 
-    color: var(--texto);
-
-    font-family: "DM Sans", Arial, sans-serif;
-
-}
-
-button,
-input,
-textarea,
-select {
-
-    font: inherit;
-
-}
-
-button {
-
-    cursor: pointer;
-
-}
-
-button:disabled {
-
-    opacity: 0.5;
-
-    cursor: not-allowed;
-
-}
-
-img {
-
-    max-width: 100%;
-
-}
-
-h1,
-h2,
-h3 {
-
-    font-family: "Space Grotesk", sans-serif;
-
-}
-
-p {
-
-    line-height: 1.6;
-
-}
-
-[hidden] {
-
-    display: none !important;
-
-}
-
-/* ==========================================
-   LOGO OFICIAL
-========================================== */
-
-.logo-empresa {
-
-    display: block;
-
-    width: 175px;
-    height: 175px;
-
-    max-width: 100%;
-
-    margin: auto;
-
-    object-fit: contain;
-
-    background: #000000;
-
-    border-radius: 12px;
-
-    user-select: none;
-
-    -webkit-user-drag: none;
-
-}
-
-/* ==========================================
-   LOGIN
-========================================== */
-
-.tela-login {
-
-    min-height: 100vh;
-
-    display: flex;
-
-    align-items: center;
-    justify-content: center;
-
-    padding: 25px;
-
-    background:
-
-        radial-gradient(
-            circle at 50% 20%,
-            rgba(177,43,255,0.18),
-            transparent 45%
-        ),
-
-        var(--fundo);
-
-}
-
-.form-login {
-
-    width: min(440px,100%);
-
-    padding: 32px;
-
-    background: var(--painel);
-
-    border: 1px solid #714188;
-
-    border-radius: 20px;
-
-    box-shadow: 0 25px 70px rgba(0,0,0,0.35);
-
-}
-
-.form-login h2 {
-
-    margin-top: 25px;
-
-    color: var(--laranja);
-
-    text-align: center;
-
-}
-
-.form-login p {
-
-    color: var(--cinza);
-
-    text-align: center;
-
-    font-size: 13px;
-
-}
-
-.form-login label {
-
-    display: block;
-
-    margin-top: 16px;
-    margin-bottom: 7px;
-
-    font-size: 12px;
-
-    font-weight: 800;
-
-}
-
-.form-login input {
-
-    width: 100%;
-
-    padding: 13px;
-
-    background: var(--painel-claro);
-
-    color: white;
-
-    border: 1px solid #705481;
-
-    border-radius: 9px;
-
-}
-
-.form-login button {
-
-    width: 100%;
-
-    margin-top: 22px;
-
-    padding: 14px;
-
-    background: var(--laranja);
-
-    color: #211025;
-
-    border: none;
-
-    border-radius: 10px;
-
-    font-weight: 900;
-
-}
-
-#mensagem-login {
-
-    min-height: 18px;
-
-    color: var(--vermelho);
-
-}
-
-/* ==========================================
-   PAINEL PRINCIPAL
-========================================== */
-
-.app {
-
-    min-height: 100vh;
-
-    display: grid;
-
-    grid-template-columns: 245px minmax(0,1fr);
-
-}
-
-/* MENU LATERAL */
-
-.sidebar {
-
-    min-height: 100vh;
-
-    padding: 25px 15px;
-
-    background: var(--sidebar);
-
-    border-right: 1px solid var(--borda);
-
-    display: flex;
-
-    flex-direction: column;
-
-}
-
-.marca {
-
-    padding: 10px 0;
-
-    margin-bottom: 25px;
-
-}
-
-.menu-titulo {
-
-    margin: 15px 12px;
-
-    color: #a48cb0;
-
-    font-size: 10px;
-
-    letter-spacing: 2px;
-
-}
-
-.menu {
-
-    display: flex;
-
-    flex-direction: column;
-
-    gap: 8px;
-
-}
-
-.menu-item {
-
-    width: 100%;
-
-    padding: 14px;
-
-    background: transparent;
-
-    color: #cab9d4;
-
-    border: 1px solid transparent;
-
-    border-radius: 10px;
-
-    text-align: left;
-
-    font-size: 13px;
-
-    font-weight: 800;
-
-}
-
-.menu-item:hover {
-
-    background: #30203c;
-
-}
-
-.menu-item.ativo {
-
-    background: linear-gradient(
-        90deg,
-        #54226c,
-        #342043
-    );
-
-    color: white;
-
-    border-color: #82409a;
-
-    box-shadow: inset 3px 0 0 var(--laranja);
-
-}
-
-.sidebar-rodape {
-
-    margin-top: auto;
-
-    padding: 15px;
-
-    background: #21172c;
-
-    border: 1px solid var(--borda);
-
-    border-radius: 12px;
-
-}
-
-.sidebar-rodape strong {
-
-    color: var(--verde);
-
-}
-
-.sidebar-rodape p {
-
-    color: var(--cinza);
-
-    font-size: 11px;
-
-}
-
-/* ==========================================
-   CONTEÚDO
-========================================== */
-
-.conteudo {
-
-    min-width: 0;
-
-}
-
-.topbar {
-
-    display: flex;
-
-    align-items: center;
-    justify-content: space-between;
-
-    flex-wrap: wrap;
-
-    gap: 15px;
-
-    min-height: 90px;
-
-    padding: 20px 30px;
-
-    background: #160f1d;
-
-    border-bottom: 1px solid var(--borda);
-
-}
-
-.topbar small {
-
-    color: #ab97b7;
-
-    font-size: 10px;
-
-    letter-spacing: 1px;
-
-}
-
-.topbar h2 {
-
-    margin: 5px 0 0;
-
-}
-
-.topbar-acoes {
-
-    display: flex;
-
-    flex-wrap: wrap;
-
-    gap: 10px;
-
-}
-
-main {
-
-    max-width: 1500px;
-
-    margin: auto;
-
-    padding: 30px;
-
-}
-
-.aviso {
-
-    margin-bottom: 30px;
-
-    padding: 16px;
-
-    background: #2d1f32;
-
-    border: 1px solid #74466d;
-
-    border-left: 4px solid var(--laranja);
-
-    border-radius: 12px;
-
-    color: #ebd5e6;
-
-    font-size: 12px;
-
-}
-
-.cabecalho-pagina {
-
-    display: flex;
-
-    align-items: center;
-    justify-content: space-between;
-
-    flex-wrap: wrap;
-
-    gap: 20px;
-
-    margin-bottom: 30px;
-
-}
-
-.subtitulo {
-
-    color: var(--roxo-claro);
-
-    font-size: 11px;
-
-    font-weight: 900;
-
-    letter-spacing: 2px;
-
-}
-
-.cabecalho-pagina h1 {
-
-    margin: 12px 0;
-
-    font-size: clamp(30px,3.5vw,46px);
-
-}
-
-.cabecalho-pagina p {
-
-    color: var(--cinza);
-
-    font-size: 14px;
-
-}
-
-/* ==========================================
-   BOTÕES
-========================================== */
-
-.botao {
-
-    display: inline-flex;
-
-    align-items: center;
-    justify-content: center;
-
-    gap: 8px;
-
-    padding: 12px 19px;
-
-    background: #302438;
-
-    color: white;
-
-    border: 1px solid #684b75;
-
-    border-radius: 10px;
-
-    font-size: 13px;
-
-    font-weight: 800;
-
-    text-decoration: none;
-
-}
-
-.botao:hover:not(:disabled) {
-
-    filter: brightness(1.15);
-
-}
-
-.botao-laranja {
-
-    background: var(--laranja);
-
-    color: #211025;
-
-    border-color: var(--laranja);
-
-}
-
-.botao-perigo {
-
-    color: #ffb7b7;
-
-    border-color: #794250;
-
-}
-
-.grupo-botoes {
-
-    display: flex;
-
-    flex-wrap: wrap;
-
-    gap: 10px;
-
-}
-
-/* ==========================================
-   INDICADORES
-========================================== */
-
-.indicadores {
-
-    display: grid;
-
-    grid-template-columns:
-        repeat(4,minmax(0,1fr));
-
-    gap: 15px;
-
-    margin-bottom: 25px;
-
-}
-
-.indicador {
-
-    padding: 23px;
-
-    background: linear-gradient(
-        155deg,
-        #30213b,
-        #201728
-    );
-
-    border: 1px solid #543661;
-
-    border-radius: 16px;
-
-}
-
-.indicador span {
-
-    color: #c9b5d3;
-
-    font-size: 10px;
-
-    font-weight: 900;
-
-    letter-spacing: 1px;
-
-}
-
-.indicador strong {
-
-    display: block;
-
-    margin: 14px 0;
-
-    font-size: 42px;
-
-}
-
-.indicador small {
-
-    color: var(--cinza);
-
-    font-size: 11px;
-
-}
-
-/* ==========================================
-   PAINÉIS
-========================================== */
-
-.painel {
-
-    margin-bottom: 20px;
-
-    padding: 25px;
-
-    background: var(--painel);
-
-    border: 1px solid var(--borda);
-
-    border-radius: 16px;
-
-}
-
-.painel p {
-
-    color: var(--cinza);
-
-    font-size: 13px;
-
-}
-
-.painel-cabecalho {
-
-    display: flex;
-
-    align-items: center;
-    justify-content: space-between;
-
-    gap: 15px;
-
-    margin-bottom: 20px;
-
-}
-
-.painel-cabecalho h2 {
-
-    margin: 0;
-
-}
-
-/* ==========================================
-   TABELAS
-========================================== */
-
-.barra-ferramentas {
-
-    display: flex;
-
-    align-items: center;
-    justify-content: space-between;
-
-    flex-wrap: wrap;
-
-    gap: 15px;
-
-    margin-bottom: 20px;
-
-}
-
-.barra-ferramentas input {
-
-    width: min(350px,100%);
-
-    padding: 12px;
-
-    background: var(--painel-claro);
-
-    color: white;
-
-    border: 1px solid var(--borda);
-
-    border-radius: 10px;
-
-}
-
-.tabela-container {
-
-    overflow-x: auto;
-
-    border: 1px solid var(--borda);
-
-    border-radius: 10px;
-
-}
-
-table {
-
-    width: 100%;
-
-    min-width: 700px;
-
-    border-collapse: collapse;
-
-    text-align: left;
-
-}
-
-th {
-
-    padding: 15px;
-
-    background: var(--painel-claro);
-
-    color: #c7b5d1;
-
-    font-size: 10px;
-
-    letter-spacing: 1px;
-
-}
-
-td {
-
-    padding: 15px;
-
-    border-top: 1px solid var(--borda);
-
-    font-size: 13px;
-
-}
-
-td small {
-
-    display: block;
-
-    margin-top: 5px;
-
-    color: var(--cinza);
-
-}
-
-.produto-celula {
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 12px;
-
-}
-
-.produto-celula img {
-
-    width: 55px;
-    height: 55px;
-
-    object-fit: cover;
-
-    border-radius: 9px;
-
-}
-
-.produto-recente {
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 15px;
-
-    padding: 12px 0;
-
-    border-bottom: 1px solid var(--borda);
-
-}
-
-.produto-recente img {
-
-    width: 55px;
-    height: 55px;
-
-    object-fit: cover;
-
-    border-radius: 9px;
-
-}
-
-.produto-recente-info {
-
-    flex: 1;
-
-}
-
-.produto-recente-info strong {
-
-    display: block;
-
-}
-
-.produto-recente-info span {
-
-    display: block;
-
-    margin-top: 5px;
-
-    color: var(--cinza);
-
-    font-size: 12px;
-
-}
-
-.produto-recente b {
-
-    color: var(--laranja);
-
-}
-
-.botao-pequeno {
-
-    padding: 8px 10px;
-
-    margin: 3px;
-
-    background: #372741;
-
-    color: white;
-
-    border: 1px solid #634972;
-
-    border-radius: 7px;
-
-    font-size: 12px;
-
-}
-
-.botao-excluir {
-
-    color: #ffb7b7;
-
-}
-
-.visivel {
-
-    color: var(--verde);
-
-}
-
-.oculto {
-
-    color: var(--vermelho);
-
-}
-
-.etiqueta {
-
-    display: inline-block;
-
-    padding: 7px 10px;
-
-    background: #3e294b;
-
-    border-radius: 8px;
-
-    font-size: 11px;
-
-}
-
-/* ==========================================
-   MODAIS E FORMULÁRIOS
-========================================== */
-
-.modal {
-
-    width: min(650px,calc(100vw - 24px));
-
-    max-height: 90vh;
-
-    overflow-y: auto;
-
-    padding: 25px;
-
-    background: #21172c;
-
-    color: white;
-
-    border: 1px solid #7d4d91;
-
-    border-radius: 18px;
-
-}
-
-.modal::backdrop {
-
-    background: rgba(0,0,0,0.8);
-
-}
-
-.modal-cabecalho {
-
-    display: flex;
-
-    align-items: center;
-    justify-content: space-between;
-
-    gap: 15px;
-
-    margin-bottom: 25px;
-
-}
-
-.modal-cabecalho h2 {
-
-    margin: 0;
-
-}
-
-.fechar-modal {
-
-    width: 38px;
-    height: 38px;
-
-    background: #382641;
-
-    color: white;
-
-    border: 1px solid var(--borda);
-
-    border-radius: 9px;
-
-    font-size: 24px;
-
-}
-
-.campos {
-
-    display: grid;
-
-    grid-template-columns:
-        repeat(2,minmax(0,1fr));
-
-    gap: 18px;
-
-}
-
-.campo {
-
-    display: flex;
-
-    flex-direction: column;
-
-    gap: 8px;
-
-    color: #e8d7ee;
-
-    font-size: 12px;
-
-    font-weight: 800;
-
-}
-
-.campo-inteiro {
-
-    grid-column: 1 / -1;
-
-}
-
-.campo input,
-.campo textarea,
-.campo select {
-
-    width: 100%;
-
-    padding: 12px;
-
-    background: var(--painel-claro);
-
-    color: white;
-
-    border: 1px solid #6c5177;
-
-    border-radius: 9px;
-
-    outline: none;
-
-}
-
-.campo textarea {
-
-    min-height: 100px;
-
-    resize: vertical;
-
-}
-
-.campo input:focus,
-.campo textarea:focus,
-.campo select:focus {
-
-    border-color: var(--laranja);
-
-}
-
-.checkbox-campo {
-
-    flex-direction: row;
-
-    align-items: center;
-
-}
-
-.checkbox-campo input {
-
-    width: auto;
-
-    accent-color: var(--roxo);
-
-}
-
-.modal-acoes {
-
-    display: flex;
-
-    justify-content: flex-end;
-
-    flex-wrap: wrap;
-
-    gap: 10px;
-
-    margin-top: 25px;
-
-}
-
-/* ==========================================
-   UPLOAD DAS FOTOGRAFIAS
-========================================== */
-
-.zona-upload {
-
-    display: flex;
-
-    flex-direction: column;
-
-    align-items: center;
-    justify-content: center;
-
-    gap: 12px;
-
-    min-height: 220px;
-
-    padding: 25px;
-
-    background: #261b30;
-
-    border: 2px dashed #8950ab;
-
-    border-radius: 16px;
-
-    text-align: center;
-
-    cursor: pointer;
-
-}
-
-.zona-upload:hover,
-.zona-upload.arrastando {
-
-    background: #432352;
-
-    border-color: var(--laranja);
-
-}
-
-.zona-upload:focus-visible {
-
-    outline: 3px solid var(--laranja);
-
-}
-
-.zona-upload.enviando {
-
-    opacity: 0.6;
-
-    pointer-events: none;
-
-}
-
-.icone-upload {
-
-    display: flex;
-
-    align-items: center;
-    justify-content: center;
-
-    width: 65px;
-    height: 65px;
-
-    background: #4c2b61;
-
-    color: var(--laranja);
-
-    border-radius: 50%;
-
-    font-size: 35px;
-
-}
-
-.zona-upload span,
-.zona-upload small {
-
-    color: var(--cinza);
-
-    font-size: 12px;
-
-}
-
-.botao-escolher-foto {
-
-    padding: 12px 20px;
-
-    background: var(--laranja);
-
-    color: #211025;
-
-    border-radius: 10px;
-
-    font-size: 13px;
-
-    font-weight: 900;
-
-}
-
-.preview-container {
-
-    margin-top: 20px;
-
-    padding: 15px;
-
-    background: #1b1323;
-
-    border: 1px solid #63466d;
-
-    border-radius: 13px;
-
-}
-
-#preview-foto {
-
-    display: block;
-
-    width: 100%;
-    max-width: 350px;
-    max-height: 350px;
-
-    margin: auto;
-
-    object-fit: contain;
-
-    border-radius: 10px;
-
-}
-
-.preview-informacoes {
-
-    display: flex;
-
-    align-items: center;
-    justify-content: space-between;
-
-    flex-wrap: wrap;
-
-    gap: 12px;
-
-    margin-top: 15px;
-
-}
-
-.status-foto {
-
-    margin-top: 12px;
-
-    color: var(--verde);
-
-    font-size: 12px;
-
-}
-
-.status-foto.erro {
-
-    color: var(--vermelho);
-
-}
-
-/* ==========================================
-   SINCRONIZAÇÃO
-========================================== */
-
-.sync-empresa {
-
-    padding: 20px;
-
-    background: #191221;
-
-    border: 1px solid var(--borda);
-
-    border-radius: 12px;
-
-}
-
-#status-sync {
-
-    padding: 12px;
-
-    background: #252032;
-
-    border: 1px solid #4e3a58;
-
-    border-radius: 9px;
-
-    color: var(--verde);
-
-}
-
-/* ==========================================
-   NOTIFICAÇÕES
-========================================== */
-
-.notificacao {
-
-    position: fixed;
-
-    left: 50%;
-    bottom: 25px;
-
-    z-index: 999;
-
-    max-width: calc(100vw - 30px);
-
-    padding: 15px 22px;
-
-    background: var(--laranja);
-
-    color: #261429;
-
-    border-radius: 11px;
-
-    font-size: 13px;
-
-    font-weight: 900;
-
-    opacity: 0;
-
-    pointer-events: none;
-
-    transform: translate(-50%,100px);
-
-    transition: 0.3s;
-
-}
-
-.notificacao.visivel {
-
-    opacity: 1;
-
-    transform: translate(-50%,0);
-
-}
-
-.notificacao.erro {
-
-    background: #ffb2b2;
-
-    color: #5d1722;
-
-}
-
-/* ==========================================
-   RESPONSIVIDADE
-========================================== */
-
-@media (max-width:1100px) {
-
-    .app {
-
-        grid-template-columns:
-            205px minmax(0,1fr);
-
-    }
-
-    .indicadores {
-
-        grid-template-columns:
-            repeat(2,minmax(0,1fr));
-
-    }
-
-    .sidebar .logo-empresa {
-
-        width: 155px;
-        height: 155px;
-
-    }
-
-}
-
-@media (max-width:720px) {
-
-    .app {
-
-        display: block;
-
-    }
-
-    .sidebar {
-
-        min-height: auto;
-
-        padding: 15px;
-
-    }
-
-    .sidebar .logo-empresa {
-
-        width: 115px;
-        height: 115px;
-
-    }
-
-    .sidebar-rodape,
-    .menu-titulo {
-
-        display: none;
-
-    }
-
-    .menu {
-
-        flex-direction: row;
-
-        overflow-x: auto;
-
-    }
-
-    .menu-item {
-
-        min-width: max-content;
-
-        padding: 12px;
-
-        white-space: nowrap;
-
-    }
-
-    .topbar {
-
-        padding: 15px;
-
-    }
-
-    main {
-
-        padding: 20px 15px;
-
-    }
-
-    .indicadores {
-
-        grid-template-columns: 1fr 1fr;
-
-    }
-
-    .indicador {
-
-        padding: 15px;
-
-    }
-
-    .indicador strong {
-
-        font-size: 32px;
-
-    }
-
-    .painel {
-
-        padding: 16px;
-
-    }
-
-    .cabecalho-pagina {
-
-        align-items: flex-start;
-
-    }
-
-    .campos {
-
-        grid-template-columns: 1fr;
-
-    }
-
-    .campo-inteiro {
-
-        grid-column: 1 / -1;
-
-    }
-
-    .modal {
-
-        padding: 18px;
-
-    }
-
-    .modal-acoes {
-
-        flex-direction: column;
-
-    }
-
-    .modal-acoes .botao {
-
-        width: 100%;
-
-    }
-
-}
-
-@media (prefers-reduced-motion:reduce) {
-
-    * {
-
-        animation-duration: 0.01ms !important;
-
-        transition-duration: 0.01ms !important;
-
-    }
-
-}
-
-</style>
-
-<!-- ==========================================
-     BIBLIOTECA SUPABASE
-========================================== -->
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- =====================================
+         3. CATÁLOGO LOCAL
+
+         Contém:
+         - Configurações do catálogo;
+         - Estrutura dos produtos;
+         - Funções auxiliares.
+    ===================================== -->
+
+    <script
+        src="catalogo.js"
+        defer
+    ></script>
+
+
+    <!-- =====================================
+         4. PAINEL ADMINISTRATIVO
+
+         Contém:
+         - Login e logout;
+         - Cadastro de produtos;
+         - Edição e exclusão;
+         - Estoque;
+         - Pedidos;
+         - Indicadores;
+         - Backup.
+    ===================================== -->
+
+    <script
+        src="admin.js"
+        defer
+    ></script>
+
+
+    <!-- =====================================
+         5. FOTOGRAFIAS DOS PRODUTOS
+
+         Contém:
+         - Arrastar e soltar;
+         - Seleção do computador;
+         - Colar imagens;
+         - Pré-visualização;
+         - Upload para o Supabase.
+
+         Bucket: projetos
+         Pasta: catalogo
+    ===================================== -->
+
+    <script
+        src="fotos-empresa.js"
+        defer
+    ></script>
+
+
+    <!-- =====================================
+         6. SINCRONIZAÇÃO DO CATÁLOGO
+
+         Contém:
+         - Recarregamento do catálogo;
+         - Verificação de atualizações;
+         - Conexão Supabase Realtime.
+    ===================================== -->
+
+    <script
+        src="sync-empresa.js"
+        defer
+    ></script>
 
 </head>
 
 
-<body>
+<body data-area="empresa">
 
 
-<!-- ==========================================
-     TELA DE LOGIN
-========================================== -->
+    <!-- =====================================
+         PAINEL ADMINISTRATIVO
+    ===================================== -->
 
-<section class="tela-login" id="tela-login">
+    <div
+        class="app"
+        id="app"
+        hidden
+    >
 
-    <form class="form-login" id="form-login">
 
-        <img
-            src="assets/logo-criaitor3d.jpg"
-            alt="CriAItor 3D"
-            class="logo-empresa"
-            draggable="false"
-        >
+        <!-- =================================
+             MENU LATERAL
+        ================================= -->
 
-        <h2>Painel administrativo</h2>
+        <aside class="sidebar">
 
-        <p>
-            Entre com sua conta administrativa
-            para gerenciar a CriAItor 3D.
-        </p>
 
-        <label for="email-login">E-mail</label>
+            <!-- LOGO OFICIAL -->
 
-        <input
-            type="email"
-            id="email-login"
-            autocomplete="username"
-            required
-        >
-
-        <label for="senha-login">Senha</label>
-
-        <input
-            type="password"
-            id="senha-login"
-            autocomplete="current-password"
-            required
-        >
-
-        <button type="submit" id="botao-login">
-            Entrar no painel
-        </button>
-
-        <p id="mensagem-login" role="status"></p>
-
-    </form>
-
-</section>
-
-
-<!-- ==========================================
-     PAINEL PRINCIPAL
-========================================== -->
-
-<div class="app" id="app" hidden>
-
-
-<!-- MENU LATERAL -->
-
-<aside class="sidebar">
-
-    <div class="marca">
-
-        <img
-            src="assets/logo-criaitor3d.jpg"
-            alt="CriAItor 3D"
-            class="logo-empresa"
-            draggable="false"
-        >
-
-    </div>
-
-    <p class="menu-titulo">
-        MENU PRINCIPAL
-    </p>
-
-    <nav class="menu">
-
-        <button
-            type="button"
-            class="menu-item ativo"
-            data-pagina="dashboard"
-        >
-            ◈ Visão geral
-        </button>
-
-        <button
-            type="button"
-            class="menu-item"
-            data-pagina="produtos"
-        >
-            ▦ Produtos
-        </button>
-
-        <button
-            type="button"
-            class="menu-item"
-            data-pagina="pedidos"
-        >
-            ▤ Pedidos
-        </button>
-
-        <button
-            type="button"
-            class="menu-item"
-            data-pagina="publicar"
-        >
-            ↥ Sincronização
-        </button>
-
-    </nav>
-
-    <div class="sidebar-rodape">
-
-        <strong>● CriAItor 3D</strong>
-
-        <p>
-            Painel administrativo integrado
-            ao Supabase.
-        </p>
-
-    </div>
-
-</aside>
-
-
-<!-- CONTEÚDO -->
-
-<div class="conteudo">
-
-
-<header class="topbar">
-
-    <div>
-
-        <small>
-            CRIAITOR 3D / ADMINISTRAÇÃO
-        </small>
-
-        <h2 id="titulo-pagina">
-            Visão geral
-        </h2>
-
-    </div>
-
-    <div class="topbar-acoes">
-
-        <button
-            type="button"
-            class="botao botao-laranja"
-            id="novo-produto-topo"
-        >
-            + Novo produto
-        </button>
-
-        <button
-            type="button"
-            class="botao"
-            id="botao-sair"
-        >
-            Sair
-        </button>
-
-    </div>
-
-</header>
-
-
-<main>
-
-<div class="aviso">
-
-    Os produtos e fotografias são armazenados
-    no Supabase.
-
-    A logo oficial é carregada diretamente
-    da pasta assets do GitHub.
-
-    Os pedidos registrados neste painel
-    são armazenados localmente no navegador.
-
-</div>
-
-
-<!-- ==========================================
-     DASHBOARD
-========================================== -->
-
-<section
-    class="pagina ativa"
-    id="dashboard"
->
-
-    <div class="cabecalho-pagina">
-
-        <div>
-
-            <span class="subtitulo">
-                SEU ESPAÇO DE CRIAÇÃO
-            </span>
-
-            <h1>
-                Bem-vindo ao atelier.
-            </h1>
-
-            <p>
-                Gerencie produtos, estoque
-                e pedidos da CriAItor 3D.
-            </p>
-
-        </div>
-
-        <span id="data-atual"></span>
-
-    </div>
-
-
-    <div class="indicadores">
-
-        <div class="indicador">
-
-            <span>PRODUTOS CADASTRADOS</span>
-
-            <strong id="total-produtos">0</strong>
-
-            <small>Produtos no catálogo</small>
-
-        </div>
-
-
-        <div class="indicador">
-
-            <span>PRODUTOS VISÍVEIS</span>
-
-            <strong id="total-visiveis">0</strong>
-
-            <small>Disponíveis na loja</small>
-
-        </div>
-
-
-        <div class="indicador">
-
-            <span>UNIDADES EM ESTOQUE</span>
-
-            <strong id="total-estoque">0</strong>
-
-            <small>Estoque informado</small>
-
-        </div>
-
-
-        <div class="indicador">
-
-            <span>PEDIDOS EM ABERTO</span>
-
-            <strong id="total-pedidos">0</strong>
-
-            <small>Pedidos registrados neste navegador</small>
-
-        </div>
-
-    </div>
-
-
-    <div class="painel">
-
-        <div class="painel-cabecalho">
-
-            <h2>Suas criações</h2>
-
-            <button
-                type="button"
-                class="botao"
-                data-ir="produtos"
-            >
-                Ver produtos →
-            </button>
-
-        </div>
-
-        <div id="produtos-recentes"></div>
-
-    </div>
-
-</section>
-
-
-<!-- ==========================================
-     PRODUTOS
-========================================== -->
-
-<section
-    class="pagina"
-    id="produtos"
-    hidden
->
-
-    <div class="cabecalho-pagina">
-
-        <div>
-
-            <span class="subtitulo">
-                CATÁLOGO DE IMPRESSÃO 3D
-            </span>
-
-            <h1>Gerenciar produtos</h1>
-
-            <p>
-                Cadastre novas criações,
-                fotografias, preços e estoque.
-            </p>
-
-        </div>
-
-        <button
-            type="button"
-            class="botao botao-laranja"
-            id="novo-produto"
-        >
-            + Adicionar produto
-        </button>
-
-    </div>
-
-
-    <div class="painel">
-
-        <div class="barra-ferramentas">
-
-            <input
-                type="search"
-                id="buscar-produto"
-                placeholder="Buscar produto..."
-            >
-
-            <span id="contador-produtos">
-                0 produtos
-            </span>
-
-        </div>
-
-
-        <div class="tabela-container">
-
-            <table>
-
-                <thead>
-
-                    <tr>
-
-                        <th>PRODUTO</th>
-                        <th>CATEGORIA</th>
-                        <th>PREÇO</th>
-                        <th>ESTOQUE</th>
-                        <th>VISIBILIDADE</th>
-                        <th>AÇÕES</th>
-
-                    </tr>
-
-                </thead>
-
-                <tbody id="tabela-produtos"></tbody>
-
-            </table>
-
-        </div>
-
-    </div>
-
-</section>
-
-
-<!-- ==========================================
-     PEDIDOS
-========================================== -->
-
-<section
-    class="pagina"
-    id="pedidos"
-    hidden
->
-
-    <div class="cabecalho-pagina">
-
-        <div>
-
-            <span class="subtitulo">
-                ORGANIZAÇÃO INTERNA
-            </span>
-
-            <h1>Controle de pedidos</h1>
-
-            <p>
-                Registre manualmente os pedidos
-                recebidos dos clientes.
-            </p>
-
-        </div>
-
-        <div class="grupo-botoes">
-
-            <button
-                type="button"
-                class="botao"
-                id="exportar-pedidos"
-            >
-                Exportar CSV
-            </button>
-
-            <button
-                type="button"
-                class="botao botao-laranja"
-                id="novo-pedido"
-            >
-                + Registrar pedido
-            </button>
-
-        </div>
-
-    </div>
-
-
-    <div class="painel">
-
-        <div class="tabela-container">
-
-            <table>
-
-                <thead>
-
-                    <tr>
-
-                        <th>CLIENTE</th>
-                        <th>DESCRIÇÃO</th>
-                        <th>VALOR</th>
-                        <th>STATUS</th>
-                        <th>DATA</th>
-                        <th>AÇÕES</th>
-
-                    </tr>
-
-                </thead>
-
-                <tbody id="tabela-pedidos"></tbody>
-
-            </table>
-
-        </div>
-
-    </div>
-
-</section>
-
-
-<!-- ==========================================
-     SINCRONIZAÇÃO
-========================================== -->
-
-<section
-    class="pagina"
-    id="publicar"
-    hidden
->
-
-    <div class="cabecalho-pagina">
-
-        <div>
-
-            <span class="subtitulo">
-                LOJA DOS CLIENTES
-            </span>
-
-            <h1>Catálogo conectado</h1>
-
-            <p>
-                Acompanhe o catálogo compartilhado
-                pelo Supabase.
-            </p>
-
-        </div>
-
-    </div>
-
-
-    <div class="painel">
-
-        <div class="sync-empresa">
-
-            <h2>Sincronização com Supabase</h2>
-
-            <p id="status-sync" role="status">
-                Aguardando conexão...
-            </p>
-
-            <p>
-                Versão do catálogo:
-                <strong id="versao-sync">—</strong>
-            </p>
-
-            <p>
-                Última atualização:
-                <strong id="ultima-sync">—</strong>
-            </p>
-
-            <button
-                type="button"
-                class="botao botao-laranja"
-                id="recarregar-catalogo"
-            >
-                Recarregar catálogo da nuvem
-            </button>
-
-        </div>
-
-    </div>
-
-
-    <div class="painel">
-
-        <h2>Exportar catálogo</h2>
-
-        <p>
-            Faça uma cópia dos produtos cadastrados
-            em formato JavaScript.
-        </p>
-
-        <button
-            type="button"
-            class="botao"
-            id="exportar-catalogo"
-        >
-            Exportar catalogo.js
-        </button>
-
-    </div>
-
-
-    <div class="painel">
-
-        <h2>Backup dos dados</h2>
-
-        <p>
-            Exporte uma cópia dos produtos e pedidos.
-            A restauração altera somente os pedidos
-            locais, sem substituir o catálogo na nuvem.
-        </p>
-
-        <div class="grupo-botoes">
-
-            <button
-                type="button"
-                class="botao"
-                id="baixar-backup"
-            >
-                Exportar backup
-            </button>
-
-            <label class="botao">
-
-                Restaurar pedidos
-
-                <input
-                    type="file"
-                    id="restaurar-backup"
-                    accept=".json,application/json"
-                    hidden
-                >
-
-            </label>
-
-        </div>
-
-    </div>
-
-</section>
-
-
-</main>
-
-</div>
-
-</div>
-
-
-<!-- ==========================================
-     CADASTRO DE PRODUTOS
-========================================== -->
-
-<dialog class="modal" id="modal-produto">
-
-<form id="form-produto">
-
-    <div class="modal-cabecalho">
-
-        <h2 id="titulo-modal-produto">
-            Novo produto
-        </h2>
-
-        <button
-            type="button"
-            class="fechar-modal"
-            data-fechar="modal-produto"
-        >
-            ×
-        </button>
-
-    </div>
-
-
-    <div class="campos">
-
-
-        <label class="campo campo-inteiro">
-
-            Nome do produto
-
-            <input
-                name="nome"
-                type="text"
-                maxlength="100"
-                required
-            >
-
-        </label>
-
-
-        <label class="campo">
-
-            Categoria
-
-            <input
-                name="categoria"
-                type="text"
-                maxlength="45"
-                required
-            >
-
-        </label>
-
-
-        <label class="campo">
-
-            Preço (R$)
-
-            <input
-                name="preco"
-                type="number"
-                min="0"
-                step="0.01"
-                required
-            >
-
-        </label>
-
-
-        <label class="campo">
-
-            Estoque
-
-            <input
-                name="estoque"
-                type="number"
-                min="0"
-                step="1"
-                value="0"
-                required
-            >
-
-        </label>
-
-
-        <label class="campo">
-
-            Prazo de produção
-
-            <input
-                name="prazo"
-                type="text"
-                value="Produção sob encomenda"
-            >
-
-        </label>
-
-
-        <!-- UPLOAD DE FOTOGRAFIA -->
-
-        <div class="campo campo-inteiro">
-
-            Fotografia do produto
-
-            <div
-                class="zona-upload"
-                id="zona-upload"
-                role="button"
-                tabindex="0"
-                aria-label="Selecionar fotografia"
-            >
-
-                <div class="icone-upload">
-                    ⬆
-                </div>
-
-                <strong>
-                    Arraste sua fotografia para cá
-                </strong>
-
-                <span>
-                    Ou cole uma imagem usando Ctrl + V
-                </span>
-
-                <span class="botao-escolher-foto">
-                    Escolher imagem
-                </span>
-
-                <small>
-                    JPG, PNG ou WEBP — máximo de 5 MB
-                </small>
-
-            </div>
-
-
-            <input
-                type="file"
-                id="input-foto"
-                accept="image/jpeg,image/png,image/webp"
-                hidden
-            >
-
-
-            <div
-                class="preview-container"
-                id="preview-container"
-                hidden
-            >
+            <div class="marca">
 
                 <img
-                    id="preview-foto"
-                    alt="Pré-visualização do produto"
+                    src="assets/logo-criaitor3d.jpg"
+                    alt="CriAItor 3D"
+                    class="logo-empresa"
+                    draggable="false"
                 >
 
-                <div class="preview-informacoes">
+            </div>
 
-                    <span id="nome-foto"></span>
 
-                    <button
-                        type="button"
-                        class="botao"
-                        id="trocar-foto"
-                    >
-                        Trocar fotografia
-                    </button>
+            <!-- MENU PRINCIPAL -->
 
-                </div>
+            <p class="menu-titulo">
+                MENU PRINCIPAL
+            </p>
+
+
+            <nav
+                class="menu"
+                aria-label="Menu administrativo"
+            >
+
+
+                <button
+                    type="button"
+                    class="menu-item ativo"
+                    data-pagina="dashboard"
+                >
+
+                    ◈ Visão geral
+
+                </button>
+
+
+                <button
+                    type="button"
+                    class="menu-item"
+                    data-pagina="produtos"
+                >
+
+                    ▦ Produtos
+
+                </button>
+
+
+                <button
+                    type="button"
+                    class="menu-item"
+                    data-pagina="pedidos"
+                >
+
+                    ▤ Pedidos
+
+                </button>
+
+
+                <button
+                    type="button"
+                    class="menu-item"
+                    data-pagina="publicar"
+                >
+
+                    ↥ Sincronização
+
+                </button>
+
+
+            </nav>
+
+
+            <!-- RODAPÉ DO MENU -->
+
+            <div class="sidebar-rodape">
+
+                <strong>
+                    ● CriAItor 3D
+                </strong>
+
+
+                <p>
+
+                    Painel administrativo
+                    conectado ao catálogo
+                    da loja virtual.
+
+                </p>
 
             </div>
 
 
-            <p
-                class="status-foto"
-                id="status-foto"
-                role="status"
-            ></p>
+        </aside>
 
-            <input
-                type="hidden"
-                name="imagem"
-            >
 
-        </div>
+        <!-- =================================
+             CONTEÚDO DO PAINEL
+        ================================= -->
 
+        <div class="conteudo">
 
-        <label class="campo campo-inteiro">
 
-            Descrição
+            <!-- CABEÇALHO SUPERIOR -->
 
-            <textarea
-                name="descricao"
-                rows="3"
-                maxlength="300"
-            ></textarea>
+            <header class="topbar">
 
-        </label>
 
+                <div>
 
-        <label class="campo checkbox-campo">
+                    <small>
 
-            <input
-                name="disponivel"
-                type="checkbox"
-                checked
-            >
+                        CRIAITOR 3D / ADMINISTRAÇÃO
 
-            Mostrar produto na loja
+                    </small>
 
-        </label>
 
+                    <h2 id="titulo-pagina">
 
-        <label class="campo checkbox-campo">
+                        Visão geral
 
-            <input
-                name="destaque"
-                type="checkbox"
-            >
-
-            Produto em destaque
-
-        </label>
-
-    </div>
-
-
-    <div class="modal-acoes">
-
-        <button
-            type="button"
-            class="botao"
-            data-fechar="modal-produto"
-        >
-            Cancelar
-        </button>
-
-        <button
-            type="submit"
-            class="botao botao-laranja"
-            id="salvar-produto"
-        >
-            Salvar produto
-        </button>
-
-    </div>
-
-</form>
-
-</dialog>
-
-
-<!-- ==========================================
-     CADASTRO DE PEDIDOS
-========================================== -->
-
-<dialog class="modal" id="modal-pedido">
-
-<form id="form-pedido">
-
-    <div class="modal-cabecalho">
-
-        <h2>Registrar pedido</h2>
-
-        <button
-            type="button"
-            class="fechar-modal"
-            data-fechar="modal-pedido"
-        >
-            ×
-        </button>
-
-    </div>
-
-
-    <div class="campos">
-
-
-        <label class="campo">
-
-            Nome do cliente
-
-            <input
-                name="cliente"
-                type="text"
-                required
-            >
-
-        </label>
-
-
-        <label class="campo">
-
-            Contato
-
-            <input
-                name="contato"
-                type="text"
-            >
-
-        </label>
-
-
-        <label class="campo campo-inteiro">
-
-            Produtos solicitados
-
-            <textarea
-                name="itens"
-                required
-            ></textarea>
-
-        </label>
-
-
-        <label class="campo">
-
-            Valor (R$)
-
-            <input
-                name="valor"
-                type="number"
-                min="0"
-                step="0.01"
-                required
-            >
-
-        </label>
-
-
-        <label class="campo">
-
-            Status
-
-            <select name="status">
-
-                <option value="Novo">
-                    Novo
-                </option>
-
-                <option value="Em produção">
-                    Em produção
-                </option>
-
-                <option value="Pronto">
-                    Pronto
-                </option>
-
-                <option value="Entregue">
-                    Entregue
-                </option>
-
-                <option value="Cancelado">
-                    Cancelado
-                </option>
-
-            </select>
-
-        </label>
-
-    </div>
-
-
-    <div class="modal-acoes">
-
-        <button
-            type="button"
-            class="botao"
-            data-fechar="modal-pedido"
-        >
-            Cancelar
-        </button>
-
-        <button
-            type="submit"
-            class="botao botao-laranja"
-        >
-            Salvar pedido
-        </button>
-
-    </div>
-
-</form>
-
-</dialog>
-
-
-<!-- NOTIFICAÇÕES -->
-
-<div
-    class="notificacao"
-    id="notificacao"
-    role="status"
-    aria-live="polite"
-></div>
-
-
-<!-- ==========================================
-     JAVASCRIPT INTEGRADO
-========================================== -->
-
-<script>
-
-"use strict";
-
-/*
-==========================================
-CRIAITOR 3D
-PAINEL ADMINISTRATIVO INTEGRADO
-==========================================
-
-Este código reúne:
-
-- Configuração Supabase
-- Autenticação administrativa
-- Catálogo de produtos
-- Upload de fotografias
-- Controle de estoque
-- Pedidos locais
-- Sincronização
-- Backup e exportação
-
-==========================================
-*/
-
-
-// ==========================================
-// 1. CONFIGURAÇÃO SUPABASE
-// ==========================================
-
-const SUPABASE_URL =
-    "https://odmshtzmvtgkuxnysqor.supabase.co";
-
-const SUPABASE_PUBLIC_KEY =
-    "sb_publishable_iGeAejP8oNb0hUy7FhThIQ_MMbzZV2c";
-
-const ADMIN_UID =
-    "99d25baa-5916-4c09-86cb-14e33b887752";
-
-
-const CONFIG = {
-
-    tabela: "catalogo",
-
-    registro: 1,
-
-    bucket: "projetos",
-
-    pasta: "catalogo",
-
-    tamanhoMaximo: 5 * 1024 * 1024
-
-};
-
-
-// Cliente compartilhado.
-
-let sb = null;
-
-
-// ==========================================
-// 2. ELEMENTOS E ESTADO
-// ==========================================
-
-const $ = seletor =>
-    document.querySelector(seletor);
-
-const $$ = seletor =>
-    Array.from(document.querySelectorAll(seletor));
-
-
-const estado = {
-
-    usuario: null,
-
-    produtos: [],
-
-    versao: 0,
-
-    pedidos: [],
-
-    produtoEditando: null,
-
-    pedidoEditando: null,
-
-    arquivoFoto: null,
-
-    previewURL: null,
-
-    salvando: false,
-
-    carregando: false,
-
-    atualizacaoPendente: false,
-
-    realtime: null
-
-};
-
-
-// ==========================================
-// 3. FUNÇÕES AUXILIARES
-// ==========================================
-
-function escapar(valor) {
-
-    return String(valor ?? "")
-
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#39;");
-
-}
-
-
-function dinheiro(valor) {
-
-    return new Intl.NumberFormat(
-
-        "pt-BR",
-
-        {
-            style: "currency",
-            currency: "BRL"
-        }
-
-    ).format(Number(valor) || 0);
-
-}
-
-
-function numero(valor) {
-
-    const n = Number(valor);
-
-    return Number.isFinite(n) ? n : 0;
-
-}
-
-
-function criarID() {
-
-    return crypto.randomUUID();
-
-}
-
-
-function imagemSegura(valor) {
-
-    const endereco = String(valor || "").trim();
-
-    if (
-
-        endereco.startsWith("https://") ||
-
-        endereco.startsWith("assets/")
-
-    ) {
-
-        return endereco;
-
-    }
-
-    return "";
-
-}
-
-
-function formatarData(valor) {
-
-    const data = new Date(valor);
-
-    return Number.isNaN(data.getTime())
-
-        ? "—"
-
-        : data.toLocaleDateString("pt-BR");
-
-}
-
-
-// ==========================================
-// 4. NOTIFICAÇÕES
-// ==========================================
-
-let timerNotificacao;
-
-
-function avisar(mensagem, erro = false) {
-
-    const elemento = $("#notificacao");
-
-    elemento.textContent = mensagem;
-
-    elemento.classList.toggle("erro", erro);
-
-    elemento.classList.add("visivel");
-
-
-    clearTimeout(timerNotificacao);
-
-
-    timerNotificacao = setTimeout(() => {
-
-        elemento.classList.remove("visivel");
-
-    }, 4500);
-
-}
-
-
-// ==========================================
-// 5. AUTENTICAÇÃO
-// ==========================================
-
-async function obterAdministrador() {
-
-    const { data, error } =
-        await sb.auth.getUser();
-
-
-    if (error || !data.user) {
-
-        throw new Error(
-
-            "Sua sessão expirou. Faça login novamente."
-
-        );
-
-    }
-
-
-    if (data.user.id !== ADMIN_UID) {
-
-        throw new Error(
-
-            "Esta conta não possui acesso administrativo."
-
-        );
-
-    }
-
-
-    return data.user;
-
-}
-
-
-function mostrarLogin() {
-
-    $("#app").hidden = true;
-
-    $("#tela-login").hidden = false;
-
-    estado.usuario = null;
-
-    pararRealtime();
-
-}
-
-
-async function entrarPainel() {
-
-    const usuario = await obterAdministrador();
-
-    estado.usuario = usuario;
-
-
-    // Carregar dados antes de exibir o painel.
-
-    await carregarCatalogo();
-
-    carregarPedidos();
-
-
-    $("#tela-login").hidden = true;
-
-    $("#app").hidden = false;
-
-
-    abrirPagina("dashboard");
-
-    atualizarPainel();
-
-    iniciarRealtime();
-
-}
-
-
-async function realizarLogin(evento) {
-
-    evento.preventDefault();
-
-
-    const botao = $("#botao-login");
-
-    const mensagem = $("#mensagem-login");
-
-
-    botao.disabled = true;
-
-    mensagem.textContent = "Verificando acesso...";
-
-
-    try {
-
-        const email =
-            $("#email-login").value.trim();
-
-        const senha =
-            $("#senha-login").value;
-
-
-        const { data, error } =
-            await sb.auth.signInWithPassword({
-
-                email,
-
-                password: senha
-
-            });
-
-
-        if (error) {
-
-            throw error;
-
-        }
-
-
-        if (data.user?.id !== ADMIN_UID) {
-
-            await sb.auth.signOut();
-
-            throw new Error(
-
-                "Conta não autorizada."
-
-            );
-
-        }
-
-
-        $("#senha-login").value = "";
-
-
-        await entrarPainel();
-
-
-    } catch (erro) {
-
-        console.error(erro);
-
-        mensagem.textContent = erro.message;
-
-    } finally {
-
-        botao.disabled = false;
-
-    }
-
-}
-
-
-async function sairPainel() {
-
-    try {
-
-        await sb.auth.signOut();
-
-    } finally {
-
-        mostrarLogin();
-
-    }
-
-}
-
-
-// ==========================================
-// 6. CATÁLOGO SUPABASE
-// ==========================================
-
-async function carregarCatalogo() {
-
-    if (estado.carregando) {
-
-        return;
-
-    }
-
-
-    estado.carregando = true;
-
-
-    try {
-
-        const { data, error } = await sb
-
-            .from(CONFIG.tabela)
-
-            .select("id, produtos, versao")
-
-            .eq("id", CONFIG.registro)
-
-            .single();
-
-
-        if (error) {
-
-            throw error;
-
-        }
-
-
-        if (!Array.isArray(data.produtos)) {
-
-            throw new Error(
-
-                "A coluna produtos não contém uma lista JSON."
-
-            );
-
-        }
-
-
-        estado.produtos = data.produtos;
-
-        estado.versao = Number(data.versao) || 0;
-
-        estado.atualizacaoPendente = false;
-
-
-        atualizarPainel();
-
-        atualizarStatusSync(
-
-            "Catálogo sincronizado com o Supabase."
-
-        );
-
-
-    } finally {
-
-        estado.carregando = false;
-
-    }
-
-}
-
-
-// ==========================================
-// 7. SALVAR CATÁLOGO
-// ==========================================
-
-async function salvarCatalogo(novosProdutos) {
-
-    if (estado.salvando) {
-
-        throw new Error(
-
-            "Já existe um salvamento em andamento."
-
-        );
-
-    }
-
-
-    await obterAdministrador();
-
-
-    estado.salvando = true;
-
-
-    try {
-
-        const novaVersao = estado.versao + 1;
-
-
-        const { data, error } = await sb
-
-            .from(CONFIG.tabela)
-
-            .update({
-
-                produtos: novosProdutos,
-
-                versao: novaVersao
-
-            })
-
-            .eq("id", CONFIG.registro)
-
-            .eq("versao", estado.versao)
-
-            .select("produtos, versao");
-
-
-        if (error) {
-
-            throw error;
-
-        }
-
-
-        if (!data || data.length === 0) {
-
-            throw new Error(
-
-                "O catálogo foi alterado em outra sessão. " +
-
-                "Recarregue os produtos antes de salvar."
-
-            );
-
-        }
-
-
-        estado.produtos = data[0].produtos;
-
-        estado.versao = Number(data[0].versao);
-
-
-        atualizarPainel();
-
-
-        return data[0];
-
-
-    } finally {
-
-        estado.salvando = false;
-
-    }
-
-}
-
-
-// ==========================================
-// 8. NAVEGAÇÃO
-// ==========================================
-
-function abrirPagina(nome) {
-
-    $$(".pagina").forEach(pagina => {
-
-        const ativa = pagina.id === nome;
-
-        pagina.hidden = !ativa;
-
-        pagina.classList.toggle(
-            "ativa",
-            ativa
-        );
-
-    });
-
-
-    $$("[data-pagina]").forEach(botao => {
-
-        botao.classList.toggle(
-
-            "ativo",
-
-            botao.dataset.pagina === nome
-
-        );
-
-    });
-
-
-    const titulos = {
-
-        dashboard: "Visão geral",
-
-        produtos: "Produtos",
-
-        pedidos: "Pedidos",
-
-        publicar: "Sincronização"
-
-    };
-
-
-    $("#titulo-pagina").textContent =
-        titulos[nome] || nome;
-
-}
-
-
-// ==========================================
-// 9. INDICADORES
-// ==========================================
-
-function atualizarIndicadores() {
-
-    $("#total-produtos").textContent =
-        estado.produtos.length;
-
-
-    $("#total-visiveis").textContent =
-
-        estado.produtos.filter(
-
-            p => p.disponivel !== false
-
-        ).length;
-
-
-    $("#total-estoque").textContent =
-
-        estado.produtos.reduce(
-
-            (total,p) =>
-                total + numero(p.estoque),
-
-            0
-
-        );
-
-
-    $("#total-pedidos").textContent =
-
-        estado.pedidos.filter(
-
-            p => !["Entregue","Cancelado"]
-                .includes(p.status)
-
-        ).length;
-
-}
-
-
-// ==========================================
-// 10. PRODUTOS RECENTES
-// ==========================================
-
-function renderizarRecentes() {
-
-    const container = $("#produtos-recentes");
-
-    const produtos =
-        estado.produtos.slice(-5).reverse();
-
-
-    if (!produtos.length) {
-
-        container.textContent =
-            "Nenhum produto cadastrado.";
-
-        return;
-
-    }
-
-
-    container.innerHTML = produtos.map(p => {
-
-        const imagem = imagemSegura(p.imagem);
-
-
-        return `
-
-            <div class="produto-recente">
-
-                ${imagem ? `
-
-                    <img
-                        src="${escapar(imagem)}"
-                        alt=""
-                        loading="lazy"
-                    >
-
-                ` : ""}
-
-                <div class="produto-recente-info">
-
-                    <strong>
-                        ${escapar(p.nome)}
-                    </strong>
-
-                    <span>
-                        ${escapar(p.categoria)}
-                    </span>
+                    </h2>
 
                 </div>
 
-                <b>
-                    ${dinheiro(p.preco)}
-                </b>
 
-            </div>
+                <button
+                    type="button"
+                    class="botao botao-laranja"
+                    id="novo-produto-topo"
+                >
 
-        `;
+                    + Novo produto
 
-    }).join("");
-
-}
-
-
-// ==========================================
-// 11. TABELA DE PRODUTOS
-// ==========================================
-
-function renderizarProdutos() {
-
-    const busca =
-
-        $("#buscar-produto")
-            .value.trim().toLowerCase();
+                </button>
 
 
-    const produtos = estado.produtos.filter(p => {
-
-        return (
-
-            String(p.nome || "")
-                .toLowerCase()
-                .includes(busca)
-
-            ||
-
-            String(p.categoria || "")
-                .toLowerCase()
-                .includes(busca)
-
-        );
-
-    });
+                <!--
+                    O admin.js adiciona
+                    automaticamente o botão Sair.
+                -->
 
 
-    $("#contador-produtos").textContent =
-        produtos.length + " produtos";
+            </header>
 
 
-    const tabela = $("#tabela-produtos");
+            <!-- =================================
+                 CONTEÚDO PRINCIPAL
+            ================================= -->
+
+            <main>
 
 
-    if (!produtos.length) {
+                <!-- AVISO -->
 
-        tabela.innerHTML = `
+                <div class="aviso">
 
-            <tr>
+                    Os produtos, preços, estoque
+                    e fotografias são compartilhados
+                    com a loja dos clientes
+                    por meio do Supabase.
 
-                <td colspan="6">
+                    Os pedidos recebidos pelo
+                    WhatsApp podem ser registrados
+                    manualmente neste painel.
 
-                    Nenhum produto encontrado.
-
-                </td>
-
-            </tr>
-
-        `;
-
-        return;
-
-    }
+                </div>
 
 
-    tabela.innerHTML = produtos.map(p => {
+                <!-- =================================
+                     PÁGINA 1 - VISÃO GERAL
+                ================================= -->
 
-        const imagem = imagemSegura(p.imagem);
+                <section
+                    class="pagina ativa"
+                    id="dashboard"
+                >
 
 
-        return `
+                    <div class="cabecalho-pagina">
 
-            <tr>
-
-                <td>
-
-                    <div class="produto-celula">
-
-                        ${imagem ? `
-
-                            <img
-                                src="${escapar(imagem)}"
-                                alt=""
-                                loading="lazy"
-                            >
-
-                        ` : ""}
 
                         <div>
 
-                            <strong>
-                                ${escapar(p.nome)}
+                            <span class="subtitulo">
+
+                                SEU ESPAÇO DE CRIAÇÃO
+
+                            </span>
+
+
+                            <h1>
+
+                                Bem-vindo ao
+
+                                <em>atelier.</em>
+
+                            </h1>
+
+
+                            <p>
+
+                                Gerencie suas impressões 3D,
+                                produtos, estoque e pedidos.
+
+                            </p>
+
+                        </div>
+
+
+                        <span
+                            class="data-atual"
+                            id="data-atual"
+                        ></span>
+
+
+                    </div>
+
+
+                    <!-- INDICADORES -->
+
+                    <div class="indicadores">
+
+
+                        <!-- TOTAL DE PRODUTOS -->
+
+                        <div class="indicador">
+
+                            <span>
+
+                                PRODUTOS CADASTRADOS
+
+                            </span>
+
+
+                            <strong id="total-produtos">
+
+                                0
+
                             </strong>
 
+
                             <small>
-                                ${escapar(p.prazo || "")}
+
+                                Produtos no catálogo
+
                             </small>
 
                         </div>
 
+
+                        <!-- PRODUTOS VISÍVEIS -->
+
+                        <div class="indicador">
+
+                            <span>
+
+                                PRODUTOS VISÍVEIS
+
+                            </span>
+
+
+                            <strong id="total-visiveis">
+
+                                0
+
+                            </strong>
+
+
+                            <small>
+
+                                Disponíveis na loja
+
+                            </small>
+
+                        </div>
+
+
+                        <!-- ESTOQUE -->
+
+                        <div class="indicador">
+
+                            <span>
+
+                                UNIDADES EM ESTOQUE
+
+                            </span>
+
+
+                            <strong id="total-estoque">
+
+                                0
+
+                            </strong>
+
+
+                            <small>
+
+                                Estoque informado
+
+                            </small>
+
+                        </div>
+
+
+                        <!-- PEDIDOS -->
+
+                        <div class="indicador">
+
+                            <span>
+
+                                PEDIDOS EM ABERTO
+
+                            </span>
+
+
+                            <strong id="total-pedidos">
+
+                                0
+
+                            </strong>
+
+
+                            <small>
+
+                                Pedidos registrados
+
+                            </small>
+
+                        </div>
+
+
                     </div>
 
-                </td>
 
-                <td>
-                    ${escapar(p.categoria)}
-                </td>
+                    <!-- PRODUTOS RECENTES -->
 
-                <td>
-                    ${dinheiro(p.preco)}
-                </td>
+                    <div class="painel">
 
-                <td>
-                    ${numero(p.estoque)}
-                </td>
 
-                <td>
+                        <div class="painel-cabecalho">
 
-                    <span class="${
-                        p.disponivel !== false
-                            ? "visivel"
-                            : "oculto"
-                    }">
 
-                        ${
-                            p.disponivel !== false
-                                ? "Visível"
-                                : "Oculto"
-                        }
+                            <h2>
 
-                    </span>
+                                Suas criações
 
-                </td>
+                            </h2>
 
-                <td>
 
-                    <button
-                        type="button"
-                        class="botao-pequeno"
-                        data-produto="editar"
-                        data-id="${escapar(p.id)}"
+                            <button
+                                type="button"
+                                class="botao-link"
+                                data-ir="produtos"
+                            >
+
+                                Ver todos →
+
+                            </button>
+
+
+                        </div>
+
+
+                        <!--
+                            O admin.js insere os
+                            produtos neste elemento.
+                        -->
+
+                        <div id="produtos-recentes"></div>
+
+
+                    </div>
+
+
+                </section>
+
+
+                <!-- =================================
+                     PÁGINA 2 - PRODUTOS
+                ================================= -->
+
+                <section
+                    class="pagina"
+                    id="produtos"
+                    hidden
+                >
+
+
+                    <div class="cabecalho-pagina">
+
+
+                        <div>
+
+                            <span class="subtitulo">
+
+                                CATÁLOGO DE IMPRESSÃO 3D
+
+                            </span>
+
+
+                            <h1>
+
+                                Gerenciar
+
+                                <em>produtos.</em>
+
+                            </h1>
+
+
+                            <p>
+
+                                Cadastre novas criações,
+                                adicione fotografias,
+                                atualize preços e estoque.
+
+                            </p>
+
+                        </div>
+
+
+                        <button
+                            type="button"
+                            class="botao botao-laranja"
+                            id="novo-produto"
+                        >
+
+                            + Adicionar produto
+
+                        </button>
+
+
+                    </div>
+
+
+                    <!-- LISTAGEM DE PRODUTOS -->
+
+                    <div class="painel">
+
+
+                        <!-- PESQUISA -->
+
+                        <div class="barra-ferramentas">
+
+
+                            <input
+                                type="search"
+                                id="buscar-produto"
+                                placeholder="Buscar produto..."
+                                aria-label="Buscar produto"
+                            >
+
+
+                            <span id="contador-produtos">
+
+                                0 produtos
+
+                            </span>
+
+
+                        </div>
+
+
+                        <!-- TABELA -->
+
+                        <div class="tabela-container">
+
+
+                            <table>
+
+
+                                <thead>
+
+                                    <tr>
+
+                                        <th>PRODUTO</th>
+
+                                        <th>CATEGORIA</th>
+
+                                        <th>PREÇO</th>
+
+                                        <th>ESTOQUE</th>
+
+                                        <th>VISIBILIDADE</th>
+
+                                        <th>AÇÕES</th>
+
+                                    </tr>
+
+                                </thead>
+
+
+                                <!--
+                                    O admin.js carrega os
+                                    produtos do Supabase.
+                                -->
+
+                                <tbody id="tabela-produtos"></tbody>
+
+
+                            </table>
+
+
+                        </div>
+
+
+                    </div>
+
+
+                </section>
+
+
+                <!-- =================================
+                     PÁGINA 3 - PEDIDOS
+                ================================= -->
+
+                <section
+                    class="pagina"
+                    id="pedidos"
+                    hidden
+                >
+
+
+                    <div class="cabecalho-pagina">
+
+
+                        <div>
+
+                            <span class="subtitulo">
+
+                                ORGANIZAÇÃO INTERNA
+
+                            </span>
+
+
+                            <h1>
+
+                                Controle de
+
+                                <em>pedidos.</em>
+
+                            </h1>
+
+
+                            <p>
+
+                                Registre e acompanhe
+                                os pedidos dos clientes.
+
+                            </p>
+
+                        </div>
+
+
+                        <div class="grupo-botoes">
+
+
+                            <button
+                                type="button"
+                                class="botao botao-secundario"
+                                id="exportar-pedidos"
+                            >
+
+                                Exportar CSV
+
+                            </button>
+
+
+                            <button
+                                type="button"
+                                class="botao botao-laranja"
+                                id="novo-pedido"
+                            >
+
+                                + Registrar pedido
+
+                            </button>
+
+
+                        </div>
+
+
+                    </div>
+
+
+                    <!-- LISTAGEM DE PEDIDOS -->
+
+                    <div class="painel">
+
+
+                        <div class="tabela-container">
+
+
+                            <table>
+
+
+                                <thead>
+
+                                    <tr>
+
+                                        <th>CLIENTE</th>
+
+                                        <th>DESCRIÇÃO</th>
+
+                                        <th>VALOR</th>
+
+                                        <th>STATUS</th>
+
+                                        <th>DATA</th>
+
+                                        <th>AÇÕES</th>
+
+                                    </tr>
+
+                                </thead>
+
+
+                                <tbody id="tabela-pedidos"></tbody>
+
+
+                            </table>
+
+
+                        </div>
+
+
+                    </div>
+
+
+                </section>
+
+
+                <!-- =================================
+                     PÁGINA 4 - SINCRONIZAÇÃO
+                ================================= -->
+
+                <section
+                    class="pagina"
+                    id="publicar"
+                    hidden
+                >
+
+
+                    <div class="cabecalho-pagina">
+
+
+                        <div>
+
+                            <span class="subtitulo">
+
+                                LOJA DOS CLIENTES
+
+                            </span>
+
+
+                            <h1>
+
+                                Catálogo
+
+                                <em>conectado.</em>
+
+                            </h1>
+
+
+                            <p>
+
+                                Gerencie a sincronização
+                                dos produtos com a loja virtual.
+
+                            </p>
+
+                        </div>
+
+
+                    </div>
+
+
+                    <!-- SUPABASE -->
+
+                    <div class="painel">
+
+
+                        <h2>
+
+                            Sincronização com Supabase
+
+                        </h2>
+
+
+                        <p>
+
+                            Os produtos, preços e estoque
+                            são atualizados na loja
+                            quando você salva as alterações
+                            no catálogo.
+
+                        </p>
+
+
+                        <p>
+
+                            As fotografias dos produtos
+                            ficam armazenadas no bucket
+                            projetos do Supabase Storage.
+
+                        </p>
+
+
+                        <!--
+                            O sync-empresa.js adiciona
+                            os controles de sincronização.
+                        -->
+
+
+                    </div>
+
+
+                    <!-- EXPORTAR CATÁLOGO -->
+
+                    <div class="painel">
+
+
+                        <h2>
+
+                            Exportar catálogo
+
+                        </h2>
+
+
+                        <p>
+
+                            Salve uma cópia dos produtos
+                            cadastrados em formato JavaScript.
+
+                        </p>
+
+
+                        <button
+                            type="button"
+                            class="botao botao-secundario"
+                            id="exportar-catalogo"
+                        >
+
+                            Exportar catalogo.js
+
+                        </button>
+
+
+                    </div>
+
+
+                    <!-- BACKUP -->
+
+                    <div class="painel">
+
+
+                        <h2>
+
+                            Backup dos dados
+
+                        </h2>
+
+
+                        <p>
+
+                            Faça uma cópia dos produtos
+                            e pedidos cadastrados.
+
+                        </p>
+
+
+                        <div class="grupo-botoes">
+
+
+                            <button
+                                type="button"
+                                class="botao botao-secundario"
+                                id="baixar-backup"
+                            >
+
+                                Exportar backup
+
+                            </button>
+
+
+                            <label class="botao botao-secundario">
+
+
+                                Restaurar backup
+
+
+                                <input
+                                    type="file"
+                                    id="restaurar-backup"
+                                    accept=".json,application/json"
+                                    hidden
+                                >
+
+
+                            </label>
+
+
+                        </div>
+
+
+                    </div>
+
+
+                </section>
+
+
+            </main>
+
+
+        </div>
+
+
+    </div>
+
+
+    <!-- =====================================
+         FORMULÁRIO DE PRODUTOS
+    ===================================== -->
+
+    <dialog
+        class="modal"
+        id="modal-produto"
+        aria-labelledby="titulo-modal-produto"
+    >
+
+
+        <form id="form-produto">
+
+
+            <!-- CABEÇALHO -->
+
+            <div class="modal-cabecalho">
+
+
+                <h2 id="titulo-modal-produto">
+
+                    Novo produto
+
+                </h2>
+
+
+                <button
+                    type="button"
+                    class="fechar-modal"
+                    data-fechar="modal-produto"
+                    aria-label="Fechar formulário"
+                >
+
+                    ×
+
+                </button>
+
+
+            </div>
+
+
+            <!-- CAMPOS -->
+
+            <div class="campos">
+
+
+                <!-- NOME -->
+
+                <label class="campo campo-inteiro">
+
+
+                    Nome do produto
+
+
+                    <input
+                        type="text"
+                        name="nome"
+                        maxlength="100"
+                        placeholder="Ex.: Dragão articulado"
+                        required
                     >
-                        Editar
-                    </button>
 
-                    <button
-                        type="button"
-                        class="botao-pequeno botao-excluir"
-                        data-produto="excluir"
-                        data-id="${escapar(p.id)}"
+
+                </label>
+
+
+                <!-- CATEGORIA -->
+
+                <label class="campo">
+
+
+                    Categoria
+
+
+                    <input
+                        type="text"
+                        name="categoria"
+                        maxlength="45"
+                        placeholder="Ex.: Articulados"
+                        required
                     >
-                        Excluir
-                    </button>
 
-                </td>
 
-            </tr>
+                </label>
 
-        `;
 
-    }).join("");
+                <!-- PREÇO -->
 
-}
+                <label class="campo">
 
 
-// ==========================================
-// 12. CONTROLE DA FOTOGRAFIA
-// ==========================================
+                    Preço (R$)
 
-function limparPreview() {
 
-    if (estado.previewURL) {
-
-        URL.revokeObjectURL(
-            estado.previewURL
-        );
-
-        estado.previewURL = null;
-
-    }
-
-
-    $("#preview-foto").removeAttribute("src");
-
-    $("#preview-container").hidden = true;
-
-    $("#nome-foto").textContent = "";
-
-}
-
-
-function mostrarPreview(arquivoOuURL) {
-
-    limparPreview();
-
-
-    if (!arquivoOuURL) {
-
-        return;
-
-    }
-
-
-    let endereco;
-
-
-    if (arquivoOuURL instanceof File) {
-
-        endereco = URL.createObjectURL(
-            arquivoOuURL
-        );
-
-        estado.previewURL = endereco;
-
-
-        $("#nome-foto").textContent =
-            arquivoOuURL.name;
-
-    } else {
-
-        endereco = imagemSegura(arquivoOuURL);
-
-
-        if (!endereco) {
-
-            return;
-
-        }
-
-
-        $("#nome-foto").textContent =
-            "Fotografia atual do produto";
-
-    }
-
-
-    $("#preview-foto").src = endereco;
-
-    $("#preview-container").hidden = false;
-
-}
-
-
-function mostrarStatusFoto(mensagem, erro = false) {
-
-    const elemento = $("#status-foto");
-
-    elemento.textContent = mensagem;
-
-    elemento.classList.toggle("erro", erro);
-
-}
-
-
-function selecionarFoto(arquivo) {
-
-    if (estado.salvando) {
-
-        return;
-
-    }
-
-
-    const formatos = [
-
-        "image/jpeg",
-
-        "image/png",
-
-        "image/webp"
-
-    ];
-
-
-    if (!arquivo || !formatos.includes(arquivo.type)) {
-
-        mostrarStatusFoto(
-
-            "Selecione uma imagem JPG, PNG ou WEBP.",
-
-            true
-
-        );
-
-        return;
-
-    }
-
-
-    if (
-
-        arquivo.size <= 0 ||
-
-        arquivo.size > CONFIG.tamanhoMaximo
-
-    ) {
-
-        mostrarStatusFoto(
-
-            "A imagem deve ter no máximo 5 MB.",
-
-            true
-
-        );
-
-        return;
-
-    }
-
-
-    estado.arquivoFoto = arquivo;
-
-
-    mostrarPreview(arquivo);
-
-
-    mostrarStatusFoto(
-
-        "Fotografia selecionada. " +
-
-        "Clique em Salvar produto para enviar."
-
-    );
-
-}
-
-
-// ==========================================
-// 13. UPLOAD SUPABASE STORAGE
-// ==========================================
-
-async function enviarFotografia(arquivo) {
-
-    await obterAdministrador();
-
-
-    const formatos = {
-
-        "image/jpeg": "jpg",
-
-        "image/png": "png",
-
-        "image/webp": "webp"
-
-    };
-
-
-    if (
-
-        !formatos[arquivo.type] ||
-
-        arquivo.size <= 0 ||
-
-        arquivo.size > CONFIG.tamanhoMaximo
-
-    ) {
-
-        throw new Error(
-
-            "Formato ou tamanho de fotografia inválido."
-
-        );
-
-    }
-
-
-    const caminho =
-
-        CONFIG.pasta +
-
-        "/" +
-
-        criarID() +
-
-        "." +
-
-        formatos[arquivo.type];
-
-
-    const { data, error } = await sb.storage
-
-        .from(CONFIG.bucket)
-
-        .upload(
-
-            caminho,
-
-            arquivo,
-
-            {
-
-                contentType: arquivo.type,
-
-                cacheControl: "3600",
-
-                upsert: false
-
-            }
-
-        );
-
-
-    if (error) {
-
-        throw new Error(
-
-            "Erro no upload: " + error.message
-
-        );
-
-    }
-
-
-    const resultado = sb.storage
-
-        .from(CONFIG.bucket)
-
-        .getPublicUrl(data.path);
-
-
-    const url = resultado.data?.publicUrl;
-
-
-    if (!url) {
-
-        throw new Error(
-
-            "Não foi possível obter a URL da fotografia."
-
-        );
-
-    }
-
-
-    return url;
-
-}
-
-
-// ==========================================
-// 14. NOVO PRODUTO
-// ==========================================
-
-function abrirNovoProduto() {
-
-    estado.produtoEditando = null;
-
-    estado.arquivoFoto = null;
-
-
-    $("#form-produto").reset();
-
-
-    limparPreview();
-
-    mostrarStatusFoto("");
-
-
-    $("#titulo-modal-produto").textContent =
-        "Novo produto";
-
-
-    $("#modal-produto").showModal();
-
-}
-
-
-// ==========================================
-// 15. EDITAR PRODUTO
-// ==========================================
-
-function editarProduto(id) {
-
-    const produto = estado.produtos.find(
-
-        p => String(p.id) === String(id)
-
-    );
-
-
-    if (!produto) {
-
-        avisar("Produto não encontrado.", true);
-
-        return;
-
-    }
-
-
-    estado.produtoEditando = produto.id;
-
-    estado.arquivoFoto = null;
-
-
-    const form = $("#form-produto");
-
-    form.reset();
-
-
-    form.elements.nome.value =
-        produto.nome || "";
-
-    form.elements.categoria.value =
-        produto.categoria || "";
-
-    form.elements.preco.value =
-        numero(produto.preco);
-
-    form.elements.estoque.value =
-        numero(produto.estoque);
-
-    form.elements.prazo.value =
-        produto.prazo || "";
-
-    form.elements.imagem.value =
-        produto.imagem || "";
-
-    form.elements.descricao.value =
-        produto.descricao || "";
-
-
-    form.elements.disponivel.checked =
-        produto.disponivel !== false;
-
-    form.elements.destaque.checked =
-        produto.destaque === true;
-
-
-    mostrarPreview(produto.imagem);
-
-    mostrarStatusFoto("");
-
-
-    $("#titulo-modal-produto").textContent =
-        "Editar produto";
-
-
-    $("#modal-produto").showModal();
-
-}
-
-
-// ==========================================
-// 16. SALVAR PRODUTO
-// ==========================================
-
-async function salvarProduto(evento) {
-
-    evento.preventDefault();
-
-
-    if (estado.salvando) {
-
-        return;
-
-    }
-
-
-    const form = $("#form-produto");
-
-    const botao = $("#salvar-produto");
-
-
-    botao.disabled = true;
-
-    $("#zona-upload").classList.add("enviando");
-
-
-    try {
-
-        const campos = form.elements;
-
-
-        const nome = campos.nome.value.trim();
-
-        const categoria =
-            campos.categoria.value.trim();
-
-
-        const preco =
-            Number(campos.preco.value);
-
-        const estoque =
-            Number(campos.estoque.value);
-
-
-        if (!nome || !categoria) {
-
-            throw new Error(
-
-                "Preencha nome e categoria."
-
-            );
-
-        }
-
-
-        if (
-
-            !Number.isFinite(preco) ||
-
-            preco < 0 ||
-
-            !Number.isInteger(estoque) ||
-
-            estoque < 0
-
-        ) {
-
-            throw new Error(
-
-                "Informe preço e estoque válidos."
-
-            );
-
-        }
-
-
-        const anterior = estado.produtos.find(
-
-            p => String(p.id) ===
-
-            String(estado.produtoEditando)
-
-        );
-
-
-        let imagem = campos.imagem.value.trim();
-
-
-        // ==================================
-        // ENVIAR FOTOGRAFIA NOVA
-        // ==================================
-
-        if (estado.arquivoFoto) {
-
-            mostrarStatusFoto(
-
-                "Enviando fotografia ao Supabase..."
-
-            );
-
-
-            imagem = await enviarFotografia(
-
-                estado.arquivoFoto
-
-            );
-
-
-            campos.imagem.value = imagem;
-
-
-            // A URL é mantida no formulário
-            // se o salvamento do catálogo falhar.
-
-            estado.arquivoFoto = null;
-
-
-            mostrarPreview(imagem);
-
-
-            mostrarStatusFoto(
-
-                "Fotografia enviada. Salvando produto..."
-
-            );
-
-        }
-
-
-        // ==================================
-        // PREPARAR PRODUTO
-        // ==================================
-
-        const produto = {
-
-            ...(anterior || {}),
-
-            id: anterior?.id || criarID(),
-
-            nome,
-
-            categoria,
-
-            preco,
-
-            estoque,
-
-            prazo: campos.prazo.value.trim(),
-
-            imagem,
-
-            descricao: campos.descricao.value.trim(),
-
-            disponivel: campos.disponivel.checked,
-
-            destaque: campos.destaque.checked,
-
-            atualizado_em: new Date().toISOString()
-
-        };
-
-
-        let novosProdutos;
-
-
-        if (anterior) {
-
-            novosProdutos = estado.produtos.map(
-
-                p => String(p.id) === String(anterior.id)
-
-                    ? produto
-
-                    : p
-
-            );
-
-        } else {
-
-            novosProdutos = [
-
-                ...estado.produtos,
-
-                produto
-
-            ];
-
-        }
-
-
-        await salvarCatalogo(novosProdutos);
-
-
-        $("#modal-produto").close();
-
-
-        estado.produtoEditando = null;
-
-
-        avisar("Produto salvo com sucesso!");
-
-
-    } catch (erro) {
-
-        console.error(erro);
-
-        avisar(erro.message, true);
-
-        mostrarStatusFoto(erro.message, true);
-
-    } finally {
-
-        botao.disabled = false;
-
-        $("#zona-upload").classList.remove("enviando");
-
-    }
-
-}
-
-
-// ==========================================
-// 17. EXCLUIR PRODUTO
-// ==========================================
-
-async function excluirProduto(id) {
-
-    const produto = estado.produtos.find(
-
-        p => String(p.id) === String(id)
-
-    );
-
-
-    if (!produto) {
-
-        return;
-
-    }
-
-
-    if (!confirm(
-
-        "Excluir o produto " +
-
-        produto.nome +
-
-        " do catálogo?"
-
-    )) {
-
-        return;
-
-    }
-
-
-    try {
-
-        const novos = estado.produtos.filter(
-
-            p => String(p.id) !== String(id)
-
-        );
-
-
-        await salvarCatalogo(novos);
-
-
-        avisar("Produto excluído do catálogo.");
-
-
-    } catch (erro) {
-
-        avisar(erro.message, true);
-
-    }
-
-}
-
-
-// ==========================================
-// 18. PEDIDOS LOCAIS
-// ==========================================
-
-function chavePedidos() {
-
-    return "criaitor3d_pedidos_" + estado.usuario.id;
-
-}
-
-
-function carregarPedidos() {
-
-    try {
-
-        const dados = localStorage.getItem(
-            chavePedidos()
-        );
-
-
-        const lista = dados
-            ? JSON.parse(dados)
-            : [];
-
-
-        estado.pedidos =
-            Array.isArray(lista) ? lista : [];
-
-
-    } catch (erro) {
-
-        console.error(erro);
-
-        estado.pedidos = [];
-
-    }
-
-}
-
-
-function persistirPedidos() {
-
-    localStorage.setItem(
-
-        chavePedidos(),
-
-        JSON.stringify(estado.pedidos)
-
-    );
-
-
-    atualizarPainel();
-
-}
-
-
-// ==========================================
-// 19. RENDERIZAR PEDIDOS
-// ==========================================
-
-function renderizarPedidos() {
-
-    const tabela = $("#tabela-pedidos");
-
-
-    if (!estado.pedidos.length) {
-
-        tabela.innerHTML = `
-
-            <tr>
-
-                <td colspan="6">
-
-                    Nenhum pedido registrado.
-
-                </td>
-
-            </tr>
-
-        `;
-
-        return;
-
-    }
-
-
-    tabela.innerHTML = [...estado.pedidos]
-
-        .reverse()
-
-        .map(p => `
-
-            <tr>
-
-                <td>
-
-                    <strong>
-                        ${escapar(p.cliente)}
-                    </strong>
-
-                    <small>
-                        ${escapar(p.contato)}
-                    </small>
-
-                </td>
-
-                <td>
-                    ${escapar(p.itens)}
-                </td>
-
-                <td>
-                    ${dinheiro(p.valor)}
-                </td>
-
-                <td>
-
-                    <span class="etiqueta">
-                        ${escapar(p.status)}
-                    </span>
-
-                </td>
-
-                <td>
-                    ${formatarData(p.data)}
-                </td>
-
-                <td>
-
-                    <button
-                        type="button"
-                        class="botao-pequeno"
-                        data-pedido="editar"
-                        data-id="${escapar(p.id)}"
+                    <input
+                        type="number"
+                        name="preco"
+                        min="0"
+                        step="0.01"
+                        placeholder="0.00"
+                        required
                     >
-                        Editar
-                    </button>
 
-                    <button
-                        type="button"
-                        class="botao-pequeno botao-excluir"
-                        data-pedido="excluir"
-                        data-id="${escapar(p.id)}"
+
+                </label>
+
+
+                <!-- ESTOQUE -->
+
+                <label class="campo">
+
+
+                    Estoque disponível
+
+
+                    <input
+                        type="number"
+                        name="estoque"
+                        min="0"
+                        step="1"
+                        value="0"
+                        required
                     >
-                        Excluir
-                    </button>
 
-                </td>
 
-            </tr>
+                </label>
 
-        `).join("");
 
-}
+                <!-- PRAZO -->
 
+                <label class="campo">
 
-// ==========================================
-// 20. FORMULÁRIO DE PEDIDOS
-// ==========================================
 
-function abrirNovoPedido() {
+                    Prazo de produção
 
-    estado.pedidoEditando = null;
 
-    $("#form-pedido").reset();
+                    <input
+                        type="text"
+                        name="prazo"
+                        maxlength="80"
+                        value="Produção sob encomenda"
+                    >
 
-    $("#modal-pedido").showModal();
 
-}
+                </label>
 
 
-function editarPedido(id) {
+                <!-- =================================
+                     FOTOGRAFIAS DOS PRODUTOS
+                ================================= -->
 
-    const pedido = estado.pedidos.find(
+                <!--
+                    O fotos-empresa.js cria
+                    automaticamente a área para:
 
-        p => String(p.id) === String(id)
+                    - Arrastar imagens;
+                    - Selecionar do computador;
+                    - Colar fotografias;
+                    - Pré-visualizar;
+                    - Enviar ao Supabase.
 
-    );
+                    A interface será inserida
+                    antes do campo abaixo.
+                -->
 
 
-    if (!pedido) {
+                <!-- CAMPO INTERNO DA IMAGEM -->
 
-        return;
+                <label
+                    class="campo campo-inteiro campo-url-legado"
+                >
 
-    }
 
+                    Endereço da fotografia
 
-    estado.pedidoEditando = pedido.id;
 
+                    <input
+                        type="text"
+                        name="imagem"
+                        maxlength="500"
+                        tabindex="-1"
+                        readonly
+                    >
 
-    const form = $("#form-pedido");
 
-    form.reset();
+                </label>
 
 
-    form.elements.cliente.value =
-        pedido.cliente || "";
+                <!-- DESCRIÇÃO -->
 
-    form.elements.contato.value =
-        pedido.contato || "";
+                <label class="campo campo-inteiro">
 
-    form.elements.itens.value =
-        pedido.itens || "";
 
-    form.elements.valor.value =
-        numero(pedido.valor);
+                    Descrição do produto
 
-    form.elements.status.value =
-        pedido.status || "Novo";
 
+                    <textarea
+                        name="descricao"
+                        rows="3"
+                        maxlength="300"
+                        placeholder="Descreva seu produto..."
+                    ></textarea>
 
-    $("#modal-pedido").showModal();
 
-}
+                </label>
 
 
-function salvarPedido(evento) {
+                <!-- DISPONIBILIDADE -->
 
-    evento.preventDefault();
+                <label class="campo checkbox-campo">
 
 
-    try {
+                    <input
+                        type="checkbox"
+                        name="disponivel"
+                        checked
+                    >
 
-        const campos =
-            $("#form-pedido").elements;
 
+                    Mostrar produto na loja
 
-        const anterior = estado.pedidos.find(
 
-            p => String(p.id) ===
+                </label>
 
-            String(estado.pedidoEditando)
 
-        );
+                <!-- DESTAQUE -->
 
+                <label class="campo checkbox-campo">
 
-        const pedido = {
 
-            ...(anterior || {}),
+                    <input
+                        type="checkbox"
+                        name="destaque"
+                    >
 
-            id: anterior?.id || criarID(),
 
-            cliente: campos.cliente.value.trim(),
+                    Produto em destaque
 
-            contato: campos.contato.value.trim(),
 
-            itens: campos.itens.value.trim(),
+                </label>
 
-            valor: Number(campos.valor.value),
 
-            status: campos.status.value,
+            </div>
 
-            data: anterior?.data ||
 
-                new Date().toISOString()
+            <!-- BOTÕES -->
 
-        };
+            <div class="modal-acoes">
 
 
-        if (
+                <button
+                    type="button"
+                    class="botao botao-secundario"
+                    data-fechar="modal-produto"
+                >
 
-            !pedido.cliente ||
+                    Cancelar
 
-            !pedido.itens ||
+                </button>
 
-            !Number.isFinite(pedido.valor) ||
 
-            pedido.valor < 0
+                <button
+                    type="submit"
+                    class="botao botao-laranja"
+                    id="salvar-produto"
+                >
 
-        ) {
+                    Salvar produto
 
-            throw new Error(
+                </button>
 
-                "Preencha corretamente os dados do pedido."
 
-            );
+            </div>
 
-        }
 
+        </form>
 
-        if (anterior) {
 
-            estado.pedidos = estado.pedidos.map(
+    </dialog>
 
-                p => String(p.id) === String(anterior.id)
 
-                    ? pedido
+    <!-- =====================================
+         FORMULÁRIO DE PEDIDOS
+    ===================================== -->
 
-                    : p
+    <dialog
+        class="modal"
+        id="modal-pedido"
+        aria-label="Registrar pedido"
+    >
 
-            );
 
-        } else {
+        <form id="form-pedido">
 
-            estado.pedidos.push(pedido);
 
-        }
+            <!-- CABEÇALHO -->
 
+            <div class="modal-cabecalho">
 
-        persistirPedidos();
 
+                <h2>
 
-        $("#modal-pedido").close();
+                    Registrar pedido
 
+                </h2>
 
-        avisar("Pedido salvo!");
 
+                <button
+                    type="button"
+                    class="fechar-modal"
+                    data-fechar="modal-pedido"
+                    aria-label="Fechar formulário"
+                >
 
-    } catch (erro) {
+                    ×
 
-        avisar(erro.message, true);
+                </button>
 
-    }
 
-}
+            </div>
 
 
-function excluirPedido(id) {
+            <!-- CAMPOS -->
 
-    if (!confirm("Excluir este pedido?")) {
+            <div class="campos">
 
-        return;
 
-    }
+                <!-- CLIENTE -->
 
+                <label class="campo">
 
-    estado.pedidos = estado.pedidos.filter(
 
-        p => String(p.id) !== String(id)
+                    Nome do cliente
 
-    );
 
+                    <input
+                        type="text"
+                        name="cliente"
+                        maxlength="100"
+                        required
+                    >
 
-    persistirPedidos();
 
-    avisar("Pedido excluído.");
+                </label>
 
-}
 
+                <!-- CONTATO -->
 
-// ==========================================
-// 21. ATUALIZAR PAINEL
-// ==========================================
+                <label class="campo">
 
-function atualizarPainel() {
 
-    atualizarIndicadores();
+                    Contato
 
-    renderizarRecentes();
 
-    renderizarProdutos();
+                    <input
+                        type="text"
+                        name="contato"
+                        maxlength="120"
+                    >
 
-    renderizarPedidos();
 
+                </label>
 
-    $("#data-atual").textContent =
 
-        new Date().toLocaleDateString(
+                <!-- PRODUTOS SOLICITADOS -->
 
-            "pt-BR",
+                <label class="campo campo-inteiro">
 
-            {
 
-                day: "2-digit",
+                    Produtos solicitados
 
-                month: "long",
 
-                year: "numeric"
+                    <textarea
+                        name="itens"
+                        rows="3"
+                        maxlength="500"
+                        required
+                    ></textarea>
 
-            }
 
-        );
+                </label>
 
 
-    $("#versao-sync").textContent =
-        estado.versao;
+                <!-- VALOR -->
 
-}
+                <label class="campo">
 
 
-// ==========================================
-// 22. SINCRONIZAÇÃO
-// ==========================================
+                    Valor (R$)
 
-function atualizarStatusSync(mensagem, erro = false) {
 
-    const status = $("#status-sync");
+                    <input
+                        type="number"
+                        name="valor"
+                        min="0"
+                        step="0.01"
+                        required
+                    >
 
 
-    status.textContent = mensagem;
+                </label>
 
-    status.style.color = erro
 
-        ? "#ff8e8e"
+                <!-- STATUS -->
 
-        : "#91e4b1";
+                <label class="campo">
 
 
-    $("#versao-sync").textContent =
-        estado.versao;
+                    Status
 
 
-    $("#ultima-sync").textContent =
+                    <select name="status">
 
-        new Date().toLocaleString("pt-BR");
 
-}
+                        <option value="Novo">
 
+                            Novo
 
-async function verificarAtualizacoes() {
+                        </option>
 
-    if (
 
-        !estado.usuario ||
+                        <option value="Em produção">
 
-        estado.salvando ||
+                            Em produção
 
-        estado.carregando
+                        </option>
 
-    ) {
 
-        return;
+                        <option value="Pronto">
 
-    }
+                            Pronto
 
+                        </option>
 
-    if ($("#modal-produto").open) {
 
-        estado.atualizacaoPendente = true;
+                        <option value="Entregue">
 
-        return;
+                            Entregue
 
-    }
+                        </option>
 
 
-    try {
+                        <option value="Cancelado">
 
-        const { data, error } = await sb
+                            Cancelado
 
-            .from(CONFIG.tabela)
+                        </option>
 
-            .select("versao")
 
-            .eq("id", CONFIG.registro)
+                    </select>
 
-            .single();
 
+                </label>
 
-        if (error) {
 
-            throw error;
+            </div>
 
-        }
 
+            <!-- BOTÕES -->
 
-        if (Number(data.versao) !== estado.versao) {
+            <div class="modal-acoes">
 
-            await carregarCatalogo();
 
-        }
+                <button
+                    type="button"
+                    class="botao botao-secundario"
+                    data-fechar="modal-pedido"
+                >
 
+                    Cancelar
 
-    } catch (erro) {
+                </button>
 
-        console.warn(
 
-            "Falha ao verificar atualizações:",
+                <button
+                    type="submit"
+                    class="botao botao-laranja"
+                >
 
-            erro
+                    Salvar pedido
 
-        );
+                </button>
 
-    }
 
-}
+            </div>
 
 
-// ==========================================
-// 23. REALTIME
-// ==========================================
+        </form>
 
-function iniciarRealtime() {
 
-    if (estado.realtime) {
+    </dialog>
 
-        return;
 
-    }
+    <!-- =====================================
+         NOTIFICAÇÕES DO SISTEMA
+    ===================================== -->
 
+    <div
+        class="notificacao"
+        id="notificacao"
+        role="status"
+        aria-live="polite"
+    ></div>
 
-    estado.realtime = sb
-
-        .channel("criaitor3d-painel-integrado")
-
-        .on(
-
-            "postgres_changes",
-
-            {
-
-                event: "UPDATE",
-
-                schema: "public",
-
-                table: CONFIG.tabela,
-
-                filter: "id=eq.1"
-
-            },
-
-            () => {
-
-                verificarAtualizacoes();
-
-            }
-
-        )
-
-        .subscribe();
-
-}
-
-
-function pararRealtime() {
-
-    if (estado.realtime && sb) {
-
-        sb.removeChannel(estado.realtime);
-
-        estado.realtime = null;
-
-    }
-
-}
-
-
-// ==========================================
-// 24. EXPORTAÇÃO E BACKUP
-// ==========================================
-
-function baixarArquivo(nome,conteudo,tipo) {
-
-    const blob = new Blob(
-
-        [conteudo],
-
-        { type: tipo }
-
-    );
-
-
-    const url = URL.createObjectURL(blob);
-
-
-    const link = document.createElement("a");
-
-    link.href = url;
-
-    link.download = nome;
-
-
-    document.body.appendChild(link);
-
-    link.click();
-
-    link.remove();
-
-
-    setTimeout(() => {
-
-        URL.revokeObjectURL(url);
-
-    }, 1000);
-
-}
-
-
-function exportarCatalogo() {
-
-    const conteudo =
-
-        "window.CRIAITOR_CATALOGO = " +
-
-        JSON.stringify(estado.produtos,null,2) +
-
-        ";\n";
-
-
-    baixarArquivo(
-
-        "catalogo.js",
-
-        conteudo,
-
-        "text/javascript;charset=utf-8"
-
-    );
-
-}
-
-
-function campoCSV(valor) {
-
-    let texto = String(valor ?? "");
-
-
-    if (/^\s*[=+\-@]/.test(texto)) {
-
-        texto = "'" + texto;
-
-    }
-
-
-    return '"' +
-
-        texto.replaceAll('"','""') +
-
-        '"';
-
-}
-
-
-function exportarPedidos() {
-
-    const cabecalho = [
-
-        "Cliente",
-
-        "Contato",
-
-        "Produtos",
-
-        "Valor",
-
-        "Status",
-
-        "Data"
-
-    ];
-
-
-    const linhas = estado.pedidos.map(p => [
-
-        p.cliente,
-
-        p.contato,
-
-        p.itens,
-
-        p.valor,
-
-        p.status,
-
-        formatarData(p.data)
-
-    ].map(campoCSV).join(";"));
-
-
-    const conteudo =
-
-        "\uFEFF" +
-
-        [
-
-            cabecalho.map(campoCSV).join(";"),
-
-            ...linhas
-
-        ].join("\r\n");
-
-
-    baixarArquivo(
-
-        "pedidos-criaitor3d.csv",
-
-        conteudo,
-
-        "text/csv;charset=utf-8"
-
-    );
-
-}
-
-
-function exportarBackup() {
-
-    baixarArquivo(
-
-        "backup-criaitor3d.json",
-
-        JSON.stringify(
-
-            {
-
-                empresa: "CriAItor 3D",
-
-                data: new Date().toISOString(),
-
-                versaoCatalogo: estado.versao,
-
-                produtos: estado.produtos,
-
-                pedidos: estado.pedidos
-
-            },
-
-            null,
-
-            2
-
-        ),
-
-        "application/json;charset=utf-8"
-
-    );
-
-}
-
-
-async function restaurarBackup(evento) {
-
-    const arquivo = evento.target.files?.[0];
-
-
-    if (!arquivo) {
-
-        return;
-
-    }
-
-
-    try {
-
-        const backup = JSON.parse(
-
-            await arquivo.text()
-
-        );
-
-
-        if (!Array.isArray(backup.pedidos)) {
-
-            throw new Error(
-
-                "Backup sem lista válida de pedidos."
-
-            );
-
-        }
-
-
-        if (!confirm(
-
-            "Substituir os pedidos locais pelo backup?"
-
-        )) {
-
-            return;
-
-        }
-
-
-        estado.pedidos = backup.pedidos;
-
-
-        persistirPedidos();
-
-
-        avisar("Pedidos restaurados.");
-
-
-    } catch (erro) {
-
-        avisar(erro.message,true);
-
-    } finally {
-
-        evento.target.value = "";
-
-    }
-
-}
-
-
-// ==========================================
-// 25. EVENTOS
-// ==========================================
-
-function configurarEventos() {
-
-    $("#form-login").addEventListener(
-
-        "submit",
-
-        realizarLogin
-
-    );
-
-
-    $("#botao-sair").addEventListener(
-
-        "click",
-
-        sairPainel
-
-    );
-
-
-    $$("[data-pagina]").forEach(botao => {
-
-        botao.addEventListener(
-
-            "click",
-
-            () => abrirPagina(botao.dataset.pagina)
-
-        );
-
-    });
-
-
-    $$("[data-ir]").forEach(botao => {
-
-        botao.addEventListener(
-
-            "click",
-
-            () => abrirPagina(botao.dataset.ir)
-
-        );
-
-    });
-
-
-    $("#novo-produto").addEventListener(
-
-        "click",
-
-        abrirNovoProduto
-
-    );
-
-
-    $("#novo-produto-topo").addEventListener(
-
-        "click",
-
-        abrirNovoProduto
-
-    );
-
-
-    $("#form-produto").addEventListener(
-
-        "submit",
-
-        salvarProduto
-
-    );
-
-
-    $("#buscar-produto").addEventListener(
-
-        "input",
-
-        renderizarProdutos
-
-    );
-
-
-    $("#tabela-produtos").addEventListener(
-
-        "click",
-
-        evento => {
-
-            const botao = evento.target.closest(
-
-                "[data-produto]"
-
-            );
-
-
-            if (!botao) return;
-
-
-            if (botao.dataset.produto === "editar") {
-
-                editarProduto(botao.dataset.id);
-
-            } else {
-
-                excluirProduto(botao.dataset.id);
-
-            }
-
-        }
-
-    );
-
-
-    $("#novo-pedido").addEventListener(
-
-        "click",
-
-        abrirNovoPedido
-
-    );
-
-
-    $("#form-pedido").addEventListener(
-
-        "submit",
-
-        salvarPedido
-
-    );
-
-
-    $("#tabela-pedidos").addEventListener(
-
-        "click",
-
-        evento => {
-
-            const botao = evento.target.closest(
-
-                "[data-pedido]"
-
-            );
-
-
-            if (!botao) return;
-
-
-            if (botao.dataset.pedido === "editar") {
-
-                editarPedido(botao.dataset.id);
-
-            } else {
-
-                excluirPedido(botao.dataset.id);
-
-            }
-
-        }
-
-    );
-
-
-    $$("[data-fechar]").forEach(botao => {
-
-        botao.addEventListener(
-
-            "click",
-
-            () => {
-
-                const modal = document.getElementById(
-
-                    botao.dataset.fechar
-
-                );
-
-
-                if (!estado.salvando && modal.open) {
-
-                    modal.close();
-
-                }
-
-            }
-
-        );
-
-    });
-
-
-    // UPLOAD DE FOTOGRAFIAS
-
-    const zona = $("#zona-upload");
-
-    const input = $("#input-foto");
-
-
-    zona.addEventListener(
-
-        "click",
-
-        () => input.click()
-
-    );
-
-
-    zona.addEventListener(
-
-        "keydown",
-
-        evento => {
-
-            if (
-
-                evento.key === "Enter" ||
-
-                evento.key === " "
-
-            ) {
-
-                evento.preventDefault();
-
-                input.click();
-
-            }
-
-        }
-
-    );
-
-
-    $("#trocar-foto").addEventListener(
-
-        "click",
-
-        () => input.click()
-
-    );
-
-
-    input.addEventListener(
-
-        "change",
-
-        evento => {
-
-            const arquivo = evento.target.files?.[0];
-
-            if (arquivo) {
-
-                selecionarFoto(arquivo);
-
-            }
-
-            input.value = "";
-
-        }
-
-    );
-
-
-    ["dragenter","dragover"].forEach(tipo => {
-
-        zona.addEventListener(tipo, evento => {
-
-            evento.preventDefault();
-
-            zona.classList.add("arrastando");
-
-        });
-
-    });
-
-
-    zona.addEventListener(
-
-        "dragleave",
-
-        evento => {
-
-            evento.preventDefault();
-
-            zona.classList.remove("arrastando");
-
-        }
-
-    );
-
-
-    zona.addEventListener(
-
-        "drop",
-
-        evento => {
-
-            evento.preventDefault();
-
-            zona.classList.remove("arrastando");
-
-
-            const arquivos = evento.dataTransfer.files;
-
-
-            if (arquivos.length === 1) {
-
-                selecionarFoto(arquivos[0]);
-
-            } else {
-
-                mostrarStatusFoto(
-
-                    "Selecione uma fotografia por vez.",
-
-                    true
-
-                );
-
-            }
-
-        }
-
-    );
-
-
-    document.addEventListener(
-
-        "dragover",
-
-        evento => {
-
-            if ($("#modal-produto").open) {
-
-                evento.preventDefault();
-
-            }
-
-        }
-
-    );
-
-
-    document.addEventListener(
-
-        "drop",
-
-        evento => {
-
-            if ($("#modal-produto").open) {
-
-                evento.preventDefault();
-
-            }
-
-        }
-
-    );
-
-
-    document.addEventListener(
-
-        "paste",
-
-        evento => {
-
-            if (!$("#modal-produto").open) {
-
-                return;
-
-            }
-
-
-            for (const item of evento.clipboardData?.items || []) {
-
-                if (
-
-                    item.kind === "file" &&
-
-                    item.type.startsWith("image/")
-
-                ) {
-
-                    const arquivo = item.getAsFile();
-
-
-                    if (arquivo) {
-
-                        evento.preventDefault();
-
-                        selecionarFoto(arquivo);
-
-                        break;
-
-                    }
-
-                }
-
-            }
-
-        }
-
-    );
-
-
-    $("#modal-produto").addEventListener(
-
-        "close",
-
-        () => {
-
-            estado.arquivoFoto = null;
-
-            limparPreview();
-
-            mostrarStatusFoto("");
-
-            verificarAtualizacoes();
-
-        }
-
-    );
-
-
-    // SINCRONIZAÇÃO
-
-    $("#recarregar-catalogo").addEventListener(
-
-        "click",
-
-        async () => {
-
-            if ($("#modal-produto").open) {
-
-                avisar(
-
-                    "Feche a edição antes de recarregar.",
-
-                    true
-
-                );
-
-                return;
-
-            }
-
-
-            try {
-
-                await carregarCatalogo();
-
-                avisar("Catálogo atualizado!");
-
-            } catch (erro) {
-
-                avisar(erro.message,true);
-
-            }
-
-        }
-
-    );
-
-
-    // EXPORTAÇÃO
-
-    $("#exportar-catalogo").addEventListener(
-
-        "click",
-
-        exportarCatalogo
-
-    );
-
-
-    $("#exportar-pedidos").addEventListener(
-
-        "click",
-
-        exportarPedidos
-
-    );
-
-
-    $("#baixar-backup").addEventListener(
-
-        "click",
-
-        exportarBackup
-
-    );
-
-
-    $("#restaurar-backup").addEventListener(
-
-        "change",
-
-        restaurarBackup
-
-    );
-
-
-    // VERIFICAÇÕES AUTOMÁTICAS
-
-    document.addEventListener(
-
-        "visibilitychange",
-
-        () => {
-
-            if (!document.hidden) {
-
-                verificarAtualizacoes();
-
-            }
-
-        }
-
-    );
-
-}
-
-
-// ==========================================
-// 26. INICIALIZAÇÃO
-// ==========================================
-
-async function iniciar() {
-
-    configurarEventos();
-
-
-    if (!window.supabase) {
-
-        $("#mensagem-login").textContent =
-
-            "Não foi possível carregar a biblioteca Supabase.";
-
-        return;
-
-    }
-
-
-    sb = window.supabase.createClient(
-
-        SUPABASE_URL,
-
-        SUPABASE_PUBLIC_KEY,
-
-        {
-
-            auth: {
-
-                persistSession: true,
-
-                autoRefreshToken: true,
-
-                detectSessionInUrl: false
-
-            }
-
-        }
-
-    );
-
-
-    try {
-
-        const { data, error } =
-            await sb.auth.getUser();
-
-
-        if (
-
-            !error &&
-
-            data.user?.id === ADMIN_UID
-
-        ) {
-
-            await entrarPainel();
-
-        } else {
-
-            mostrarLogin();
-
-        }
-
-
-    } catch (erro) {
-
-        console.error(erro);
-
-        mostrarLogin();
-
-        $("#mensagem-login").textContent =
-            erro.message;
-
-    }
-
-
-    // Atualização periódica do catálogo.
-
-    setInterval(
-
-        verificarAtualizacoes,
-
-        30000
-
-    );
-
-}
-
-
-iniciar();
-
-</script>
 
 </body>
 
