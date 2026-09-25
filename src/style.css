@@ -1,0 +1,2786 @@
+
+/*
+====================================================
+CRIAITOR 3D
+PAINEL ADMINISTRATIVO DA EMPRESA
+====================================================
+
+ARQUIVO: style.css
+
+IDENTIDADE VISUAL:
+Preto, roxo e laranja.
+
+LOGOTIPO:
+assets/logo-criaitor3d.jpg
+
+COMPATÍVEL COM:
+
+- index.html
+- admin.js
+- catalogo.js
+- supabase-config.js
+- sync-empresa.js
+- fotos-empresa.js
+
+====================================================
+*/
+
+
+/* ==================================================
+   1. CORES E VARIÁVEIS
+================================================== */
+
+:root {
+
+    --fundo: #100c15;
+
+    --fundo-secundario: #17101f;
+
+    --sidebar: #160f1d;
+
+    --painel: #211829;
+
+    --painel-claro: #2e2238;
+
+    --campo: #302438;
+
+    --roxo: #b12bff;
+
+    --roxo-claro: #d267ff;
+
+    --roxo-escuro: #54226c;
+
+    --laranja: #ff8927;
+
+    --laranja-claro: #ffb45e;
+
+    --texto: #f7f0fa;
+
+    --texto-secundario: #b8a8c3;
+
+    --borda: #493550;
+
+    --verde: #91e4b1;
+
+    --vermelho: #ff8e8e;
+
+    --sombra: 0 12px 35px rgba(0, 0, 0, 0.25);
+
+    --raio: 14px;
+
+}
+
+
+/* ==================================================
+   2. CONFIGURAÇÕES GERAIS
+================================================== */
+
+* {
+
+    box-sizing: border-box;
+
+}
+
+
+html {
+
+    scroll-behavior: smooth;
+
+}
+
+
+body {
+
+    margin: 0;
+
+    min-height: 100vh;
+
+    background: var(--fundo);
+
+    color: var(--texto);
+
+    font-family: "DM Sans", Arial, sans-serif;
+
+    font-size: 14px;
+
+    -webkit-font-smoothing: antialiased;
+
+}
+
+
+button,
+input,
+textarea,
+select {
+
+    font: inherit;
+
+}
+
+
+button {
+
+    cursor: pointer;
+
+}
+
+
+button:disabled {
+
+    opacity: 0.5;
+
+    cursor: not-allowed;
+
+}
+
+
+a {
+
+    color: inherit;
+
+    text-decoration: none;
+
+}
+
+
+img {
+
+    display: block;
+
+    max-width: 100%;
+
+}
+
+
+h1,
+h2,
+h3,
+h4 {
+
+    font-family: "Space Grotesk", Arial, sans-serif;
+
+}
+
+
+p {
+
+    line-height: 1.6;
+
+}
+
+
+em {
+
+    color: var(--laranja);
+
+    font-style: normal;
+
+}
+
+
+[hidden],
+.app[hidden],
+.tela-login[hidden],
+.pagina[hidden],
+.preview-container[hidden] {
+
+    display: none !important;
+
+}
+
+
+:focus-visible {
+
+    outline: 2px solid var(--laranja);
+
+    outline-offset: 3px;
+
+}
+
+
+/* ==================================================
+   3. ESTRUTURA PRINCIPAL DO PAINEL
+================================================== */
+
+.app {
+
+    display: grid;
+
+    grid-template-columns: 250px minmax(0, 1fr);
+
+    min-height: 100vh;
+
+}
+
+
+.conteudo {
+
+    min-width: 0;
+
+    background:
+
+        radial-gradient(
+            circle at 90% 0%,
+            rgba(177, 43, 255, 0.08),
+            transparent 35%
+        ),
+
+        var(--fundo);
+
+}
+
+
+/* ==================================================
+   4. MENU LATERAL
+================================================== */
+
+.sidebar {
+
+    display: flex;
+
+    flex-direction: column;
+
+    min-height: 100vh;
+
+    padding: 24px 15px;
+
+    background: var(--sidebar);
+
+    border-right: 1px solid var(--borda);
+
+}
+
+
+/* ==================================================
+   5. LOGOTIPO OFICIAL DA EMPRESA
+================================================== */
+
+/*
+
+A imagem é carregada pelo HTML:
+
+<img
+    src="assets/logo-criaitor3d.jpg"
+    class="logo-empresa"
+    alt="CriAItor 3D"
+>
+
+Não é necessário utilizar o Supabase
+para carregar o logotipo.
+
+*/
+
+
+.sidebar .marca {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    width: 100%;
+
+    margin-bottom: 30px;
+
+    padding: 10px 0;
+
+    cursor: default;
+
+}
+
+
+/* LOGO JPG COMPLETA */
+
+.logo-empresa {
+
+    display: block;
+
+    width: 195px;
+
+    height: 195px;
+
+    max-width: 100%;
+
+    object-fit: contain;
+
+    object-position: center;
+
+    aspect-ratio: 1 / 1;
+
+    background: #000000;
+
+    border: none;
+
+    border-radius: 12px;
+
+    box-shadow: none;
+
+    user-select: none;
+
+    -webkit-user-select: none;
+
+    -webkit-user-drag: none;
+
+    cursor: default;
+
+}
+
+
+/* LOGO EXIBIDA NA TELA DE LOGIN */
+
+.login-marca {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    margin-bottom: 20px;
+
+}
+
+
+.login-marca .logo-empresa {
+
+    width: 175px;
+
+    height: 175px;
+
+}
+
+
+/* ==================================================
+   6. MENU PRINCIPAL
+================================================== */
+
+.menu-titulo {
+
+    margin: 10px 12px 15px;
+
+    color: #a48cb0;
+
+    font-size: 10px;
+
+    font-weight: 800;
+
+    letter-spacing: 2px;
+
+}
+
+
+.menu {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 8px;
+
+}
+
+
+.menu-item {
+
+    display: flex;
+
+    align-items: center;
+
+    width: 100%;
+
+    min-height: 48px;
+
+    padding: 14px 16px;
+
+    background: transparent;
+
+    color: #cab9d4;
+
+    border: 1px solid transparent;
+
+    border-radius: 11px;
+
+    font-size: 14px;
+
+    font-weight: 700;
+
+    text-align: left;
+
+    transition:
+
+        background 0.2s,
+
+        color 0.2s,
+
+        border-color 0.2s;
+
+}
+
+
+.menu-item:hover {
+
+    background: #30203c;
+
+    color: white;
+
+}
+
+
+.menu-item.ativo {
+
+    background: linear-gradient(
+        90deg,
+        #54226c,
+        #342043
+    );
+
+    color: white;
+
+    border-color: #82409a;
+
+    box-shadow: inset 3px 0 0 var(--laranja);
+
+}
+
+
+/* ==================================================
+   7. RODAPÉ DO MENU
+================================================== */
+
+.sidebar-rodape {
+
+    margin-top: auto;
+
+    padding: 16px;
+
+    background: #21172c;
+
+    border: 1px solid var(--borda);
+
+    border-radius: 12px;
+
+}
+
+
+.sidebar-rodape strong {
+
+    display: block;
+
+    margin-bottom: 8px;
+
+    color: var(--verde);
+
+    font-size: 12px;
+
+}
+
+
+.sidebar-rodape p {
+
+    margin: 0;
+
+    color: var(--texto-secundario);
+
+    font-size: 11px;
+
+}
+
+
+/* ==================================================
+   8. CABEÇALHO SUPERIOR
+================================================== */
+
+.topbar {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    flex-wrap: wrap;
+
+    gap: 15px;
+
+    min-height: 90px;
+
+    padding: 20px 35px;
+
+    background: rgba(22, 15, 29, 0.96);
+
+    border-bottom: 1px solid var(--borda);
+
+}
+
+
+.topbar small {
+
+    display: block;
+
+    margin-bottom: 5px;
+
+    color: #ab97b7;
+
+    font-size: 10px;
+
+    font-weight: 800;
+
+    letter-spacing: 1.2px;
+
+}
+
+
+.topbar h2 {
+
+    margin: 0;
+
+    font-size: 22px;
+
+}
+
+
+/* ==================================================
+   9. CONTEÚDO PRINCIPAL
+================================================== */
+
+main {
+
+    width: 100%;
+
+    max-width: 1500px;
+
+    margin: 0 auto;
+
+    padding: 35px 35px 70px;
+
+}
+
+
+.pagina {
+
+    width: 100%;
+
+}
+
+
+.aviso {
+
+    margin-bottom: 30px;
+
+    padding: 18px 20px;
+
+    background: #2d1f32;
+
+    color: #ebd5e6;
+
+    border: 1px solid #74466d;
+
+    border-left: 4px solid var(--laranja);
+
+    border-radius: 12px;
+
+    font-size: 13px;
+
+    line-height: 1.8;
+
+}
+
+
+/* ==================================================
+   10. TÍTULOS DAS PÁGINAS
+================================================== */
+
+.cabecalho-pagina {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 25px;
+
+    margin-bottom: 30px;
+
+}
+
+
+.subtitulo {
+
+    color: var(--roxo-claro);
+
+    font-size: 10px;
+
+    font-weight: 900;
+
+    letter-spacing: 2px;
+
+}
+
+
+.cabecalho-pagina h1 {
+
+    margin: 12px 0;
+
+    font-size: clamp(30px, 3.5vw, 46px);
+
+    line-height: 1.2;
+
+    letter-spacing: -1.5px;
+
+}
+
+
+.cabecalho-pagina p {
+
+    max-width: 650px;
+
+    margin: 0;
+
+    color: var(--texto-secundario);
+
+    font-size: 14px;
+
+}
+
+
+.data-atual {
+
+    padding: 12px 16px;
+
+    background: var(--painel);
+
+    border: 1px solid var(--borda);
+
+    border-radius: 10px;
+
+    color: var(--texto-secundario);
+
+    font-size: 12px;
+
+    white-space: nowrap;
+
+}
+
+
+/* ==================================================
+   11. BOTÕES GERAIS
+================================================== */
+
+.botao {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 8px;
+
+    min-height: 43px;
+
+    padding: 12px 19px;
+
+    border: 1px solid transparent;
+
+    border-radius: 10px;
+
+    font-size: 13px;
+
+    font-weight: 800;
+
+    text-align: center;
+
+    text-decoration: none;
+
+    transition:
+
+        background 0.2s,
+
+        border-color 0.2s,
+
+        transform 0.2s;
+
+}
+
+
+.botao:not(:disabled):hover {
+
+    transform: translateY(-2px);
+
+}
+
+
+.botao-laranja {
+
+    background: var(--laranja);
+
+    color: #211025;
+
+}
+
+
+.botao-laranja:not(:disabled):hover {
+
+    background: var(--laranja-claro);
+
+}
+
+
+.botao-secundario {
+
+    background: #302438;
+
+    color: white;
+
+    border-color: #684b75;
+
+}
+
+
+.botao-secundario:not(:disabled):hover {
+
+    background: #453151;
+
+    border-color: var(--roxo);
+
+}
+
+
+.botao-link {
+
+    padding: 8px;
+
+    background: transparent;
+
+    color: var(--laranja);
+
+    border: none;
+
+    font-size: 13px;
+
+    font-weight: 800;
+
+}
+
+
+.botao-link:hover {
+
+    color: var(--laranja-claro);
+
+}
+
+
+.grupo-botoes {
+
+    display: flex;
+
+    align-items: center;
+
+    flex-wrap: wrap;
+
+    gap: 10px;
+
+}
+
+
+/* ==================================================
+   12. INDICADORES DO DASHBOARD
+================================================== */
+
+.indicadores {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, minmax(0, 1fr));
+
+    gap: 16px;
+
+    margin-bottom: 25px;
+
+}
+
+
+.indicador {
+
+    display: flex;
+
+    flex-direction: column;
+
+    min-height: 155px;
+
+    padding: 23px;
+
+    background: linear-gradient(
+        155deg,
+        #30213b,
+        #201728
+    );
+
+    border: 1px solid #543661;
+
+    border-radius: 16px;
+
+    transition:
+
+        transform 0.2s,
+
+        border-color 0.2s;
+
+}
+
+
+.indicador:hover {
+
+    transform: translateY(-3px);
+
+    border-color: var(--roxo);
+
+}
+
+
+.indicador span {
+
+    color: #c9b5d3;
+
+    font-size: 10px;
+
+    font-weight: 900;
+
+    letter-spacing: 1px;
+
+}
+
+
+.indicador strong {
+
+    display: block;
+
+    margin: 14px 0 5px;
+
+    color: white;
+
+    font-size: 42px;
+
+    line-height: 1.2;
+
+}
+
+
+.indicador small {
+
+    margin-top: auto;
+
+    color: var(--texto-secundario);
+
+    font-size: 11px;
+
+}
+
+
+/* ==================================================
+   13. PAINÉIS
+================================================== */
+
+.painel {
+
+    margin-bottom: 20px;
+
+    padding: 25px;
+
+    background: var(--painel);
+
+    border: 1px solid var(--borda);
+
+    border-radius: 16px;
+
+    box-shadow: var(--sombra);
+
+}
+
+
+.painel h2 {
+
+    margin: 0 0 15px;
+
+    font-size: 21px;
+
+}
+
+
+.painel h3 {
+
+    font-size: 17px;
+
+}
+
+
+.painel p {
+
+    color: var(--texto-secundario);
+
+    font-size: 14px;
+
+}
+
+
+.painel-cabecalho {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 15px;
+
+    margin-bottom: 20px;
+
+}
+
+
+/* ==================================================
+   14. PRODUTOS RECENTES
+================================================== */
+
+.produto-recente {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 15px;
+
+    padding: 14px 0;
+
+    border-bottom: 1px solid var(--borda);
+
+}
+
+
+.produto-recente:last-child {
+
+    border-bottom: none;
+
+}
+
+
+.produto-recente img {
+
+    width: 60px;
+
+    height: 60px;
+
+    flex-shrink: 0;
+
+    object-fit: cover;
+
+    background: var(--painel-claro);
+
+    border-radius: 10px;
+
+}
+
+
+.produto-recente-info {
+
+    flex: 1;
+
+    min-width: 0;
+
+}
+
+
+.produto-recente-info strong {
+
+    display: block;
+
+    margin-bottom: 6px;
+
+    font-size: 14px;
+
+}
+
+
+.produto-recente-info span {
+
+    color: var(--texto-secundario);
+
+    font-size: 12px;
+
+}
+
+
+.produto-recente b {
+
+    color: var(--laranja);
+
+    font-size: 15px;
+
+    white-space: nowrap;
+
+}
+
+
+/* ==================================================
+   15. PESQUISA E TABELAS
+================================================== */
+
+.barra-ferramentas {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    flex-wrap: wrap;
+
+    gap: 15px;
+
+    margin-bottom: 20px;
+
+}
+
+
+.barra-ferramentas input {
+
+    width: min(350px, 100%);
+
+    min-height: 43px;
+
+    padding: 12px 15px;
+
+    background: var(--campo);
+
+    color: white;
+
+    border: 1px solid var(--borda);
+
+    border-radius: 10px;
+
+    outline: none;
+
+}
+
+
+.barra-ferramentas input:focus {
+
+    border-color: var(--roxo);
+
+}
+
+
+.barra-ferramentas input::placeholder {
+
+    color: #a692b1;
+
+}
+
+
+.barra-ferramentas span {
+
+    color: var(--texto-secundario);
+
+    font-size: 12px;
+
+}
+
+
+.tabela-container {
+
+    width: 100%;
+
+    overflow-x: auto;
+
+    border: 1px solid var(--borda);
+
+    border-radius: 10px;
+
+}
+
+
+table {
+
+    width: 100%;
+
+    min-width: 700px;
+
+    border-collapse: collapse;
+
+    text-align: left;
+
+}
+
+
+thead {
+
+    background: var(--painel-claro);
+
+}
+
+
+th {
+
+    padding: 15px;
+
+    color: #c7b5d1;
+
+    font-size: 10px;
+
+    font-weight: 900;
+
+    letter-spacing: 1px;
+
+    white-space: nowrap;
+
+}
+
+
+td {
+
+    padding: 15px;
+
+    border-top: 1px solid var(--borda);
+
+    font-size: 13px;
+
+    vertical-align: middle;
+
+}
+
+
+tbody tr:hover {
+
+    background: rgba(177, 43, 255, 0.045);
+
+}
+
+
+td strong {
+
+    display: block;
+
+    font-size: 13px;
+
+}
+
+
+td small {
+
+    display: block;
+
+    margin-top: 5px;
+
+    color: var(--texto-secundario);
+
+    font-size: 11px;
+
+}
+
+
+/* ==================================================
+   16. PRODUTOS NA TABELA
+================================================== */
+
+.produto-celula {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    min-width: 170px;
+
+}
+
+
+.produto-celula img {
+
+    width: 55px;
+
+    height: 55px;
+
+    flex-shrink: 0;
+
+    object-fit: cover;
+
+    background: var(--painel-claro);
+
+    border-radius: 9px;
+
+}
+
+
+.produto-celula div {
+
+    min-width: 0;
+
+}
+
+
+.etiqueta {
+
+    display: inline-block;
+
+    padding: 7px 11px;
+
+    background: #3e294b;
+
+    color: #e0b4ee;
+
+    border: 1px solid #644276;
+
+    border-radius: 8px;
+
+    font-size: 11px;
+
+    font-weight: 800;
+
+}
+
+
+.visivel {
+
+    color: var(--verde);
+
+    font-weight: 800;
+
+}
+
+
+.oculto {
+
+    color: var(--vermelho);
+
+    font-weight: 800;
+
+}
+
+
+/* BOTÕES DAS TABELAS */
+
+.botao-pequeno {
+
+    padding: 8px 10px;
+
+    margin: 3px;
+
+    background: #372741;
+
+    color: white;
+
+    border: 1px solid #634972;
+
+    border-radius: 8px;
+
+    font-size: 12px;
+
+    font-weight: 700;
+
+    white-space: nowrap;
+
+}
+
+
+.botao-pequeno:hover {
+
+    background: #4b335a;
+
+    border-color: var(--roxo);
+
+}
+
+
+.botao-excluir {
+
+    color: #ffb7b7;
+
+}
+
+
+.botao-excluir:hover {
+
+    background: #512638;
+
+    border-color: var(--vermelho);
+
+}
+
+
+/* ==================================================
+   17. JANELAS DE CADASTRO
+================================================== */
+
+.modal {
+
+    width: min(650px, calc(100vw - 24px));
+
+    max-width: 100%;
+
+    max-height: 90vh;
+
+    padding: 27px;
+
+    overflow-y: auto;
+
+    background: #21172c;
+
+    color: white;
+
+    border: 1px solid #7d4d91;
+
+    border-radius: 18px;
+
+    box-shadow: 0 25px 80px rgba(0, 0, 0, 0.65);
+
+}
+
+
+.modal:not([open]) {
+
+    display: none;
+
+}
+
+
+.modal::backdrop {
+
+    background: rgba(0, 0, 0, 0.80);
+
+    backdrop-filter: blur(5px);
+
+}
+
+
+.modal-cabecalho {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 15px;
+
+    margin-bottom: 25px;
+
+    padding-bottom: 15px;
+
+    border-bottom: 1px solid var(--borda);
+
+}
+
+
+.modal-cabecalho h2 {
+
+    margin: 0;
+
+    color: white;
+
+    font-size: 22px;
+
+}
+
+
+.fechar-modal {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    width: 38px;
+
+    height: 38px;
+
+    flex-shrink: 0;
+
+    background: #382641;
+
+    color: white;
+
+    border: 1px solid var(--borda);
+
+    border-radius: 9px;
+
+    font-size: 25px;
+
+    line-height: 1;
+
+}
+
+
+.fechar-modal:hover {
+
+    background: #543361;
+
+}
+
+
+/* ==================================================
+   18. CAMPOS DOS FORMULÁRIOS
+================================================== */
+
+.campos {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 18px;
+
+}
+
+
+.campo {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 8px;
+
+    min-width: 0;
+
+    color: #e8d7ee;
+
+    font-size: 12px;
+
+    font-weight: 800;
+
+}
+
+
+.campo-inteiro {
+
+    grid-column: 1 / -1;
+
+}
+
+
+.campo input,
+.campo textarea,
+.campo select {
+
+    width: 100%;
+
+    min-height: 44px;
+
+    padding: 12px;
+
+    background: var(--campo);
+
+    color: white;
+
+    border: 1px solid #6c5177;
+
+    border-radius: 9px;
+
+    font-size: 13px;
+
+    outline: none;
+
+    transition: border-color 0.2s;
+
+}
+
+
+.campo textarea {
+
+    min-height: 100px;
+
+    resize: vertical;
+
+}
+
+
+.campo input:focus,
+.campo textarea:focus,
+.campo select:focus {
+
+    border-color: var(--laranja);
+
+}
+
+
+.campo input::placeholder,
+.campo textarea::placeholder {
+
+    color: #aa97b5;
+
+}
+
+
+.campo select option {
+
+    background: var(--campo);
+
+    color: white;
+
+}
+
+
+/* CHECKBOXES */
+
+.checkbox-campo {
+
+    display: flex;
+
+    flex-direction: row;
+
+    align-items: center;
+
+    gap: 10px;
+
+    cursor: pointer;
+
+}
+
+
+.checkbox-campo input {
+
+    width: 18px;
+
+    height: 18px;
+
+    min-height: 0;
+
+    margin: 0;
+
+    accent-color: var(--roxo);
+
+    cursor: pointer;
+
+}
+
+
+/* BOTÕES DOS FORMULÁRIOS */
+
+.modal-acoes {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: flex-end;
+
+    flex-wrap: wrap;
+
+    gap: 12px;
+
+    margin-top: 28px;
+
+    padding-top: 20px;
+
+    border-top: 1px solid var(--borda);
+
+}
+
+
+/* CAMPO INTERNO DA URL DA FOTOGRAFIA */
+
+.campo-url-legado {
+
+    display: none !important;
+
+}
+
+
+/* ==================================================
+   19. UPLOAD DAS FOTOGRAFIAS DOS PRODUTOS
+================================================== */
+
+/*
+
+O fotos-empresa.js cria automaticamente
+a área de upload dentro do formulário.
+
+As imagens são enviadas para:
+
+Supabase Storage
+Bucket: projetos
+Pasta: catalogo
+
+*/
+
+
+.area-fotos-empresa {
+
+    grid-column: 1 / -1;
+
+    display: block;
+
+    width: 100%;
+
+    margin: 10px 0;
+
+}
+
+
+.area-fotos-empresa h3 {
+
+    margin: 0 0 8px;
+
+    color: white;
+
+    font-size: 18px;
+
+}
+
+
+.descricao-upload {
+
+    margin: 0 0 15px;
+
+    color: var(--texto-secundario);
+
+    font-size: 12px;
+
+    line-height: 1.6;
+
+}
+
+
+/* ==================================================
+   20. ÁREA PARA ARRASTAR E SOLTAR
+================================================== */
+
+.zona-upload {
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 12px;
+
+    width: 100%;
+
+    min-height: 230px;
+
+    padding: 25px;
+
+    background: #261b30;
+
+    color: white;
+
+    border: 2px dashed #8950ab;
+
+    border-radius: 16px;
+
+    text-align: center;
+
+    cursor: pointer;
+
+    transition:
+
+        background 0.2s,
+
+        border-color 0.2s,
+
+        transform 0.2s;
+
+}
+
+
+.zona-upload:hover {
+
+    background: #34233f;
+
+    border-color: var(--laranja);
+
+}
+
+
+.zona-upload.arrastando {
+
+    background: #432352;
+
+    border-color: var(--laranja);
+
+    transform: scale(1.01);
+
+    box-shadow: 0 0 25px rgba(177, 43, 255, 0.15);
+
+}
+
+
+.zona-upload.enviando {
+
+    opacity: 0.6;
+
+    pointer-events: none;
+
+    cursor: wait;
+
+}
+
+
+.zona-upload:focus-visible {
+
+    outline: 3px solid var(--laranja);
+
+    outline-offset: 4px;
+
+}
+
+
+/* ÍCONE DO UPLOAD */
+
+.icone-upload {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    width: 65px;
+
+    height: 65px;
+
+    background: #4c2b61;
+
+    color: var(--laranja);
+
+    border-radius: 50%;
+
+    font-size: 35px;
+
+    font-weight: 900;
+
+}
+
+
+/* TEXTOS DO UPLOAD */
+
+.zona-upload strong {
+
+    color: white;
+
+    font-size: 15px;
+
+    font-weight: 800;
+
+}
+
+
+.zona-upload span {
+
+    color: #d8c4e8;
+
+    font-size: 12px;
+
+}
+
+
+.zona-upload small {
+
+    color: #aa95b8;
+
+    font-size: 11px;
+
+}
+
+
+/* BOTÃO VISUAL DE SELECIONAR FOTOGRAFIA */
+
+.botao-escolher-foto {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    min-height: 42px;
+
+    padding: 12px 20px;
+
+    background: var(--laranja);
+
+    color: #211025;
+
+    border: none;
+
+    border-radius: 10px;
+
+    font-size: 13px;
+
+    font-weight: 900;
+
+    pointer-events: none;
+
+}
+
+
+/* ==================================================
+   21. PRÉ-VISUALIZAÇÃO DA FOTOGRAFIA
+================================================== */
+
+.preview-container {
+
+    margin-top: 20px;
+
+    padding: 15px;
+
+    background: #1b1323;
+
+    border: 1px solid #63466d;
+
+    border-radius: 13px;
+
+}
+
+
+.preview-container[hidden] {
+
+    display: none !important;
+
+}
+
+
+#preview-foto {
+
+    display: block;
+
+    width: 100%;
+
+    max-width: 350px;
+
+    max-height: 350px;
+
+    margin: 0 auto;
+
+    object-fit: contain;
+
+    background: #100c15;
+
+    border-radius: 10px;
+
+}
+
+
+.preview-informacoes {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    flex-wrap: wrap;
+
+    gap: 12px;
+
+    margin-top: 15px;
+
+}
+
+
+#nome-arquivo {
+
+    flex: 1;
+
+    min-width: 0;
+
+    color: #d8c4e8;
+
+    font-size: 12px;
+
+    overflow-wrap: anywhere;
+
+}
+
+
+/* BOTÃO TROCAR FOTOGRAFIA */
+
+.botao-trocar-foto {
+
+    padding: 10px 15px;
+
+    background: #3b2849;
+
+    color: white;
+
+    border: 1px solid #8950ab;
+
+    border-radius: 9px;
+
+    font-size: 12px;
+
+    font-weight: 800;
+
+}
+
+
+.botao-trocar-foto:hover {
+
+    background: #4e3560;
+
+}
+
+
+/* ==================================================
+   22. MENSAGENS DO UPLOAD
+================================================== */
+
+.status-foto {
+
+    min-height: 18px;
+
+    margin-top: 12px;
+
+    color: var(--verde);
+
+    font-size: 12px;
+
+    font-weight: 700;
+
+    overflow-wrap: anywhere;
+
+}
+
+
+.status-foto.erro {
+
+    color: var(--vermelho);
+
+}
+
+
+/* ==================================================
+   23. TELA DE LOGIN
+================================================== */
+
+/*
+
+A tela de login é criada pelo admin.js.
+
+Ela utiliza:
+
+#tela-login
+.form-login
+.login-marca
+#form-login
+
+*/
+
+
+.tela-login {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    min-height: 100vh;
+
+    padding: 24px;
+
+    background:
+
+        radial-gradient(
+            circle at 50% 25%,
+            rgba(177, 43, 255, 0.16),
+            transparent 45%
+        ),
+
+        var(--fundo);
+
+}
+
+
+.form-login {
+
+    width: min(440px, 100%);
+
+    padding: 35px;
+
+    background: var(--painel);
+
+    border: 1px solid #714188;
+
+    border-radius: 20px;
+
+    box-shadow: 0 25px 70px rgba(0, 0, 0, 0.40);
+
+}
+
+
+.form-login h2 {
+
+    margin: 0 0 12px;
+
+    color: var(--laranja);
+
+    font-size: 25px;
+
+    text-align: center;
+
+}
+
+
+.form-login p {
+
+    margin-bottom: 25px;
+
+    color: var(--texto-secundario);
+
+    font-size: 13px;
+
+    text-align: center;
+
+}
+
+
+.form-login label {
+
+    display: block;
+
+    margin: 15px 0 7px;
+
+    color: #e8d7ee;
+
+    font-size: 12px;
+
+    font-weight: 800;
+
+}
+
+
+.form-login input {
+
+    display: block;
+
+    width: 100%;
+
+    min-height: 46px;
+
+    padding: 13px 15px;
+
+    background: var(--campo);
+
+    color: white;
+
+    border: 1px solid #6c5177;
+
+    border-radius: 10px;
+
+    outline: none;
+
+}
+
+
+.form-login input:focus {
+
+    border-color: var(--laranja);
+
+}
+
+
+.form-login input::placeholder {
+
+    color: #aa97b5;
+
+}
+
+
+.form-login button {
+
+    width: 100%;
+
+    min-height: 47px;
+
+    margin-top: 22px;
+
+    padding: 14px;
+
+    background: var(--laranja);
+
+    color: #211025;
+
+    border: none;
+
+    border-radius: 10px;
+
+    font-size: 14px;
+
+    font-weight: 900;
+
+}
+
+
+.form-login button:not(:disabled):hover {
+
+    background: var(--laranja-claro);
+
+}
+
+
+#mensagem-login {
+
+    margin: 15px 0 0;
+
+    color: var(--vermelho);
+
+    font-size: 12px;
+
+    text-align: center;
+
+    overflow-wrap: anywhere;
+
+}
+
+
+/* ==================================================
+   24. SINCRONIZAÇÃO COM SUPABASE
+================================================== */
+
+.sync-empresa {
+
+    margin-top: 25px;
+
+    padding: 20px;
+
+    background: #191221;
+
+    border: 1px solid var(--borda);
+
+    border-radius: 12px;
+
+}
+
+
+.sync-empresa h3 {
+
+    margin-top: 0;
+
+    color: white;
+
+    font-size: 18px;
+
+}
+
+
+.sync-empresa p {
+
+    margin: 10px 0;
+
+    color: var(--texto-secundario);
+
+    font-size: 13px;
+
+}
+
+
+.sync-empresa strong {
+
+    color: white;
+
+}
+
+
+#status-sync {
+
+    padding: 12px 14px;
+
+    background: #252032;
+
+    color: var(--verde);
+
+    border: 1px solid #4e3a58;
+
+    border-radius: 9px;
+
+    font-weight: 700;
+
+}
+
+
+#botao-recarregar-sync {
+
+    margin-top: 12px;
+
+}
+
+
+/* ==================================================
+   25. NOTIFICAÇÕES DO SISTEMA
+================================================== */
+
+.notificacao {
+
+    position: fixed;
+
+    bottom: 25px;
+
+    left: 50%;
+
+    z-index: 999;
+
+    max-width: min(500px, calc(100vw - 30px));
+
+    padding: 15px 22px;
+
+    background: var(--laranja);
+
+    color: #261429;
+
+    border-radius: 11px;
+
+    box-shadow: var(--sombra);
+
+    font-size: 13px;
+
+    font-weight: 800;
+
+    text-align: center;
+
+    opacity: 0;
+
+    pointer-events: none;
+
+    transform: translate(-50%, 100px);
+
+    transition:
+
+        opacity 0.3s,
+
+        transform 0.3s;
+
+}
+
+
+.notificacao.visivel {
+
+    opacity: 1;
+
+    transform: translate(-50%, 0);
+
+}
+
+
+.notificacao.erro {
+
+    background: #ffb2b2;
+
+    color: #5d1722;
+
+}
+
+
+/* ==================================================
+   26. RESPONSIVIDADE — NOTEBOOK E TABLET
+================================================== */
+
+@media (max-width: 1100px) {
+
+    .app {
+
+        grid-template-columns:
+            205px minmax(0, 1fr);
+
+    }
+
+
+    .sidebar {
+
+        padding: 20px 12px;
+
+    }
+
+
+    .sidebar .logo-empresa {
+
+        width: 160px;
+
+        height: 160px;
+
+    }
+
+
+    .indicadores {
+
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
+    }
+
+
+    .topbar {
+
+        padding: 20px 25px;
+
+    }
+
+
+    main {
+
+        padding: 25px;
+
+    }
+
+}
+
+
+/* ==================================================
+   27. RESPONSIVIDADE — CELULARES
+================================================== */
+
+@media (max-width: 720px) {
+
+    .app {
+
+        display: block;
+
+    }
+
+
+    /* MENU SUPERIOR NO CELULAR */
+
+    .sidebar {
+
+        min-height: auto;
+
+        padding: 15px;
+
+    }
+
+
+    .sidebar .marca {
+
+        margin-bottom: 15px;
+
+        padding: 0;
+
+    }
+
+
+    .sidebar .logo-empresa {
+
+        width: 120px;
+
+        height: 120px;
+
+    }
+
+
+    .menu-titulo,
+    .sidebar-rodape {
+
+        display: none;
+
+    }
+
+
+    .menu {
+
+        flex-direction: row;
+
+        gap: 8px;
+
+        overflow-x: auto;
+
+        padding-bottom: 5px;
+
+    }
+
+
+    .menu-item {
+
+        min-width: max-content;
+
+        min-height: 42px;
+
+        padding: 11px 14px;
+
+        font-size: 12px;
+
+        white-space: nowrap;
+
+    }
+
+
+    /* CABEÇALHO */
+
+    .topbar {
+
+        min-height: 75px;
+
+        padding: 15px;
+
+    }
+
+
+    .topbar h2 {
+
+        font-size: 19px;
+
+    }
+
+
+    .topbar .botao {
+
+        padding: 10px 12px;
+
+        font-size: 12px;
+
+    }
+
+
+    /* CONTEÚDO */
+
+    main {
+
+        padding: 20px 15px 50px;
+
+    }
+
+
+    .aviso {
+
+        padding: 14px;
+
+        font-size: 11px;
+
+    }
+
+
+    .cabecalho-pagina {
+
+        flex-direction: column;
+
+        align-items: flex-start;
+
+        gap: 15px;
+
+    }
+
+
+    .cabecalho-pagina h1 {
+
+        font-size: 32px;
+
+    }
+
+
+    .cabecalho-pagina p {
+
+        font-size: 13px;
+
+    }
+
+
+    /* INDICADORES */
+
+    .indicadores {
+
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
+        gap: 10px;
+
+    }
+
+
+    .indicador {
+
+        min-height: 130px;
+
+        padding: 15px;
+
+    }
+
+
+    .indicador strong {
+
+        font-size: 34px;
+
+    }
+
+
+    .indicador span {
+
+        font-size: 9px;
+
+    }
+
+
+    /* PAINÉIS */
+
+    .painel {
+
+        padding: 16px;
+
+    }
+
+
+    .painel h2 {
+
+        font-size: 19px;
+
+    }
+
+
+    /* PRODUTOS RECENTES */
+
+    .produto-recente {
+
+        gap: 10px;
+
+    }
+
+
+    .produto-recente img {
+
+        width: 48px;
+
+        height: 48px;
+
+    }
+
+
+    .produto-recente b {
+
+        font-size: 12px;
+
+    }
+
+
+    /* TABELAS */
+
+    .barra-ferramentas {
+
+        align-items: stretch;
+
+        flex-direction: column;
+
+    }
+
+
+    .barra-ferramentas input {
+
+        width: 100%;
+
+    }
+
+
+    /* MODAIS */
+
+    .modal {
+
+        width: calc(100vw - 20px);
+
+        max-height: 90dvh;
+
+        padding: 18px;
+
+    }
+
+
+    .campos {
+
+        grid-template-columns: 1fr;
+
+        gap: 15px;
+
+    }
+
+
+    .campo-inteiro,
+    .area-fotos-empresa {
+
+        grid-column: 1 / -1;
+
+    }
+
+
+    .modal-acoes {
+
+        flex-direction: column-reverse;
+
+    }
+
+
+    .modal-acoes .botao {
+
+        width: 100%;
+
+    }
+
+
+    /* UPLOAD DE FOTOS */
+
+    .zona-upload {
+
+        min-height: 190px;
+
+        padding: 18px;
+
+    }
+
+
+    .zona-upload strong {
+
+        font-size: 13px;
+
+    }
+
+
+    .preview-informacoes {
+
+        flex-direction: column;
+
+        align-items: stretch;
+
+    }
+
+
+    .botao-trocar-foto {
+
+        width: 100%;
+
+    }
+
+
+    /* LOGIN */
+
+    .form-login {
+
+        padding: 25px;
+
+    }
+
+
+    .login-marca .logo-empresa {
+
+        width: 145px;
+
+        height: 145px;
+
+    }
+
+}
+
+
+/* ==================================================
+   28. TELAS MUITO PEQUENAS
+================================================== */
+
+@media (max-width: 400px) {
+
+    .sidebar .logo-empresa {
+
+        width: 100px;
+
+        height: 100px;
+
+    }
+
+
+    .topbar {
+
+        gap: 12px;
+
+    }
+
+
+    .topbar .botao {
+
+        font-size: 11px;
+
+    }
+
+
+    .indicadores {
+
+        grid-template-columns: 1fr 1fr;
+
+    }
+
+
+    .indicador {
+
+        padding: 12px;
+
+    }
+
+
+    .indicador strong {
+
+        font-size: 30px;
+
+    }
+
+
+    .grupo-botoes {
+
+        flex-direction: column;
+
+        align-items: stretch;
+
+    }
+
+
+    .grupo-botoes .botao {
+
+        width: 100%;
+
+    }
+
+
+    .modal {
+
+        padding: 15px;
+
+    }
+
+
+    .zona-upload {
+
+        padding: 15px;
+
+    }
+
+}
+
+
+/* ==================================================
+   29. ACESSIBILIDADE
+================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+
+    html {
+
+        scroll-behavior: auto;
+
+    }
+
+
+    * {
+
+        animation-duration: 0.01ms !important;
+
+        transition-duration: 0.01ms !important;
+
+    }
+
+}
+
+
+/* ==================================================
+   FIM DO ARQUIVO
+   CRIAITOR 3D - PAINEL ADMINISTRATIVO
+================================================== */
