@@ -1,12 +1,7 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 
 <head>
-
-    <!-- ======================================
-         CONFIGURAÇÕES GERAIS
-    ====================================== -->
 
     <meta charset="UTF-8">
 
@@ -22,32 +17,28 @@
 
     <meta
         name="description"
-        content="Painel administrativo da CriAItor 3D. Gerenciamento de produtos, fotografias, estoque e pedidos."
+        content="Painel administrativo da CriAItor 3D."
     >
 
     <title>
-        CriAItor 3D | Painel Administrativo
+        CriAItor 3D | Administração
     </title>
 
 
-    <!-- ======================================
-         LOGO OFICIAL
-
-         Arquivo armazenado no GitHub:
-
-         assets/logo-criaitor3d.jpg
-    ====================================== -->
+    <!-- =========================================
+         FAVICON / LOGO
+    ========================================== -->
 
     <link
         rel="icon"
         type="image/jpeg"
-        href="assets/logo-criaitor3d.jpg"
+        href="./assets/logo-criaitor3d.jpg"
     >
 
 
-    <!-- ======================================
+    <!-- =========================================
          FONTES
-    ====================================== -->
+    ========================================== -->
 
     <link
         rel="preconnect"
@@ -61,14 +52,14 @@
     >
 
     <link
-        href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap"
         rel="stylesheet"
     >
 
 
-    <!-- ======================================
-         CSS DO PAINEL
-    ====================================== -->
+    <!-- =========================================
+         CSS PRINCIPAL
+    ========================================== -->
 
     <link
         rel="stylesheet"
@@ -76,9 +67,69 @@
     >
 
 
-    <!-- ======================================
-         1. BIBLIOTECA SUPABASE
-    ====================================== -->
+    <!-- =========================================
+         CSS DE EMERGÊNCIA
+
+         Evita tela branca caso o style.css
+         ainda não tenha carregado.
+    ========================================== -->
+
+    <style>
+
+        html,
+        body {
+
+            margin: 0;
+
+            min-height: 100%;
+
+            background: #100c15;
+
+            color: white;
+
+            font-family: Arial, sans-serif;
+
+        }
+
+
+        [hidden] {
+
+            display: none !important;
+
+        }
+
+
+        .tela-login {
+
+            min-height: 100vh;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+        }
+
+
+        .form-login {
+
+            width: min(420px, calc(100% - 30px));
+
+            padding: 30px;
+
+            background: #211829;
+
+            border-radius: 18px;
+
+        }
+
+    </style>
+
+
+    <!-- =========================================
+         SUPABASE
+    ========================================== -->
 
     <script
         src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
@@ -86,9 +137,9 @@
     ></script>
 
 
-    <!-- ======================================
-         2. CONFIGURAÇÃO DO SUPABASE
-    ====================================== -->
+    <!-- =========================================
+         CONFIGURAÇÃO
+    ========================================== -->
 
     <script
         src="./supabase-config.js"
@@ -96,9 +147,9 @@
     ></script>
 
 
-    <!-- ======================================
-         3. CATÁLOGO
-    ====================================== -->
+    <!-- =========================================
+         CATÁLOGO
+    ========================================== -->
 
     <script
         src="./catalogo.js"
@@ -106,9 +157,9 @@
     ></script>
 
 
-    <!-- ======================================
-         4. PAINEL ADMINISTRATIVO
-    ====================================== -->
+    <!-- =========================================
+         ADMINISTRAÇÃO
+    ========================================== -->
 
     <script
         src="./admin.js"
@@ -116,9 +167,9 @@
     ></script>
 
 
-    <!-- ======================================
-         5. UPLOAD DE FOTOGRAFIAS
-    ====================================== -->
+    <!-- =========================================
+         FOTOGRAFIAS
+    ========================================== -->
 
     <script
         src="./fotos-empresa.js"
@@ -126,9 +177,9 @@
     ></script>
 
 
-    <!-- ======================================
-         6. SINCRONIZAÇÃO DO CATÁLOGO
-    ====================================== -->
+    <!-- =========================================
+         SINCRONIZAÇÃO
+    ========================================== -->
 
     <script
         src="./sync-empresa.js"
@@ -141,28 +192,99 @@
 <body data-area="empresa">
 
 
-    <!-- ======================================
-         AVISO PARA JAVASCRIPT DESATIVADO
-    ====================================== -->
+    <!-- =========================================
+         LOGIN
+    ========================================== -->
 
-    <noscript>
+    <section
+        class="tela-login"
+        id="tela-login"
+    >
 
-        <p>
+        <form
+            class="form-login"
+            id="form-login"
+        >
 
-            O painel da CriAItor 3D necessita
-            de JavaScript para funcionar.
+            <div class="login-marca">
 
-            Ative o JavaScript no navegador
-            e atualize a página.
+                <img
+                    src="./assets/logo-criaitor3d.jpg"
+                    alt="CriAItor 3D"
+                    class="logo-empresa"
+                    draggable="false"
+                >
 
-        </p>
-
-    </noscript>
+            </div>
 
 
-    <!-- ======================================
-         PAINEL ADMINISTRATIVO
-    ====================================== -->
+            <h2>
+                Painel administrativo
+            </h2>
+
+
+            <p>
+
+                Entre com sua conta para gerenciar
+                produtos, custos, filamentos e pedidos.
+
+            </p>
+
+
+            <label for="email-login">
+
+                E-mail
+
+            </label>
+
+
+            <input
+                type="email"
+                id="email-login"
+                autocomplete="username"
+                required
+            >
+
+
+            <label for="senha-login">
+
+                Senha
+
+            </label>
+
+
+            <input
+                type="password"
+                id="senha-login"
+                autocomplete="current-password"
+                required
+            >
+
+
+            <button
+                type="submit"
+                id="botao-login"
+            >
+
+                Entrar no painel
+
+            </button>
+
+
+            <p
+                id="mensagem-login"
+                role="status"
+                aria-live="polite"
+            ></p>
+
+        </form>
+
+    </section>
+
+
+    <!-- =========================================
+         PAINEL PRINCIPAL
+    ========================================== -->
 
     <div
         class="app"
@@ -171,14 +293,14 @@
     >
 
 
-        <!-- ==================================
+        <!-- =====================================
              MENU LATERAL
-        ================================== -->
+        ====================================== -->
 
         <aside class="sidebar">
 
 
-            <!-- LOGO DA EMPRESA -->
+            <!-- LOGO -->
 
             <div class="marca">
 
@@ -192,16 +314,12 @@
             </div>
 
 
-            <!-- TÍTULO DO MENU -->
-
             <p class="menu-titulo">
 
                 MENU PRINCIPAL
 
             </p>
 
-
-            <!-- NAVEGAÇÃO -->
 
             <nav
                 class="menu"
@@ -245,6 +363,28 @@
                 <button
                     type="button"
                     class="menu-item"
+                    data-pagina="custos"
+                >
+
+                    ◫ Custos
+
+                </button>
+
+
+                <button
+                    type="button"
+                    class="menu-item"
+                    data-pagina="filamentos"
+                >
+
+                    ◉ Filamentos
+
+                </button>
+
+
+                <button
+                    type="button"
+                    class="menu-item"
                     data-pagina="publicar"
                 >
 
@@ -252,10 +392,9 @@
 
                 </button>
 
+
             </nav>
 
-
-            <!-- RODAPÉ DO MENU -->
 
             <div class="sidebar-rodape">
 
@@ -265,23 +404,22 @@
 
                 </strong>
 
-
                 <p>
 
-                    Painel administrativo
-                    conectado ao catálogo
-                    da loja virtual.
+                    Produtos sincronizados
+                    pelo Supabase.
 
                 </p>
 
             </div>
 
+
         </aside>
 
 
-        <!-- ==================================
-             CONTEÚDO PRINCIPAL
-        ================================== -->
+        <!-- =====================================
+             CONTEÚDO
+        ====================================== -->
 
         <div class="conteudo">
 
@@ -299,7 +437,6 @@
 
                     </small>
 
-
                     <h2 id="titulo-pagina">
 
                         Visão geral
@@ -308,8 +445,6 @@
 
                 </div>
 
-
-                <!-- NOVO PRODUTO -->
 
                 <button
                     type="button"
@@ -322,40 +457,29 @@
                 </button>
 
 
-                <!--
-                    O admin.js adicionará
-                    o botão Sair neste cabeçalho.
-                -->
-
             </header>
 
-
-            <!-- ==================================
-                 CONTEÚDO DAS PÁGINAS
-            ================================== -->
 
             <main>
 
 
-                <!-- AVISO DO PAINEL -->
+                <!-- =================================
+                     AVISO
+                ================================== -->
 
                 <div class="aviso">
 
-                    Os produtos, preços, estoque
-                    e fotografias são compartilhados
-                    com a loja dos clientes
-                    por meio do Supabase.
+                    Produtos e fotografias são
+                    armazenados no Supabase.
 
-                    A logo oficial da empresa
-                    é carregada diretamente
-                    da pasta assets do GitHub.
+                    Custos, filamentos e pedidos
+                    são administrados pelo painel.
 
                 </div>
 
 
-                <!-- ==================================
-                     PÁGINA 1
-                     VISÃO GERAL
+                <!-- =================================
+                     DASHBOARD
                 ================================== -->
 
                 <section
@@ -364,8 +488,6 @@
                 >
 
 
-                    <!-- TÍTULO -->
-
                     <div class="cabecalho-pagina">
 
 
@@ -373,10 +495,9 @@
 
                             <span class="subtitulo">
 
-                                SEU ESPAÇO DE CRIAÇÃO
+                                PAINEL DA EMPRESA
 
                             </span>
-
 
                             <h1>
 
@@ -386,11 +507,10 @@
 
                             </h1>
 
-
                             <p>
 
-                                Gerencie suas impressões 3D,
-                                produtos, estoque e pedidos.
+                                Gerencie produção,
+                                catálogo, estoque e custos.
 
                             </p>
 
@@ -402,17 +522,12 @@
                             id="data-atual"
                         ></span>
 
+
                     </div>
 
 
-                    <!-- ==================================
-                         INDICADORES
-                    ================================== -->
-
                     <div class="indicadores">
 
-
-                        <!-- PRODUTOS CADASTRADOS -->
 
                         <div class="indicador">
 
@@ -422,13 +537,11 @@
 
                             </span>
 
-
                             <strong id="total-produtos">
 
                                 0
 
                             </strong>
-
 
                             <small>
 
@@ -439,8 +552,6 @@
                         </div>
 
 
-                        <!-- PRODUTOS VISÍVEIS -->
-
                         <div class="indicador">
 
                             <span>
@@ -449,33 +560,28 @@
 
                             </span>
 
-
                             <strong id="total-visiveis">
 
                                 0
 
                             </strong>
 
-
                             <small>
 
-                                Disponíveis na loja
+                                Visíveis aos clientes
 
                             </small>
 
                         </div>
 
 
-                        <!-- ESTOQUE -->
-
                         <div class="indicador">
 
                             <span>
 
-                                UNIDADES EM ESTOQUE
+                                ESTOQUE
 
                             </span>
-
 
                             <strong id="total-estoque">
 
@@ -483,26 +589,22 @@
 
                             </strong>
 
-
                             <small>
 
-                                Estoque informado
+                                Unidades cadastradas
 
                             </small>
 
                         </div>
 
 
-                        <!-- PEDIDOS -->
-
                         <div class="indicador">
 
                             <span>
 
-                                PEDIDOS EM ABERTO
+                                PEDIDOS ABERTOS
 
                             </span>
-
 
                             <strong id="total-pedidos">
 
@@ -510,31 +612,26 @@
 
                             </strong>
 
-
                             <small>
 
-                                Pedidos registrados
+                                Pedidos pendentes
 
                             </small>
 
                         </div>
 
+
                     </div>
 
-
-                    <!-- ==================================
-                         PRODUTOS RECENTES
-                    ================================== -->
 
                     <div class="painel">
 
 
                         <div class="painel-cabecalho">
 
-
                             <h2>
 
-                                Suas criações
+                                Criações recentes
 
                             </h2>
 
@@ -545,7 +642,7 @@
                                 data-ir="produtos"
                             >
 
-                                Ver todos →
+                                Ver produtos →
 
                             </button>
 
@@ -554,17 +651,18 @@
 
                         <div id="produtos-recentes">
 
-                            Carregando produtos...
+                            Carregando...
 
                         </div>
 
+
                     </div>
+
 
                 </section>
 
 
-                <!-- ==================================
-                     PÁGINA 2
+                <!-- =================================
                      PRODUTOS
                 ================================== -->
 
@@ -575,8 +673,6 @@
                 >
 
 
-                    <!-- TÍTULO -->
-
                     <div class="cabecalho-pagina">
 
 
@@ -584,10 +680,9 @@
 
                             <span class="subtitulo">
 
-                                CATÁLOGO DE IMPRESSÃO 3D
+                                CATÁLOGO
 
                             </span>
-
 
                             <h1>
 
@@ -597,19 +692,15 @@
 
                             </h1>
 
-
                             <p>
 
-                                Cadastre novas criações,
-                                adicione fotografias,
-                                atualize preços e estoque.
+                                Cadastre, edite e organize
+                                produtos do catálogo.
 
                             </p>
 
                         </div>
 
-
-                        <!-- CADASTRAR PRODUTO -->
 
                         <button
                             type="button"
@@ -621,17 +712,12 @@
 
                         </button>
 
+
                     </div>
 
 
-                    <!-- ==================================
-                         LISTAGEM DOS PRODUTOS
-                    ================================== -->
-
                     <div class="painel">
 
-
-                        <!-- PESQUISA -->
 
                         <div class="barra-ferramentas">
 
@@ -640,7 +726,6 @@
                                 type="search"
                                 id="buscar-produto"
                                 placeholder="Buscar produto..."
-                                aria-label="Buscar produto"
                             >
 
 
@@ -650,10 +735,9 @@
 
                             </span>
 
+
                         </div>
 
-
-                        <!-- TABELA -->
 
                         <div class="tabela-container">
 
@@ -694,27 +778,24 @@
                                 </thead>
 
 
-                                <tbody id="tabela-produtos">
+                                <tbody
+                                    id="tabela-produtos"
+                                ></tbody>
 
-                                    <!--
-                                        Produtos carregados
-                                        automaticamente
-                                        pelo admin.js.
-                                    -->
-
-                                </tbody>
 
                             </table>
 
+
                         </div>
 
+
                     </div>
+
 
                 </section>
 
 
-                <!-- ==================================
-                     PÁGINA 3
+                <!-- =================================
                      PEDIDOS
                 ================================== -->
 
@@ -725,8 +806,6 @@
                 >
 
 
-                    <!-- TÍTULO -->
-
                     <div class="cabecalho-pagina">
 
 
@@ -734,10 +813,9 @@
 
                             <span class="subtitulo">
 
-                                ORGANIZAÇÃO INTERNA
+                                VENDAS
 
                             </span>
-
 
                             <h1>
 
@@ -747,19 +825,8 @@
 
                             </h1>
 
-
-                            <p>
-
-                                Registre e acompanhe
-                                os pedidos recebidos
-                                dos clientes.
-
-                            </p>
-
                         </div>
 
-
-                        <!-- BOTÕES -->
 
                         <div class="grupo-botoes">
 
@@ -785,14 +852,12 @@
 
                             </button>
 
+
                         </div>
+
 
                     </div>
 
-
-                    <!-- ==================================
-                         LISTAGEM DE PEDIDOS
-                    ================================== -->
 
                     <div class="painel">
 
@@ -836,26 +901,678 @@
                                 </thead>
 
 
-                                <tbody id="tabela-pedidos">
+                                <tbody
+                                    id="tabela-pedidos"
+                                ></tbody>
 
-                                    <!--
-                                        Pedidos carregados
-                                        pelo admin.js.
-                                    -->
-
-                                </tbody>
 
                             </table>
 
+
                         </div>
 
+
                     </div>
+
 
                 </section>
 
 
-                <!-- ==================================
-                     PÁGINA 4
+                <!-- =================================
+                     CUSTOS
+                ================================== -->
+
+                <section
+                    class="pagina"
+                    id="custos"
+                    hidden
+                >
+
+
+                    <div class="cabecalho-pagina">
+
+
+                        <div>
+
+                            <span class="subtitulo">
+
+                                GESTÃO FINANCEIRA
+
+                            </span>
+
+                            <h1>
+
+                                Controle de
+
+                                <em>custos.</em>
+
+                            </h1>
+
+                            <p>
+
+                                Registre despesas
+                                e calcule custos
+                                das impressões.
+
+                            </p>
+
+                        </div>
+
+
+                        <div class="grupo-botoes">
+
+
+                            <button
+                                type="button"
+                                class="botao botao-secundario"
+                                id="exportar-custos"
+                            >
+
+                                Exportar CSV
+
+                            </button>
+
+
+                            <button
+                                type="button"
+                                class="botao botao-laranja"
+                                id="novo-custo"
+                            >
+
+                                + Adicionar custo
+
+                            </button>
+
+
+                        </div>
+
+
+                    </div>
+
+
+                    <!-- RESUMOS -->
+
+                    <div class="gestao-resumos">
+
+
+                        <div class="gestao-card">
+
+                            <span>
+                                CUSTOS NO MÊS
+                            </span>
+
+                            <strong id="custos-mes">
+
+                                R$ 0,00
+
+                            </strong>
+
+                        </div>
+
+
+                        <div class="gestao-card">
+
+                            <span>
+                                CUSTOS FIXOS
+                            </span>
+
+                            <strong id="custos-fixos">
+
+                                R$ 0,00
+
+                            </strong>
+
+                        </div>
+
+
+                        <div class="gestao-card">
+
+                            <span>
+                                CUSTOS VARIÁVEIS
+                            </span>
+
+                            <strong id="custos-variaveis">
+
+                                R$ 0,00
+
+                            </strong>
+
+                        </div>
+
+
+                        <div class="gestao-card">
+
+                            <span>
+                                LANÇAMENTOS
+                            </span>
+
+                            <strong id="total-custos">
+
+                                0
+
+                            </strong>
+
+                        </div>
+
+
+                    </div>
+
+
+                    <!-- SIMULADOR -->
+
+                    <div class="painel">
+
+
+                        <h2>
+
+                            Simulador de custo de impressão
+
+                        </h2>
+
+
+                        <div class="simulador-grid">
+
+
+                            <label>
+
+                                Filamento
+
+                                <select id="sim-filamento">
+
+                                    <option value="">
+
+                                        Selecione um filamento
+
+                                    </option>
+
+                                </select>
+
+                            </label>
+
+
+                            <label>
+
+                                Material usado (g)
+
+                                <input
+                                    type="number"
+                                    id="sim-gramas"
+                                    min="0"
+                                    step="0.01"
+                                    value="0"
+                                >
+
+                            </label>
+
+
+                            <label>
+
+                                Tempo de impressão (h)
+
+                                <input
+                                    type="number"
+                                    id="sim-horas"
+                                    min="0"
+                                    step="0.01"
+                                    value="0"
+                                >
+
+                            </label>
+
+
+                            <label>
+
+                                Potência média (W)
+
+                                <input
+                                    type="number"
+                                    id="sim-potencia"
+                                    min="0"
+                                    value="100"
+                                >
+
+                            </label>
+
+
+                            <label>
+
+                                Energia (R$/kWh)
+
+                                <input
+                                    type="number"
+                                    id="sim-energia"
+                                    min="0"
+                                    step="0.01"
+                                    value="1"
+                                >
+
+                            </label>
+
+
+                            <label>
+
+                                Acréscimo (%)
+
+                                <input
+                                    type="number"
+                                    id="sim-margem"
+                                    min="0"
+                                    value="0"
+                                >
+
+                            </label>
+
+
+                        </div>
+
+
+                        <div class="resultado-custo">
+
+
+                            <div>
+
+                                <span>
+                                    MATERIAL
+                                </span>
+
+                                <strong
+                                    id="sim-custo-material"
+                                >
+
+                                    R$ 0,00
+
+                                </strong>
+
+                            </div>
+
+
+                            <div>
+
+                                <span>
+                                    ENERGIA
+                                </span>
+
+                                <strong
+                                    id="sim-custo-energia"
+                                >
+
+                                    R$ 0,00
+
+                                </strong>
+
+                            </div>
+
+
+                            <div>
+
+                                <span>
+                                    CUSTO DIRETO
+                                </span>
+
+                                <strong
+                                    id="sim-custo-direto"
+                                >
+
+                                    R$ 0,00
+
+                                </strong>
+
+                            </div>
+
+
+                            <div>
+
+                                <span>
+                                    VALOR CALCULADO
+                                </span>
+
+                                <strong
+                                    id="sim-preco-sugerido"
+                                >
+
+                                    R$ 0,00
+
+                                </strong>
+
+                            </div>
+
+
+                        </div>
+
+
+                    </div>
+
+
+                    <!-- LISTA -->
+
+                    <div class="painel">
+
+
+                        <div class="gestao-toolbar">
+
+
+                            <input
+                                type="search"
+                                id="buscar-custo"
+                                placeholder="Buscar custo..."
+                            >
+
+
+                            <select id="filtro-custo">
+
+                                <option value="Todos">
+
+                                    Todos os tipos
+
+                                </option>
+
+                                <option value="Fixo">
+
+                                    Fixo
+
+                                </option>
+
+                                <option value="Variável">
+
+                                    Variável
+
+                                </option>
+
+                            </select>
+
+
+                        </div>
+
+
+                        <div class="tabela-container">
+
+
+                            <table>
+
+
+                                <thead>
+
+                                    <tr>
+
+                                        <th>
+                                            DESCRIÇÃO
+                                        </th>
+
+                                        <th>
+                                            CATEGORIA
+                                        </th>
+
+                                        <th>
+                                            TIPO
+                                        </th>
+
+                                        <th>
+                                            VALOR
+                                        </th>
+
+                                        <th>
+                                            DATA
+                                        </th>
+
+                                        <th>
+                                            AÇÕES
+                                        </th>
+
+                                    </tr>
+
+                                </thead>
+
+
+                                <tbody
+                                    id="tabela-custos"
+                                ></tbody>
+
+
+                            </table>
+
+
+                        </div>
+
+
+                    </div>
+
+
+                </section>
+
+
+                <!-- =================================
+                     FILAMENTOS
+                ================================== -->
+
+                <section
+                    class="pagina"
+                    id="filamentos"
+                    hidden
+                >
+
+
+                    <div class="cabecalho-pagina">
+
+
+                        <div>
+
+                            <span class="subtitulo">
+
+                                MATÉRIA-PRIMA
+
+                            </span>
+
+                            <h1>
+
+                                Estoque de
+
+                                <em>filamentos.</em>
+
+                            </h1>
+
+                            <p>
+
+                                Controle material,
+                                cores, peso e custo.
+
+                            </p>
+
+                        </div>
+
+
+                        <div class="grupo-botoes">
+
+
+                            <button
+                                type="button"
+                                class="botao botao-secundario"
+                                id="exportar-filamentos"
+                            >
+
+                                Exportar CSV
+
+                            </button>
+
+
+                            <button
+                                type="button"
+                                class="botao botao-laranja"
+                                id="novo-filamento"
+                            >
+
+                                + Adicionar filamento
+
+                            </button>
+
+
+                        </div>
+
+
+                    </div>
+
+
+                    <div class="gestao-resumos">
+
+
+                        <div class="gestao-card">
+
+                            <span>
+                                ROLOS CADASTRADOS
+                            </span>
+
+                            <strong
+                                id="total-filamentos"
+                            >
+
+                                0
+
+                            </strong>
+
+                        </div>
+
+
+                        <div class="gestao-card">
+
+                            <span>
+                                PESO DISPONÍVEL
+                            </span>
+
+                            <strong
+                                id="peso-filamentos"
+                            >
+
+                                0 kg
+
+                            </strong>
+
+                        </div>
+
+
+                        <div class="gestao-card">
+
+                            <span>
+                                VALOR DO ESTOQUE
+                            </span>
+
+                            <strong
+                                id="valor-filamentos"
+                            >
+
+                                R$ 0,00
+
+                            </strong>
+
+                        </div>
+
+
+                        <div class="gestao-card">
+
+                            <span>
+                                ESTOQUE BAIXO
+                            </span>
+
+                            <strong
+                                id="filamentos-baixos"
+                            >
+
+                                0
+
+                            </strong>
+
+                        </div>
+
+
+                    </div>
+
+
+                    <div class="painel">
+
+
+                        <div class="gestao-toolbar">
+
+
+                            <input
+                                type="search"
+                                id="buscar-filamento"
+                                placeholder="Buscar marca, material ou cor..."
+                            >
+
+
+                            <select id="filtro-material">
+
+                                <option value="Todos">
+
+                                    Todos os materiais
+
+                                </option>
+
+                            </select>
+
+
+                        </div>
+
+
+                        <div class="tabela-container">
+
+
+                            <table>
+
+
+                                <thead>
+
+                                    <tr>
+
+                                        <th>
+                                            FILAMENTO
+                                        </th>
+
+                                        <th>
+                                            MATERIAL
+                                        </th>
+
+                                        <th>
+                                            COR
+                                        </th>
+
+                                        <th>
+                                            RESTANTE
+                                        </th>
+
+                                        <th>
+                                            CUSTO/GRAMA
+                                        </th>
+
+                                        <th>
+                                            STATUS
+                                        </th>
+
+                                        <th>
+                                            AÇÕES
+                                        </th>
+
+                                    </tr>
+
+                                </thead>
+
+
+                                <tbody
+                                    id="tabela-filamentos"
+                                ></tbody>
+
+
+                            </table>
+
+
+                        </div>
+
+
+                    </div>
+
+
+                </section>
+
+
+                <!-- =================================
                      SINCRONIZAÇÃO
                 ================================== -->
 
@@ -866,8 +1583,6 @@
                 >
 
 
-                    <!-- TÍTULO -->
-
                     <div class="cabecalho-pagina">
 
 
@@ -875,77 +1590,45 @@
 
                             <span class="subtitulo">
 
-                                LOJA DOS CLIENTES
+                                SUPABASE
 
                             </span>
-
 
                             <h1>
 
                                 Catálogo
 
-                                <em>conectado.</em>
+                                <em>sincronizado.</em>
 
                             </h1>
 
-
-                            <p>
-
-                                Gerencie a sincronização
-                                dos produtos com a
-                                loja virtual.
-
-                            </p>
-
                         </div>
+
 
                     </div>
 
-
-                    <!-- ==================================
-                         CONEXÃO SUPABASE
-                    ================================== -->
 
                     <div class="painel">
 
 
                         <h2>
 
-                            Sincronização com Supabase
+                            Sincronização com a loja
 
                         </h2>
 
 
                         <p>
 
-                            Os produtos, preços e estoque
-                            são compartilhados com a loja
-                            dos clientes pelo Supabase.
+                            Os produtos cadastrados
+                            neste painel são compartilhados
+                            com o site dos clientes.
 
                         </p>
 
-
-                        <p>
-
-                            As fotografias dos produtos
-                            ficam armazenadas no bucket
-                            projetos do Supabase Storage.
-
-                        </p>
-
-
-                        <!--
-                            O sync-empresa.js adicionará
-                            os controles de sincronização
-                            neste painel.
-                        -->
 
                     </div>
 
-
-                    <!-- ==================================
-                         EXPORTAR CATÁLOGO
-                    ================================== -->
 
                     <div class="painel">
 
@@ -955,15 +1638,6 @@
                             Exportar catálogo
 
                         </h2>
-
-
-                        <p>
-
-                            Salve uma cópia dos produtos
-                            cadastrados em formato
-                            JavaScript.
-
-                        </p>
 
 
                         <button
@@ -976,29 +1650,18 @@
 
                         </button>
 
+
                     </div>
 
-
-                    <!-- ==================================
-                         BACKUP
-                    ================================== -->
 
                     <div class="painel">
 
 
                         <h2>
 
-                            Backup dos dados
+                            Backup
 
                         </h2>
-
-
-                        <p>
-
-                            Faça uma cópia dos produtos
-                            e pedidos cadastrados.
-
-                        </p>
 
 
                         <div class="grupo-botoes">
@@ -1015,11 +1678,11 @@
                             </button>
 
 
-                            <label class="botao botao-secundario">
-
+                            <label
+                                class="botao botao-secundario"
+                            >
 
                                 Restaurar backup
-
 
                                 <input
                                     type="file"
@@ -1030,9 +1693,12 @@
 
                             </label>
 
+
                         </div>
 
+
                     </div>
+
 
                 </section>
 
@@ -1046,21 +1712,18 @@
     </div>
 
 
-    <!-- ======================================
-         FORMULÁRIO DE PRODUTOS
-    ====================================== -->
+    <!-- =========================================
+         MODAL PRODUTO
+    ========================================== -->
 
     <dialog
         class="modal"
         id="modal-produto"
-        aria-labelledby="titulo-modal-produto"
     >
 
 
         <form id="form-produto">
 
-
-            <!-- CABEÇALHO DO FORMULÁRIO -->
 
             <div class="modal-cabecalho">
 
@@ -1076,88 +1739,63 @@
                     type="button"
                     class="fechar-modal"
                     data-fechar="modal-produto"
-                    aria-label="Fechar formulário"
                 >
 
                     ×
 
                 </button>
 
+
             </div>
 
-
-            <!-- ==================================
-                 CAMPOS DO PRODUTO
-            ================================== -->
 
             <div class="campos">
 
 
-                <!-- NOME DO PRODUTO -->
-
                 <label class="campo campo-inteiro">
 
-
                     Nome do produto
-
 
                     <input
                         type="text"
                         name="nome"
-                        maxlength="100"
-                        placeholder="Ex.: Dragão articulado"
                         required
                     >
 
                 </label>
 
 
-                <!-- CATEGORIA -->
-
                 <label class="campo">
 
-
                     Categoria
-
 
                     <input
                         type="text"
                         name="categoria"
-                        maxlength="45"
-                        placeholder="Ex.: Articulados"
                         required
                     >
 
                 </label>
 
 
-                <!-- PREÇO -->
-
                 <label class="campo">
 
-
                     Preço (R$)
-
 
                     <input
                         type="number"
                         name="preco"
                         min="0"
                         step="0.01"
-                        placeholder="0.00"
                         required
                     >
 
                 </label>
 
 
-                <!-- ESTOQUE -->
-
                 <label class="campo">
 
-
-                    Estoque disponível
-
+                    Estoque
 
                     <input
                         type="number"
@@ -1171,80 +1809,52 @@
                 </label>
 
 
-                <!-- PRAZO DE PRODUÇÃO -->
-
                 <label class="campo">
 
-
                     Prazo de produção
-
 
                     <input
                         type="text"
                         name="prazo"
-                        maxlength="80"
                         value="Produção sob encomenda"
                     >
 
                 </label>
 
 
-                <!-- ==================================
-                     FOTOGRAFIA DO PRODUTO
-
-                     A área de upload será criada
-                     automaticamente pelo arquivo:
-
-                     fotos-empresa.js
-
-                     Bucket: projetos
-                     Pasta: catalogo
-                ================================== -->
-
-
-                <!-- CAMPO INTERNO DA URL -->
+                <!--
+                    fotos-empresa.js cria
+                    o sistema de upload aqui.
+                -->
 
                 <label
                     class="campo campo-inteiro campo-url-legado"
                 >
 
-
-                    Endereço da fotografia
-
+                    URL da fotografia
 
                     <input
                         type="text"
                         name="imagem"
-                        maxlength="500"
-                        tabindex="-1"
                         readonly
                     >
 
                 </label>
 
 
-                <!-- DESCRIÇÃO -->
-
                 <label class="campo campo-inteiro">
 
-
-                    Descrição do produto
-
+                    Descrição
 
                     <textarea
                         name="descricao"
-                        rows="3"
-                        maxlength="300"
-                        placeholder="Descreva seu produto..."
+                        rows="4"
                     ></textarea>
 
                 </label>
 
 
-                <!-- DISPONIBILIDADE -->
-
                 <label class="campo checkbox-campo">
-
 
                     <input
                         type="checkbox"
@@ -1252,33 +1862,25 @@
                         checked
                     >
 
-
-                    Mostrar produto na loja
+                    Mostrar na loja
 
                 </label>
 
 
-                <!-- DESTAQUE -->
-
                 <label class="campo checkbox-campo">
-
 
                     <input
                         type="checkbox"
                         name="destaque"
                     >
 
-
                     Produto em destaque
 
                 </label>
 
+
             </div>
 
-
-            <!-- ==================================
-                 BOTÕES DO FORMULÁRIO
-            ================================== -->
 
             <div class="modal-acoes">
 
@@ -1304,28 +1906,28 @@
 
                 </button>
 
+
             </div>
 
+
         </form>
+
 
     </dialog>
 
 
-    <!-- ======================================
-         FORMULÁRIO DE PEDIDOS
-    ====================================== -->
+    <!-- =========================================
+         MODAL PEDIDO
+    ========================================== -->
 
     <dialog
         class="modal"
         id="modal-pedido"
-        aria-label="Registrar pedido"
     >
 
 
         <form id="form-pedido">
 
-
-            <!-- CABEÇALHO -->
 
             <div class="modal-cabecalho">
 
@@ -1341,83 +1943,59 @@
                     type="button"
                     class="fechar-modal"
                     data-fechar="modal-pedido"
-                    aria-label="Fechar formulário"
                 >
 
                     ×
 
                 </button>
 
+
             </div>
 
-
-            <!-- ==================================
-                 CAMPOS DO PEDIDO
-            ================================== -->
 
             <div class="campos">
 
 
-                <!-- CLIENTE -->
-
                 <label class="campo">
 
-
-                    Nome do cliente
-
+                    Cliente
 
                     <input
                         type="text"
                         name="cliente"
-                        maxlength="100"
                         required
                     >
 
                 </label>
 
 
-                <!-- CONTATO -->
-
                 <label class="campo">
 
-
                     Contato
-
 
                     <input
                         type="text"
                         name="contato"
-                        maxlength="120"
                     >
 
                 </label>
 
 
-                <!-- PRODUTOS SOLICITADOS -->
-
                 <label class="campo campo-inteiro">
 
-
-                    Produtos solicitados
-
+                    Produtos
 
                     <textarea
                         name="itens"
-                        rows="3"
-                        maxlength="500"
                         required
                     ></textarea>
 
                 </label>
 
 
-                <!-- VALOR -->
-
                 <label class="campo">
 
-
-                    Valor (R$)
-
+                    Valor
 
                     <input
                         type="number"
@@ -1430,61 +2008,39 @@
                 </label>
 
 
-                <!-- STATUS -->
-
                 <label class="campo">
-
 
                     Status
 
-
                     <select name="status">
 
-
                         <option value="Novo">
-
                             Novo
-
                         </option>
-
 
                         <option value="Em produção">
-
                             Em produção
-
                         </option>
-
 
                         <option value="Pronto">
-
                             Pronto
-
                         </option>
-
 
                         <option value="Entregue">
-
                             Entregue
-
                         </option>
 
-
                         <option value="Cancelado">
-
                             Cancelado
-
                         </option>
 
                     </select>
 
                 </label>
 
+
             </div>
 
-
-            <!-- ==================================
-                 BOTÕES DO FORMULÁRIO
-            ================================== -->
 
             <div class="modal-acoes">
 
@@ -1509,16 +2065,382 @@
 
                 </button>
 
+
             </div>
 
+
         </form>
+
 
     </dialog>
 
 
-    <!-- ======================================
+    <!-- =========================================
+         MODAL CUSTO
+    ========================================== -->
+
+    <dialog
+        class="modal"
+        id="modal-custo"
+    >
+
+
+        <form id="form-custo">
+
+
+            <div class="modal-cabecalho">
+
+
+                <h2 id="titulo-modal-custo">
+
+                    Novo custo
+
+                </h2>
+
+
+                <button
+                    type="button"
+                    class="fechar-modal"
+                    data-fechar="modal-custo"
+                >
+
+                    ×
+
+                </button>
+
+
+            </div>
+
+
+            <div class="campos">
+
+
+                <label class="campo campo-inteiro">
+
+                    Descrição
+
+                    <input
+                        type="text"
+                        name="descricao"
+                        required
+                    >
+
+                </label>
+
+
+                <label class="campo">
+
+                    Categoria
+
+                    <input
+                        type="text"
+                        name="categoria"
+                        placeholder="Energia, embalagem..."
+                        required
+                    >
+
+                </label>
+
+
+                <label class="campo">
+
+                    Tipo
+
+                    <select name="tipo">
+
+                        <option value="Variável">
+                            Variável
+                        </option>
+
+                        <option value="Fixo">
+                            Fixo
+                        </option>
+
+                    </select>
+
+                </label>
+
+
+                <label class="campo">
+
+                    Valor
+
+                    <input
+                        type="number"
+                        name="valor"
+                        min="0"
+                        step="0.01"
+                        required
+                    >
+
+                </label>
+
+
+                <label class="campo">
+
+                    Data
+
+                    <input
+                        type="date"
+                        name="data"
+                        required
+                    >
+
+                </label>
+
+
+                <label class="campo campo-inteiro">
+
+                    Observações
+
+                    <textarea
+                        name="observacoes"
+                        rows="3"
+                    ></textarea>
+
+                </label>
+
+
+            </div>
+
+
+            <div class="modal-acoes">
+
+
+                <button
+                    type="button"
+                    class="botao botao-secundario"
+                    data-fechar="modal-custo"
+                >
+
+                    Cancelar
+
+                </button>
+
+
+                <button
+                    type="submit"
+                    class="botao botao-laranja"
+                >
+
+                    Salvar custo
+
+                </button>
+
+
+            </div>
+
+
+        </form>
+
+
+    </dialog>
+
+
+    <!-- =========================================
+         MODAL FILAMENTO
+    ========================================== -->
+
+    <dialog
+        class="modal"
+        id="modal-filamento"
+    >
+
+
+        <form id="form-filamento">
+
+
+            <div class="modal-cabecalho">
+
+
+                <h2 id="titulo-modal-filamento">
+
+                    Novo filamento
+
+                </h2>
+
+
+                <button
+                    type="button"
+                    class="fechar-modal"
+                    data-fechar="modal-filamento"
+                >
+
+                    ×
+
+                </button>
+
+
+            </div>
+
+
+            <div class="campos">
+
+
+                <label class="campo">
+
+                    Marca
+
+                    <input
+                        type="text"
+                        name="marca"
+                        required
+                    >
+
+                </label>
+
+
+                <label class="campo">
+
+                    Material
+
+                    <input
+                        type="text"
+                        name="material"
+                        placeholder="PLA, PETG..."
+                        required
+                    >
+
+                </label>
+
+
+                <label class="campo">
+
+                    Cor
+
+                    <input
+                        type="text"
+                        name="cor"
+                        required
+                    >
+
+                </label>
+
+
+                <label class="campo">
+
+                    Diâmetro
+
+                    <input
+                        type="number"
+                        name="diametro"
+                        step="0.01"
+                        value="1.75"
+                        required
+                    >
+
+                </label>
+
+
+                <label class="campo">
+
+                    Peso original (g)
+
+                    <input
+                        type="number"
+                        name="pesoOriginal"
+                        value="1000"
+                        required
+                    >
+
+                </label>
+
+
+                <label class="campo">
+
+                    Peso restante (g)
+
+                    <input
+                        type="number"
+                        name="pesoRestante"
+                        value="1000"
+                        required
+                    >
+
+                </label>
+
+
+                <label class="campo">
+
+                    Valor pago (R$)
+
+                    <input
+                        type="number"
+                        name="valorPago"
+                        min="0"
+                        step="0.01"
+                        required
+                    >
+
+                </label>
+
+
+                <label class="campo">
+
+                    Avisar abaixo de (g)
+
+                    <input
+                        type="number"
+                        name="limiteBaixo"
+                        min="0"
+                        value="200"
+                        required
+                    >
+
+                </label>
+
+
+                <label class="campo campo-inteiro">
+
+                    Observações
+
+                    <textarea
+                        name="observacoes"
+                        rows="3"
+                    ></textarea>
+
+                </label>
+
+
+            </div>
+
+
+            <div class="modal-acoes">
+
+
+                <button
+                    type="button"
+                    class="botao botao-secundario"
+                    data-fechar="modal-filamento"
+                >
+
+                    Cancelar
+
+                </button>
+
+
+                <button
+                    type="submit"
+                    class="botao botao-laranja"
+                >
+
+                    Salvar filamento
+
+                </button>
+
+
+            </div>
+
+
+        </form>
+
+
+    </dialog>
+
+
+    <!-- =========================================
          NOTIFICAÇÕES
-    ====================================== -->
+    ========================================== -->
 
     <div
         class="notificacao"
@@ -1526,6 +2448,7 @@
         role="status"
         aria-live="polite"
     ></div>
+
 
 </body>
 
