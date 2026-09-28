@@ -1,69 +1,46 @@
-
-/*
-==========================================
-CRIAITOR 3D
-CONFIGURAÇÃO SUPABASE - CLIENTES
-==========================================
-
-Conexão pública com o catálogo.
-
-Os clientes podem consultar os produtos,
-preços, fotografias e disponibilidade.
-
-As permissões de alteração são controladas
-pelas políticas de segurança do Supabase.
-
-==========================================
-*/
-
-
-// ENDEREÇO DO PROJETO
-
 const SUPABASE_URL =
     "https://odmshtzmvtgkuxnysqor.supabase.co";
-
-
-// CHAVE PÚBLICA
 
 const SUPABASE_PUBLIC_KEY =
     "sb_publishable_iGeAejP8oNb0hUy7FhThIQ_MMbzZV2c";
 
+window.sb =
+    window.supabase.createClient(
 
-// INICIALIZAR CONEXÃO
+        SUPABASE_URL,
 
-window.sb = window.supabase.createClient(
+        SUPABASE_PUBLIC_KEY,
 
-    SUPABASE_URL,
+        {
 
-    SUPABASE_PUBLIC_KEY,
+            auth: {
 
-    {
+                persistSession: false,
 
-        auth: {
+                autoRefreshToken: false,
 
-            persistSession: false,
+                detectSessionInUrl: false
 
-            autoRefreshToken: false,
-
-            detectSessionInUrl: false
+            }
 
         }
 
-    }
-
-);
+    );
 
 
-// CONFIGURAÇÕES DO CATÁLOGO
+window.CRIAITOR_SUPABASE_CONFIG =
+    Object.freeze({
 
-window.CRIAITOR_SUPABASE_CONFIG = Object.freeze({
+        bucket:
+            "projetos",
 
-    bucket: "projetos",
+        pastaImagens:
+            "catalogo",
 
-    pastaImagens: "catalogo",
+        tabelaCatalogo:
+            "catalogo",
 
-    tabelaCatalogo: "catalogo",
+        registroCatalogo:
+            1
 
-    registroCatalogo: 1
-
-});
+    });
