@@ -1,39 +1,54 @@
-
 /*
-============================================
+========================================================
 CRIAITOR 3D
 PAINEL ADMINISTRATIVO
-============================================
+========================================================
 
-VERSÃO: 2.0
+VERSÃO 4.0
 
-FUNCIONALIDADES:
+MÓDULOS:
 
 - Login administrativo
-- Gerenciamento de produtos
-- Cadastro e edição
-- Controle de estoque
-- Visibilidade na loja
-- Produtos em destaque
-- Integração com upload de fotografias
-- Sincronização com Supabase
-- Registro local de pedidos
-- Indicadores administrativos
-- Exportação de dados
-- Backup e restauração de pedidos
+- Produtos
+- Estoque
+- Pedidos
+- Custos
+- Simulador de custo de impressão
+- Filamentos
+- Controle de peso dos filamentos
+- Custo por grama
+- Exportação CSV
+- Backup
+- Supabase
+- Compatibilidade com fotos-empresa.js
+- Compatibilidade com sync-empresa.js
 
-============================================
+IMPORTANTE:
+
+PRODUTOS:
+Supabase
+
+FOTOS:
+Supabase Storage
+bucket: projetos
+pasta: catalogo
+
+CUSTOS:
+LocalStorage
+
+FILAMENTOS:
+LocalStorage
+
+========================================================
 */
-
 
 (function () {
 
 "use strict";
 
-
-// ==========================================
-// 1. CONFIGURAÇÕES
-// ==========================================
+/* =====================================================
+   CONFIGURAÇÃO
+===================================================== */
 
 const CONFIG = {
 
@@ -41,28 +56,11 @@ const CONFIG = {
 
     registro: 1,
 
-    chaveProdutos: "produtos",
-
-    chaveVersao: "versao",
-
     tituloEmpresa: "CriAItor 3D"
 
 };
 
-
-// ==========================================
-// 2. CONEXÃO COM SUPABASE
-// ==========================================
-
-// O arquivo supabase-config.js deve
-// disponibilizar o cliente como window.sb.
-//
-// ADMIN_UID deve conter a UID real
-// do administrador autorizado.
-
-
 const supabase = window.sb;
-
 
 const UID_ADMIN =
 
@@ -73,38 +71,24 @@ const UID_ADMIN =
         : window.ADMIN_UID || "";
 
 
-// ==========================================
-// 3. ELEMENTOS DO HTML
-// ==========================================
+/* =====================================================
+   ATALHOS
+===================================================== */
 
 const $ = seletor =>
 
     document.querySelector(seletor);
 
-
 const $$ = seletor =>
 
-    Array.from(document.querySelectorAll(seletor));
+    Array.from(
+        document.querySelectorAll(seletor)
+    );
 
 
-const app = $(".app");
-
-const topbar = $(".topbar");
-
-const modalProduto = $("#modal-produto");
-
-const modalPedido = $("#modal-pedido");
-
-const formProduto = $("#form-produto");
-
-const formPedido = $("#form-pedido");
-
-const notificacao = $("#notificacao");
-
-
-// ==========================================
-// 4. ESTADO DO PAINEL
-// ==========================================
+/* =====================================================
+   ESTADO
+===================================================== */
 
 const estado = {
 
@@ -114,15 +98,19 @@ const estado = {
 
     pedidos: [],
 
+    custos: [],
+
+    filamentos: [],
+
     versao: 0,
 
     produtoEditando: null,
 
     pedidoEditando: null,
 
-    categoriaAtual: "Todos",
+    custoEditando: null,
 
-    carregando: false,
+    filamentoEditando: null,
 
     salvando: false,
 
@@ -131,9 +119,9 @@ const estado = {
 };
 
 
-// ==========================================
-// 5. UTILITÁRIOS
-// ==========================================
+/* =====================================================
+   UTILITÁRIOS
+===================================================== */
 
 function escaparHTML(valor) {
 
@@ -166,7 +154,11 @@ function dinheiro(valor) {
 
         }
 
-    ).format(Number(valor) || 0);
+    ).format(
+
+        Number(valor) || 0
+
+    );
 
 }
 
@@ -203,9 +195,20 @@ function criarID() {
 }
 
 
-function dataAtual() {
+function agoraISO() {
 
     return new Date().toISOString();
+
+}
+
+
+function dataHoje() {
+
+    return new Date()
+
+        .toISOString()
+
+        .slice(0, 10);
 
 }
 
@@ -218,22 +221,48 @@ function formatarData(valor) {
 
     }
 
-    const data = new Date(valor);
+    let data;
 
-    if (Number.isNaN(data.getTime())) {
+    if (String(valor).length === 10) {
+
+        data = new Date(
+
+            valor + "T12:00:00"
+
+        );
+
+    } else {
+
+        data = new Date(valor);
+
+    }
+
+    if (
+
+        Number.isNaN(
+            data.getTime()
+        )
+
+    ) {
 
         return "—";
 
     }
 
-    return data.toLocaleDateString("pt-BR");
+    return data.toLocaleDateString(
+        "pt-BR"
+    );
 
 }
 
 
 function imagemSegura(valor) {
 
-    const endereco = String(valor || "").trim();
+    const endereco = String(
+
+        valor || ""
+
+    ).trim();
 
     if (
 
@@ -241,7 +270,9 @@ function imagemSegura(valor) {
 
         endereco.startsWith("http://localhost") ||
 
-        endereco.startsWith("assets/")
+        endereco.startsWith("assets/") ||
+
+        endereco.startsWith("./assets/")
 
     ) {
 
@@ -254,24 +285,42 @@ function imagemSegura(valor) {
 }
 
 
-// ==========================================
-// 6. NOTIFICAÇÕES
-// ==========================================
+/* =====================================================
+   NOTIFICAÇÕES
+===================================================== */
 
 let temporizadorNotificacao;
 
 
-function avisar(mensagem, erro = false) {
+function avisar(
+
+    mensagem,
+
+    erro = false
+
+) {
+
+    const notificacao =
+
+        $("#notificacao");
 
     if (!notificacao) {
 
-        console.log(mensagem);
+        console[
+
+            erro
+                ? "error"
+                : "log"
+
+        ](mensagem);
 
         return;
 
     }
 
-    notificacao.textContent = mensagem;
+    notificacao.textContent =
+
+        mensagem;
 
     notificacao.classList.toggle(
 
@@ -281,22 +330,42 @@ function avisar(mensagem, erro = false) {
 
     );
 
-    notificacao.classList.add("visivel");
+    notificacao.classList.add(
 
-    clearTimeout(temporizadorNotificacao);
+        "visivel"
 
-    temporizadorNotificacao = setTimeout(() => {
+    );
 
-        notificacao.classList.remove("visivel");
+    clearTimeout(
 
-    }, 4500);
+        temporizadorNotificacao
+
+    );
+
+    temporizadorNotificacao =
+
+        setTimeout(
+
+            () => {
+
+                notificacao.classList.remove(
+
+                    "visivel"
+
+                );
+
+            },
+
+            4200
+
+        );
 
 }
 
 
-// ==========================================
-// 7. VERIFICAR CONFIGURAÇÃO
-// ==========================================
+/* =====================================================
+   VALIDAR CONFIGURAÇÃO
+===================================================== */
 
 function verificarConfiguracao() {
 
@@ -325,9 +394,9 @@ function verificarConfiguracao() {
 }
 
 
-// ==========================================
-// 8. CRIAR TELA DE LOGIN
-// ==========================================
+/* =====================================================
+   LOGIN
+===================================================== */
 
 function criarTelaLogin() {
 
@@ -337,7 +406,11 @@ function criarTelaLogin() {
 
     }
 
-    const tela = document.createElement("section");
+    const tela = document.createElement(
+
+        "section"
+
+    );
 
     tela.id = "tela-login";
 
@@ -356,6 +429,7 @@ function criarTelaLogin() {
                     src="assets/logo-criaitor3d.jpg"
                     alt="CriAItor 3D"
                     class="logo-empresa"
+                    draggable="false"
                 >
 
             </div>
@@ -381,7 +455,6 @@ function criarTelaLogin() {
                 type="email"
                 id="email-login"
                 autocomplete="username"
-                placeholder="Seu e-mail"
                 required
             >
 
@@ -395,7 +468,6 @@ function criarTelaLogin() {
                 type="password"
                 id="senha-login"
                 autocomplete="current-password"
-                placeholder="Sua senha"
                 required
             >
 
@@ -418,39 +490,1494 @@ function criarTelaLogin() {
 
     `;
 
-    document.body.prepend(tela);
+    document.body.prepend(
 
-
-    $("#form-login").addEventListener(
-
-        "submit",
-
-        realizarLogin
+        tela
 
     );
 
 }
 
 
-// ==========================================
-// 9. LOGIN
-// ==========================================
+/* =====================================================
+   ESTILOS EXTRAS
+   CUSTOS + FILAMENTOS
+===================================================== */
+
+function injetarEstilosExtras() {
+
+    if (
+
+        $("#criaitor-estilos-gestao")
+
+    ) {
+
+        return;
+
+    }
+
+    const style = document.createElement(
+
+        "style"
+
+    );
+
+    style.id =
+
+        "criaitor-estilos-gestao";
+
+    style.textContent = `
+
+        .gestao-resumos {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(4, minmax(0, 1fr));
+
+            gap: 15px;
+
+            margin-bottom: 22px;
+
+        }
+
+
+        .gestao-card {
+
+            padding: 20px;
+
+            background: var(--painel, #211829);
+
+            border:
+                1px solid
+                var(--borda, #493550);
+
+            border-radius: 15px;
+
+        }
+
+
+        .gestao-card span {
+
+            display: block;
+
+            color:
+                var(--cinza, #b8a8c3);
+
+            font-size: 10px;
+
+            font-weight: 900;
+
+            letter-spacing: 1px;
+
+        }
+
+
+        .gestao-card strong {
+
+            display: block;
+
+            margin-top: 10px;
+
+            font-size: 26px;
+
+        }
+
+
+        .gestao-toolbar {
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content:
+                space-between;
+
+            flex-wrap: wrap;
+
+            gap: 12px;
+
+            margin-bottom: 18px;
+
+        }
+
+
+        .gestao-toolbar input,
+        .gestao-toolbar select {
+
+            min-height: 42px;
+
+            padding: 10px 12px;
+
+            background:
+                var(--campo, #302438);
+
+            color: white;
+
+            border:
+                1px solid
+                var(--borda, #493550);
+
+            border-radius: 9px;
+
+        }
+
+
+        .simulador-grid {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(3, minmax(0, 1fr));
+
+            gap: 14px;
+
+        }
+
+
+        .simulador-grid label {
+
+            display: flex;
+
+            flex-direction: column;
+
+            gap: 7px;
+
+            color: #e8d7ee;
+
+            font-size: 12px;
+
+            font-weight: 800;
+
+        }
+
+
+        .simulador-grid input,
+        .simulador-grid select {
+
+            width: 100%;
+
+            min-height: 43px;
+
+            padding: 11px;
+
+            background:
+                var(--campo, #302438);
+
+            color: white;
+
+            border:
+                1px solid #6c5177;
+
+            border-radius: 9px;
+
+        }
+
+
+        .resultado-custo {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(4, minmax(0, 1fr));
+
+            gap: 12px;
+
+            margin-top: 18px;
+
+        }
+
+
+        .resultado-custo div {
+
+            padding: 14px;
+
+            background: #191221;
+
+            border:
+                1px solid
+                var(--borda, #493550);
+
+            border-radius: 10px;
+
+        }
+
+
+        .resultado-custo span {
+
+            display: block;
+
+            color:
+                var(--cinza, #b8a8c3);
+
+            font-size: 10px;
+
+            font-weight: 800;
+
+        }
+
+
+        .resultado-custo strong {
+
+            display: block;
+
+            margin-top: 6px;
+
+            color:
+                var(--laranja, #ff8927);
+
+            font-size: 18px;
+
+        }
+
+
+        .barra-estoque {
+
+            width: 100%;
+
+            height: 8px;
+
+            margin-top: 7px;
+
+            overflow: hidden;
+
+            background: #34283c;
+
+            border-radius: 999px;
+
+        }
+
+
+        .barra-estoque > span {
+
+            display: block;
+
+            height: 100%;
+
+            background:
+                var(--roxo, #b12bff);
+
+            border-radius: 999px;
+
+        }
+
+
+        .estoque-baixo {
+
+            color: #ffb0b0;
+
+            font-weight: 800;
+
+        }
+
+
+        .estoque-ok {
+
+            color: #91e4b1;
+
+            font-weight: 800;
+
+        }
+
+
+        @media
+        (max-width: 900px) {
+
+            .gestao-resumos,
+            .resultado-custo {
+
+                grid-template-columns:
+                    repeat(
+                        2,
+                        minmax(0, 1fr)
+                    );
+
+            }
+
+            .simulador-grid {
+
+                grid-template-columns:
+                    1fr 1fr;
+
+            }
+
+        }
+
+
+        @media
+        (max-width: 600px) {
+
+            .gestao-resumos,
+            .resultado-custo,
+            .simulador-grid {
+
+                grid-template-columns:
+                    1fr;
+
+            }
+
+        }
+
+    `;
+
+    document.head.appendChild(
+
+        style
+
+    );
+
+}
+
+
+/* =====================================================
+   CRIAR ABAS
+===================================================== */
+
+function criarAreasExtras() {
+
+    const menu = $(".menu");
+
+    const main = $("main");
+
+    if (
+
+        !menu ||
+
+        !main
+
+    ) {
+
+        return;
+
+    }
+
+
+    /* =================================================
+       BOTÕES DO MENU
+    ================================================= */
+
+    if (
+
+        !menu.querySelector(
+            '[data-pagina="custos"]'
+        )
+
+    ) {
+
+        menu.insertAdjacentHTML(
+
+            "beforeend",
+
+            `
+
+            <button
+                type="button"
+                class="menu-item"
+                data-pagina="custos"
+            >
+
+                ◫ Custos
+
+            </button>
+
+
+            <button
+                type="button"
+                class="menu-item"
+                data-pagina="filamentos"
+            >
+
+                ◉ Filamentos
+
+            </button>
+
+            `
+
+        );
+
+    }
+
+
+    /* =================================================
+       PÁGINA CUSTOS
+    ================================================= */
+
+    if (!$("#custos")) {
+
+        main.insertAdjacentHTML(
+
+            "beforeend",
+
+            `
+
+            <section
+                class="pagina"
+                id="custos"
+                hidden
+            >
+
+                <div class="cabecalho-pagina">
+
+                    <div>
+
+                        <span class="subtitulo">
+
+                            GESTÃO FINANCEIRA
+
+                        </span>
+
+                        <h1>
+
+                            Controle de
+
+                            <em>custos.</em>
+
+                        </h1>
+
+                        <p>
+
+                            Registre despesas e
+                            estime o custo de produção
+                            das suas impressões.
+
+                        </p>
+
+                    </div>
+
+
+                    <div class="grupo-botoes">
+
+                        <button
+                            type="button"
+                            class="botao botao-secundario"
+                            id="exportar-custos"
+                        >
+
+                            Exportar CSV
+
+                        </button>
+
+
+                        <button
+                            type="button"
+                            class="botao botao-laranja"
+                            id="novo-custo"
+                        >
+
+                            + Adicionar custo
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <!-- RESUMOS -->
+
+                <div class="gestao-resumos">
+
+                    <div class="gestao-card">
+
+                        <span>
+                            CUSTOS NO MÊS
+                        </span>
+
+                        <strong id="custos-mes">
+
+                            R$ 0,00
+
+                        </strong>
+
+                    </div>
+
+
+                    <div class="gestao-card">
+
+                        <span>
+                            CUSTOS FIXOS
+                        </span>
+
+                        <strong id="custos-fixos">
+
+                            R$ 0,00
+
+                        </strong>
+
+                    </div>
+
+
+                    <div class="gestao-card">
+
+                        <span>
+                            CUSTOS VARIÁVEIS
+                        </span>
+
+                        <strong id="custos-variaveis">
+
+                            R$ 0,00
+
+                        </strong>
+
+                    </div>
+
+
+                    <div class="gestao-card">
+
+                        <span>
+                            LANÇAMENTOS
+                        </span>
+
+                        <strong id="total-custos">
+
+                            0
+
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <!-- SIMULADOR -->
+
+                <div class="painel">
+
+                    <h2>
+
+                        Simulador de custo
+                        de impressão
+
+                    </h2>
+
+                    <p>
+
+                        Selecione um filamento
+                        cadastrado e informe o
+                        consumo da impressão.
+
+                    </p>
+
+
+                    <div class="simulador-grid">
+
+                        <label>
+
+                            Filamento
+
+                            <select
+                                id="sim-filamento"
+                            ></select>
+
+                        </label>
+
+
+                        <label>
+
+                            Material usado (g)
+
+                            <input
+                                type="number"
+                                id="sim-gramas"
+                                min="0"
+                                step="0.01"
+                                value="0"
+                            >
+
+                        </label>
+
+
+                        <label>
+
+                            Tempo de impressão (h)
+
+                            <input
+                                type="number"
+                                id="sim-horas"
+                                min="0"
+                                step="0.01"
+                                value="0"
+                            >
+
+                        </label>
+
+
+                        <label>
+
+                            Potência média (W)
+
+                            <input
+                                type="number"
+                                id="sim-potencia"
+                                min="0"
+                                step="1"
+                                value="100"
+                            >
+
+                        </label>
+
+
+                        <label>
+
+                            Energia (R$/kWh)
+
+                            <input
+                                type="number"
+                                id="sim-energia"
+                                min="0"
+                                step="0.01"
+                                value="1"
+                            >
+
+                        </label>
+
+
+                        <label>
+
+                            Acréscimo (%)
+
+                            <input
+                                type="number"
+                                id="sim-margem"
+                                min="0"
+                                step="1"
+                                value="0"
+                            >
+
+                        </label>
+
+                    </div>
+
+
+                    <div class="resultado-custo">
+
+                        <div>
+
+                            <span>
+                                MATERIAL
+                            </span>
+
+                            <strong
+                                id="sim-custo-material"
+                            >
+
+                                R$ 0,00
+
+                            </strong>
+
+                        </div>
+
+
+                        <div>
+
+                            <span>
+                                ENERGIA
+                            </span>
+
+                            <strong
+                                id="sim-custo-energia"
+                            >
+
+                                R$ 0,00
+
+                            </strong>
+
+                        </div>
+
+
+                        <div>
+
+                            <span>
+                                CUSTO DIRETO
+                            </span>
+
+                            <strong
+                                id="sim-custo-direto"
+                            >
+
+                                R$ 0,00
+
+                            </strong>
+
+                        </div>
+
+
+                        <div>
+
+                            <span>
+
+                                VALOR COM
+                                ACRÉSCIMO
+
+                            </span>
+
+                            <strong
+                                id="sim-preco-sugerido"
+                            >
+
+                                R$ 0,00
+
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- TABELA -->
+
+                <div class="painel">
+
+                    <div class="gestao-toolbar">
+
+                        <input
+                            type="search"
+                            id="buscar-custo"
+                            placeholder="Buscar custo..."
+                        >
+
+
+                        <select id="filtro-custo">
+
+                            <option value="Todos">
+
+                                Todos os tipos
+
+                            </option>
+
+                            <option value="Fixo">
+
+                                Fixo
+
+                            </option>
+
+                            <option value="Variável">
+
+                                Variável
+
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="tabela-container">
+
+                        <table>
+
+                            <thead>
+
+                                <tr>
+
+                                    <th>
+                                        DESCRIÇÃO
+                                    </th>
+
+                                    <th>
+                                        CATEGORIA
+                                    </th>
+
+                                    <th>
+                                        TIPO
+                                    </th>
+
+                                    <th>
+                                        VALOR
+                                    </th>
+
+                                    <th>
+                                        DATA
+                                    </th>
+
+                                    <th>
+                                        AÇÕES
+                                    </th>
+
+                                </tr>
+
+                            </thead>
+
+                            <tbody
+                                id="tabela-custos"
+                            ></tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+            `
+
+        );
+
+    }
+
+
+    /* =================================================
+       FILAMENTOS
+    ================================================= */
+
+    if (!$("#filamentos")) {
+
+        main.insertAdjacentHTML(
+
+            "beforeend",
+
+            `
+
+            <section
+                class="pagina"
+                id="filamentos"
+                hidden
+            >
+
+                <div class="cabecalho-pagina">
+
+                    <div>
+
+                        <span class="subtitulo">
+
+                            ESTOQUE DE
+                            MATÉRIA-PRIMA
+
+                        </span>
+
+                        <h1>
+
+                            Controle de
+
+                            <em>filamentos.</em>
+
+                        </h1>
+
+                        <p>
+
+                            Acompanhe material,
+                            cor, custo por grama
+                            e quantidade disponível.
+
+                        </p>
+
+                    </div>
+
+
+                    <div class="grupo-botoes">
+
+                        <button
+                            type="button"
+                            class="botao botao-secundario"
+                            id="exportar-filamentos"
+                        >
+
+                            Exportar CSV
+
+                        </button>
+
+
+                        <button
+                            type="button"
+                            class="botao botao-laranja"
+                            id="novo-filamento"
+                        >
+
+                            + Adicionar filamento
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <div class="gestao-resumos">
+
+                    <div class="gestao-card">
+
+                        <span>
+                            ROLOS CADASTRADOS
+                        </span>
+
+                        <strong
+                            id="total-filamentos"
+                        >
+
+                            0
+
+                        </strong>
+
+                    </div>
+
+
+                    <div class="gestao-card">
+
+                        <span>
+                            PESO DISPONÍVEL
+                        </span>
+
+                        <strong
+                            id="peso-filamentos"
+                        >
+
+                            0 kg
+
+                        </strong>
+
+                    </div>
+
+
+                    <div class="gestao-card">
+
+                        <span>
+                            VALOR DO ESTOQUE
+                        </span>
+
+                        <strong
+                            id="valor-filamentos"
+                        >
+
+                            R$ 0,00
+
+                        </strong>
+
+                    </div>
+
+
+                    <div class="gestao-card">
+
+                        <span>
+                            ESTOQUE BAIXO
+                        </span>
+
+                        <strong
+                            id="filamentos-baixos"
+                        >
+
+                            0
+
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <div class="painel">
+
+                    <div class="gestao-toolbar">
+
+                        <input
+                            type="search"
+                            id="buscar-filamento"
+                            placeholder="Buscar marca, material ou cor..."
+                        >
+
+
+                        <select
+                            id="filtro-material"
+                        >
+
+                            <option value="Todos">
+
+                                Todos os materiais
+
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="tabela-container">
+
+                        <table>
+
+                            <thead>
+
+                                <tr>
+
+                                    <th>
+                                        FILAMENTO
+                                    </th>
+
+                                    <th>
+                                        MATERIAL
+                                    </th>
+
+                                    <th>
+                                        COR
+                                    </th>
+
+                                    <th>
+                                        RESTANTE
+                                    </th>
+
+                                    <th>
+                                        CUSTO/GRAMA
+                                    </th>
+
+                                    <th>
+                                        STATUS
+                                    </th>
+
+                                    <th>
+                                        AÇÕES
+                                    </th>
+
+                                </tr>
+
+                            </thead>
+
+                            <tbody
+                                id="tabela-filamentos"
+                            ></tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+            `
+
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   MODAL CUSTOS + FILAMENTOS
+===================================================== */
+
+function criarModaisExtras() {
+
+    if (!$("#modal-custo")) {
+
+        document.body.insertAdjacentHTML(
+
+            "beforeend",
+
+            `
+
+            <dialog
+                class="modal"
+                id="modal-custo"
+            >
+
+                <form id="form-custo">
+
+                    <div class="modal-cabecalho">
+
+                        <h2 id="titulo-modal-custo">
+
+                            Novo custo
+
+                        </h2>
+
+                        <button
+                            type="button"
+                            class="fechar-modal"
+                            data-fechar="modal-custo"
+                        >
+                            ×
+                        </button>
+
+                    </div>
+
+
+                    <div class="campos">
+
+                        <label class="campo campo-inteiro">
+
+                            Descrição
+
+                            <input
+                                type="text"
+                                name="descricao"
+                                maxlength="120"
+                                required
+                            >
+
+                        </label>
+
+
+                        <label class="campo">
+
+                            Categoria
+
+                            <input
+                                type="text"
+                                name="categoria"
+                                maxlength="60"
+                                placeholder="Energia, embalagem..."
+                                required
+                            >
+
+                        </label>
+
+
+                        <label class="campo">
+
+                            Tipo
+
+                            <select
+                                name="tipo"
+                                required
+                            >
+
+                                <option
+                                    value="Variável"
+                                >
+
+                                    Variável
+
+                                </option>
+
+                                <option
+                                    value="Fixo"
+                                >
+
+                                    Fixo
+
+                                </option>
+
+                            </select>
+
+                        </label>
+
+
+                        <label class="campo">
+
+                            Valor (R$)
+
+                            <input
+                                type="number"
+                                name="valor"
+                                min="0"
+                                step="0.01"
+                                required
+                            >
+
+                        </label>
+
+
+                        <label class="campo">
+
+                            Data
+
+                            <input
+                                type="date"
+                                name="data"
+                                required
+                            >
+
+                        </label>
+
+
+                        <label class="campo campo-inteiro">
+
+                            Observações
+
+                            <textarea
+                                name="observacoes"
+                                rows="3"
+                                maxlength="400"
+                            ></textarea>
+
+                        </label>
+
+                    </div>
+
+
+                    <div class="modal-acoes">
+
+                        <button
+                            type="button"
+                            class="botao botao-secundario"
+                            data-fechar="modal-custo"
+                        >
+
+                            Cancelar
+
+                        </button>
+
+                        <button
+                            type="submit"
+                            class="botao botao-laranja"
+                        >
+
+                            Salvar custo
+
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </dialog>
+
+            `
+
+        );
+
+    }
+
+
+    if (!$("#modal-filamento")) {
+
+        document.body.insertAdjacentHTML(
+
+            "beforeend",
+
+            `
+
+            <dialog
+                class="modal"
+                id="modal-filamento"
+            >
+
+                <form id="form-filamento">
+
+                    <div class="modal-cabecalho">
+
+                        <h2
+                            id="titulo-modal-filamento"
+                        >
+
+                            Novo filamento
+
+                        </h2>
+
+                        <button
+                            type="button"
+                            class="fechar-modal"
+                            data-fechar="modal-filamento"
+                        >
+
+                            ×
+
+                        </button>
+
+                    </div>
+
+
+                    <div class="campos">
+
+                        <label class="campo">
+
+                            Marca
+
+                            <input
+                                type="text"
+                                name="marca"
+                                maxlength="80"
+                                required
+                            >
+
+                        </label>
+
+
+                        <label class="campo">
+
+                            Material
+
+                            <input
+                                type="text"
+                                name="material"
+                                placeholder="PLA, PETG..."
+                                required
+                            >
+
+                        </label>
+
+
+                        <label class="campo">
+
+                            Cor
+
+                            <input
+                                type="text"
+                                name="cor"
+                                required
+                            >
+
+                        </label>
+
+
+                        <label class="campo">
+
+                            Diâmetro (mm)
+
+                            <input
+                                type="number"
+                                name="diametro"
+                                min="1"
+                                max="3"
+                                step="0.01"
+                                value="1.75"
+                                required
+                            >
+
+                        </label>
+
+
+                        <label class="campo">
+
+                            Peso original (g)
+
+                            <input
+                                type="number"
+                                name="pesoOriginal"
+                                min="1"
+                                step="1"
+                                value="1000"
+                                required
+                            >
+
+                        </label>
+
+
+                        <label class="campo">
+
+                            Peso restante (g)
+
+                            <input
+                                type="number"
+                                name="pesoRestante"
+                                min="0"
+                                step="1"
+                                value="1000"
+                                required
+                            >
+
+                        </label>
+
+
+                        <label class="campo">
+
+                            Valor pago (R$)
+
+                            <input
+                                type="number"
+                                name="valorPago"
+                                min="0"
+                                step="0.01"
+                                required
+                            >
+
+                        </label>
+
+
+                        <label class="campo">
+
+                            Avisar abaixo de (g)
+
+                            <input
+                                type="number"
+                                name="limiteBaixo"
+                                min="0"
+                                step="1"
+                                value="200"
+                                required
+                            >
+
+                        </label>
+
+
+                        <label class="campo campo-inteiro">
+
+                            Observações
+
+                            <textarea
+                                name="observacoes"
+                                rows="3"
+                                maxlength="400"
+                            ></textarea>
+
+                        </label>
+
+                    </div>
+
+
+                    <div class="modal-acoes">
+
+                        <button
+                            type="button"
+                            class="botao botao-secundario"
+                            data-fechar="modal-filamento"
+                        >
+
+                            Cancelar
+
+                        </button>
+
+                        <button
+                            type="submit"
+                            class="botao botao-laranja"
+                        >
+
+                            Salvar filamento
+
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </dialog>
+
+            `
+
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   LOGIN
+===================================================== */
 
 async function realizarLogin(evento) {
 
     evento.preventDefault();
 
-    const email = $("#email-login").value.trim();
+    const email =
 
-    const senha = $("#senha-login").value;
+        $("#email-login")
+            .value
+            .trim();
 
-    const botao = $("#botao-login");
+    const senha =
 
-    const mensagem = $("#mensagem-login");
+        $("#senha-login")
+            .value;
+
+    const botao =
+
+        $("#botao-login");
+
+    const mensagem =
+
+        $("#mensagem-login");
+
 
     botao.disabled = true;
 
-    mensagem.textContent = "Verificando acesso...";
+    mensagem.textContent =
+
+        "Verificando acesso...";
+
 
     try {
 
@@ -463,13 +1990,14 @@ async function realizarLogin(evento) {
 
             error
 
-        } = await supabase.auth.signInWithPassword({
+        } = await supabase.auth
+            .signInWithPassword({
 
-            email,
+                email,
 
-            password: senha
+                password: senha
 
-        });
+            });
 
 
         if (error) {
@@ -491,7 +2019,8 @@ async function realizarLogin(evento) {
 
             throw new Error(
 
-                "Esta conta não possui acesso administrativo."
+                "Esta conta não possui " +
+                "acesso administrativo."
 
             );
 
@@ -507,10 +2036,17 @@ async function realizarLogin(evento) {
 
     } catch (erro) {
 
-        mensagem.textContent = erro.message;
+        console.error(
 
-        console.error("Erro no login:", erro);
+            "Erro no login:",
 
+            erro
+
+        );
+
+        mensagem.textContent =
+
+            erro.message;
 
     } finally {
 
@@ -521,9 +2057,9 @@ async function realizarLogin(evento) {
 }
 
 
-// ==========================================
-// 10. VERIFICAR SESSÃO
-// ==========================================
+/* =====================================================
+   SESSÃO
+===================================================== */
 
 async function verificarSessao() {
 
@@ -536,17 +2072,28 @@ async function verificarSessao() {
 
         error
 
-    } = await supabase.auth.getUser();
+    } = await supabase.auth
+        .getUser();
 
 
-    if (error || !data.user) {
+    if (
+
+        error ||
+
+        !data.user
+
+    ) {
 
         return null;
 
     }
 
 
-    if (data.user.id !== UID_ADMIN) {
+    if (
+
+        data.user.id !== UID_ADMIN
+
+    ) {
 
         await supabase.auth.signOut();
 
@@ -560,45 +2107,9 @@ async function verificarSessao() {
 }
 
 
-// ==========================================
-// 11. ENTRAR NO PAINEL
-// ==========================================
-
-async function entrarPainel() {
-
-    const usuario = await verificarSessao();
-
-    if (!usuario) {
-
-        mostrarLogin();
-
-        return;
-
-    }
-
-    estado.usuario = usuario;
-
-
-    await carregarCatalogo();
-
-    carregarPedidos();
-
-
-    $("#tela-login").hidden = true;
-
-    app.hidden = false;
-
-
-    abrirPagina("dashboard");
-
-    atualizarPainel();
-
-}
-
-
-// ==========================================
-// 12. MOSTRAR LOGIN
-// ==========================================
+/* =====================================================
+   LOGIN / LOGOUT
+===================================================== */
 
 function mostrarLogin() {
 
@@ -608,38 +2119,88 @@ function mostrarLogin() {
 
     estado.pedidos = [];
 
+    estado.custos = [];
 
-    app.hidden = true;
+    estado.filamentos = [];
 
-    $("#tela-login").hidden = false;
+
+    const app = $(".app");
+
+    const tela = $("#tela-login");
+
+
+    if (app) {
+
+        app.hidden = true;
+
+    }
+
+
+    if (tela) {
+
+        tela.hidden = false;
+
+    }
 
 }
 
 
-// ==========================================
-// 13. LOGOUT
-// ==========================================
+async function entrarPainel() {
+
+    const usuario =
+
+        await verificarSessao();
+
+
+    if (!usuario) {
+
+        mostrarLogin();
+
+        return;
+
+    }
+
+
+    estado.usuario = usuario;
+
+
+    await carregarCatalogo();
+
+
+    carregarDadosLocais();
+
+
+    $("#tela-login").hidden = true;
+
+    $(".app").hidden = false;
+
+
+    abrirPagina("dashboard");
+
+    atualizarPainel();
+
+}
+
 
 async function sairPainel() {
 
     try {
 
-        await supabase.auth.signOut();
+        await supabase.auth
+            .signOut();
 
-    } catch (erro) {
+    } finally {
 
-        console.error(erro);
+        mostrarLogin();
 
     }
-
-    mostrarLogin();
 
 }
 
 
-// ==========================================
-// 14. BOTÃO SAIR
-// ==========================================
+/* =====================================================
+   BOTÃO SAIR
+===================================================== */
 
 function criarBotaoSair() {
 
@@ -649,13 +2210,31 @@ function criarBotaoSair() {
 
     }
 
-    const botao = document.createElement("button");
+
+    const topbar = $(".topbar");
+
+
+    if (!topbar) {
+
+        return;
+
+    }
+
+
+    const botao =
+
+        document.createElement(
+            "button"
+        );
+
 
     botao.id = "botao-sair";
 
     botao.type = "button";
 
-    botao.className = "botao botao-secundario";
+    botao.className =
+
+        "botao botao-secundario";
 
     botao.textContent = "Sair";
 
@@ -669,14 +2248,18 @@ function criarBotaoSair() {
     );
 
 
-    topbar.appendChild(botao);
+    topbar.appendChild(
+
+        botao
+
+    );
 
 }
 
 
-// ==========================================
-// 15. CARREGAR CATÁLOGO DO SUPABASE
-// ==========================================
+/* =====================================================
+   SUPABASE - CATÁLOGO
+===================================================== */
 
 async function carregarCatalogo() {
 
@@ -691,16 +2274,13 @@ async function carregarCatalogo() {
         .from(CONFIG.tabela)
 
         .select(
-
-            "id, " +
-
-            CONFIG.chaveProdutos + ", " +
-
-            CONFIG.chaveVersao
-
+            "id, produtos, versao"
         )
 
-        .eq("id", CONFIG.registro)
+        .eq(
+            "id",
+            CONFIG.registro
+        )
 
         .single();
 
@@ -718,22 +2298,33 @@ async function carregarCatalogo() {
     }
 
 
-    if (!Array.isArray(data.produtos)) {
+    if (
+
+        !Array.isArray(
+            data.produtos
+        )
+
+    ) {
 
         throw new Error(
 
-            "A coluna produtos precisa conter " +
+            "A coluna produtos precisa " +
 
-            "uma lista JSON de produtos."
+            "conter uma lista JSON."
 
         );
 
     }
 
 
-    estado.produtos = data.produtos;
+    estado.produtos =
 
-    estado.versao = Number(data.versao) || 0;
+        data.produtos;
+
+
+    estado.versao =
+
+        Number(data.versao) || 0;
 
 
     atualizarPainel();
@@ -741,30 +2332,41 @@ async function carregarCatalogo() {
 }
 
 
-// ==========================================
-// 16. SALVAR CATÁLOGO NO SUPABASE
-// ==========================================
+/* =====================================================
+   SALVAR CATÁLOGO
+===================================================== */
 
-async function salvarCatalogo(novosProdutos) {
+async function salvarCatalogo(
+
+    novosProdutos
+
+) {
 
     if (estado.salvando) {
 
         throw new Error(
 
-            "Já existe uma alteração em andamento."
+            "Já existe uma alteração " +
+
+            "em andamento."
 
         );
 
     }
 
 
-    const usuario = await verificarSessao();
+    const usuario =
+
+        await verificarSessao();
+
 
     if (!usuario) {
 
         throw new Error(
 
-            "Sua sessão expirou. Faça login novamente."
+            "Sua sessão expirou. " +
+
+            "Faça login novamente."
 
         );
 
@@ -776,11 +2378,9 @@ async function salvarCatalogo(novosProdutos) {
 
     try {
 
-        // Controle de concorrência:
-        // salva somente se a versão do catálogo
-        // não tiver sido alterada por outro usuário.
+        const novaVersao =
 
-        const novaVersao = estado.versao + 1;
+            estado.versao + 1;
 
 
         const {
@@ -801,11 +2401,19 @@ async function salvarCatalogo(novosProdutos) {
 
             })
 
-            .eq("id", CONFIG.registro)
+            .eq(
+                "id",
+                CONFIG.registro
+            )
 
-            .eq("versao", estado.versao)
+            .eq(
+                "versao",
+                estado.versao
+            )
 
-            .select("produtos, versao");
+            .select(
+                "produtos, versao"
+            );
 
 
         if (error) {
@@ -815,22 +2423,37 @@ async function salvarCatalogo(novosProdutos) {
         }
 
 
-        if (!data || data.length === 0) {
+        if (
+
+            !data ||
+
+            data.length === 0
+
+        ) {
 
             throw new Error(
 
-                "O catálogo foi alterado em outra sessão. " +
+                "O catálogo foi alterado " +
 
-                "Recarregue os produtos antes de tentar novamente."
+                "em outra sessão. " +
+
+                "Recarregue antes de salvar."
 
             );
 
         }
 
 
-        estado.produtos = data[0].produtos;
+        estado.produtos =
 
-        estado.versao = Number(data[0].versao);
+            data[0].produtos;
+
+
+        estado.versao =
+
+            Number(
+                data[0].versao
+            );
 
 
         atualizarPainel();
@@ -848,140 +2471,363 @@ async function salvarCatalogo(novosProdutos) {
 }
 
 
-// ==========================================
-// 17. NAVEGAÇÃO DO PAINEL
-// ==========================================
+/* =====================================================
+   NAVEGAÇÃO
+===================================================== */
 
 function abrirPagina(nome) {
 
     estado.paginaAtual = nome;
 
 
-    $$(".pagina").forEach(pagina => {
+    $$(".pagina")
+        .forEach(
 
-        const ativa = pagina.id === nome;
+            pagina => {
 
-        pagina.hidden = !ativa;
+                const ativa =
 
-        pagina.classList.toggle(
+                    pagina.id === nome;
 
-            "ativa",
 
-            ativa
+                pagina.hidden =
+
+                    !ativa;
+
+
+                pagina.classList.toggle(
+
+                    "ativa",
+
+                    ativa
+
+                );
+
+            }
 
         );
 
-    });
 
+    $$("[data-pagina]")
+        .forEach(
 
-    $$("[data-pagina]").forEach(botao => {
+            botao => {
 
-        botao.classList.toggle(
+                botao.classList.toggle(
 
-            "ativo",
+                    "ativo",
 
-            botao.dataset.pagina === nome
+                    botao.dataset.pagina ===
+                        nome
+
+                );
+
+            }
 
         );
-
-    });
 
 
     const titulos = {
 
-        dashboard: "Visão geral",
+        dashboard:
+            "Visão geral",
 
-        produtos: "Produtos",
+        produtos:
+            "Produtos",
 
-        pedidos: "Pedidos",
+        pedidos:
+            "Pedidos",
 
-        publicar: "Sincronização"
+        publicar:
+            "Sincronização",
+
+        custos:
+            "Custos",
+
+        filamentos:
+            "Filamentos"
 
     };
 
 
-    const titulo = $("#titulo-pagina");
+    const titulo =
+
+        $("#titulo-pagina");
+
 
     if (titulo) {
 
-        titulo.textContent = titulos[nome] || nome;
+        titulo.textContent =
+
+            titulos[nome] || nome;
 
     }
 
 }
 
 
-// ==========================================
-// 18. INDICADORES
-// ==========================================
+/* =====================================================
+   LOCALSTORAGE
+===================================================== */
 
-function atualizarIndicadores() {
+function chaveLocal(tipo) {
 
-    const produtos = estado.produtos;
+    const uid =
 
-    const pedidos = estado.pedidos;
+        estado.usuario?.id ||
 
-
-    const visiveis = produtos.filter(
-
-        produto => produto.disponivel !== false
-
-    );
+        "sem_usuario";
 
 
-    const estoque = produtos.reduce(
+    return (
 
-        (total, produto) =>
+        "criaitor3d_" +
 
-            total + numero(produto.estoque),
+        tipo +
 
-        0
+        "_" +
+
+        uid
 
     );
-
-
-    const pedidosAbertos = pedidos.filter(
-
-        pedido =>
-
-            !["Entregue", "Cancelado"].includes(
-
-                pedido.status
-
-            )
-
-    );
-
-
-    $("#total-produtos").textContent =
-
-        produtos.length;
-
-
-    $("#total-visiveis").textContent =
-
-        visiveis.length;
-
-
-    $("#total-estoque").textContent =
-
-        estoque;
-
-
-    $("#total-pedidos").textContent =
-
-        pedidosAbertos.length;
 
 }
 
 
-// ==========================================
-// 19. PRODUTOS RECENTES
-// ==========================================
+function lerListaLocal(tipo) {
+
+    try {
+
+        const dados =
+
+            localStorage.getItem(
+                chaveLocal(tipo)
+            );
+
+
+        const lista =
+
+            dados
+
+                ? JSON.parse(dados)
+
+                : [];
+
+
+        return Array.isArray(lista)
+
+            ? lista
+
+            : [];
+
+
+    } catch {
+
+        return [];
+
+    }
+
+}
+
+
+function salvarListaLocal(
+
+    tipo,
+
+    lista
+
+) {
+
+    localStorage.setItem(
+
+        chaveLocal(tipo),
+
+        JSON.stringify(lista)
+
+    );
+
+}
+
+
+function carregarDadosLocais() {
+
+    estado.pedidos =
+
+        lerListaLocal("pedidos");
+
+
+    estado.custos =
+
+        lerListaLocal("custos");
+
+
+    estado.filamentos =
+
+        lerListaLocal("filamentos");
+
+}
+
+
+/* =====================================================
+   PERSISTÊNCIA
+===================================================== */
+
+function persistirPedidos() {
+
+    salvarListaLocal(
+
+        "pedidos",
+
+        estado.pedidos
+
+    );
+
+    atualizarPainel();
+
+}
+
+
+function persistirCustos() {
+
+    salvarListaLocal(
+
+        "custos",
+
+        estado.custos
+
+    );
+
+    atualizarPainel();
+
+}
+
+
+function persistirFilamentos() {
+
+    salvarListaLocal(
+
+        "filamentos",
+
+        estado.filamentos
+
+    );
+
+    atualizarPainel();
+
+}
+
+
+/* =====================================================
+   DASHBOARD
+===================================================== */
+
+function atualizarIndicadores() {
+
+    const visiveis =
+
+        estado.produtos.filter(
+
+            produto =>
+
+                produto.disponivel !==
+                    false
+
+        );
+
+
+    const estoque =
+
+        estado.produtos.reduce(
+
+            (
+
+                total,
+
+                produto
+
+            ) =>
+
+                total +
+
+                numero(
+                    produto.estoque
+                ),
+
+            0
+
+        );
+
+
+    const pedidosAbertos =
+
+        estado.pedidos.filter(
+
+            pedido =>
+
+                ![
+
+                    "Entregue",
+
+                    "Cancelado"
+
+                ].includes(
+                    pedido.status
+                )
+
+        );
+
+
+    if ($("#total-produtos")) {
+
+        $("#total-produtos")
+            .textContent =
+
+            estado.produtos.length;
+
+    }
+
+
+    if ($("#total-visiveis")) {
+
+        $("#total-visiveis")
+            .textContent =
+
+            visiveis.length;
+
+    }
+
+
+    if ($("#total-estoque")) {
+
+        $("#total-estoque")
+            .textContent =
+
+            estoque;
+
+    }
+
+
+    if ($("#total-pedidos")) {
+
+        $("#total-pedidos")
+            .textContent =
+
+            pedidosAbertos.length;
+
+    }
+
+}
+
+
+/* =====================================================
+   PRODUTOS RECENTES
+===================================================== */
 
 function renderizarProdutosRecentes() {
 
-    const container = $("#produtos-recentes");
+    const container =
+
+        $("#produtos-recentes");
 
 
     if (!container) {
@@ -991,7 +2837,13 @@ function renderizarProdutosRecentes() {
     }
 
 
-    const produtos = estado.produtos.slice(-5).reverse();
+    const produtos =
+
+        estado.produtos
+
+            .slice(-5)
+
+            .reverse();
 
 
     if (!produtos.length) {
@@ -1000,7 +2852,8 @@ function renderizarProdutosRecentes() {
 
             <p>
 
-                Você ainda não cadastrou produtos.
+                Você ainda não cadastrou
+                produtos.
 
             </p>
 
@@ -1011,110 +2864,168 @@ function renderizarProdutosRecentes() {
     }
 
 
-    container.innerHTML = produtos.map(produto => {
+    container.innerHTML =
 
-        const imagem = imagemSegura(produto.imagem);
+        produtos.map(
+
+            produto => {
+
+                const imagem =
+
+                    imagemSegura(
+                        produto.imagem
+                    );
 
 
-        return `
+                return `
 
-            <div class="produto-recente">
-
-                ${imagem ? `
-
-                    <img
-                        src="${escaparHTML(imagem)}"
-                        alt=""
-                        loading="lazy"
+                    <div
+                        class="produto-recente"
                     >
 
-                ` : ""}
+                        ${
+
+                            imagem
+
+                                ? `
+
+                                    <img
+                                        src="${escaparHTML(
+                                            imagem
+                                        )}"
+                                        alt=""
+                                        loading="lazy"
+                                    >
+
+                                `
+
+                                : ""
+
+                        }
 
 
-                <div class="produto-recente-info">
+                        <div
+                            class="produto-recente-info"
+                        >
 
-                    <strong>
+                            <strong>
 
-                        ${escaparHTML(produto.nome)}
+                                ${escaparHTML(
+                                    produto.nome
+                                )}
 
-                    </strong>
+                            </strong>
 
-                    <span>
+                            <span>
 
-                        ${escaparHTML(produto.categoria)}
+                                ${escaparHTML(
+                                    produto.categoria
+                                )}
 
-                    </span>
+                            </span>
 
-                </div>
+                        </div>
 
 
-                <b>
+                        <b>
 
-                    ${dinheiro(produto.preco)}
+                            ${dinheiro(
+                                produto.preco
+                            )}
 
-                </b>
+                        </b>
 
-            </div>
+                    </div>
 
-        `;
+                `;
 
-    }).join("");
+            }
+
+        ).join("");
 
 }
 
 
-// ==========================================
-// 20. TABELA DE PRODUTOS
-// ==========================================
+/* =====================================================
+   TABELA PRODUTOS
+===================================================== */
 
 function renderizarProdutos() {
 
-    const tabela = $("#tabela-produtos");
+    const tabela =
+
+        $("#tabela-produtos");
+
+
+    if (!tabela) {
+
+        return;
+
+    }
 
 
     const busca =
 
-        ($("#buscar-produto")?.value || "")
+        (
+            $("#buscar-produto")
+                ?.value || ""
+        )
 
-            .trim()
+        .trim()
 
-            .toLowerCase();
-
-
-    const produtos = estado.produtos.filter(
-
-        produto => {
-
-            const nome = String(
-
-                produto.nome || ""
-
-            ).toLowerCase();
+        .toLowerCase();
 
 
-            const categoria = String(
+    const produtos =
 
-                produto.categoria || ""
+        estado.produtos.filter(
 
-            ).toLowerCase();
+            produto => {
 
+                const nome =
 
-            return (
+                    String(
+                        produto.nome || ""
+                    )
 
-                nome.includes(busca) ||
-
-                categoria.includes(busca)
-
-            );
-
-        }
-
-    );
+                    .toLowerCase();
 
 
-    $("#contador-produtos").textContent =
+                const categoria =
 
-        produtos.length + " produtos";
+                    String(
+                        produto.categoria || ""
+                    )
+
+                    .toLowerCase();
+
+
+                return (
+
+                    nome.includes(busca) ||
+
+                    categoria.includes(busca)
+
+                );
+
+            }
+
+        );
+
+
+    if ($("#contador-produtos")) {
+
+        $("#contador-produtos")
+            .textContent =
+
+            produtos.length === 1
+
+                ? "1 produto"
+
+                : produtos.length +
+                    " produtos";
+
+    }
 
 
     if (!produtos.length) {
@@ -1138,196 +3049,276 @@ function renderizarProdutos() {
     }
 
 
-    tabela.innerHTML = produtos.map(produto => {
+    tabela.innerHTML =
 
-        const imagem = imagemSegura(produto.imagem);
+        produtos.map(
+
+            produto => {
+
+                const imagem =
+
+                    imagemSegura(
+                        produto.imagem
+                    );
 
 
-        return `
+                return `
 
-            <tr>
+                    <tr>
 
-                <td>
+                        <td>
 
-                    <div class="produto-celula">
-
-                        ${imagem ? `
-
-                            <img
-                                src="${escaparHTML(imagem)}"
-                                alt=""
-                                loading="lazy"
+                            <div
+                                class="produto-celula"
                             >
 
-                        ` : ""}
+                                ${
+
+                                    imagem
+
+                                        ? `
+
+                                            <img
+                                                src="${escaparHTML(
+                                                    imagem
+                                                )}"
+                                                alt=""
+                                            >
+
+                                        `
+
+                                        : ""
+
+                                }
 
 
-                        <div>
+                                <div>
 
-                            <strong>
+                                    <strong>
 
-                                ${escaparHTML(produto.nome)}
+                                        ${escaparHTML(
+                                            produto.nome
+                                        )}
 
-                            </strong>
+                                    </strong>
 
-                            <small>
+                                    <small>
 
-                                ${escaparHTML(produto.prazo || "")}
+                                        ${escaparHTML(
+                                            produto.prazo ||
+                                            ""
+                                        )}
 
-                            </small>
+                                    </small>
 
-                        </div>
+                                </div>
 
-                    </div>
+                            </div>
 
-                </td>
-
-
-                <td>
-
-                    ${escaparHTML(produto.categoria)}
-
-                </td>
+                        </td>
 
 
-                <td>
+                        <td>
 
-                    ${dinheiro(produto.preco)}
+                            ${escaparHTML(
+                                produto.categoria
+                            )}
 
-                </td>
-
-
-                <td>
-
-                    ${numero(produto.estoque)}
-
-                </td>
+                        </td>
 
 
-                <td>
+                        <td>
 
-                    <span class="${
-                        produto.disponivel !== false
-                            ? "visivel"
-                            : "oculto"
-                    }">
+                            ${dinheiro(
+                                produto.preco
+                            )}
 
-                        ${
-                            produto.disponivel !== false
-                                ? "Visível"
-                                : "Oculto"
-                        }
-
-                    </span>
-
-                </td>
+                        </td>
 
 
-                <td>
+                        <td>
 
-                    <button
-                        type="button"
-                        class="botao-pequeno"
-                        data-acao-produto="editar"
-                        data-id="${escaparHTML(produto.id)}"
-                    >
+                            ${numero(
+                                produto.estoque
+                            )}
 
-                        Editar
-
-                    </button>
+                        </td>
 
 
-                    <button
-                        type="button"
-                        class="botao-pequeno botao-excluir"
-                        data-acao-produto="excluir"
-                        data-id="${escaparHTML(produto.id)}"
-                    >
+                        <td>
 
-                        Excluir
+                            <span class="${
+                                produto.disponivel !== false
+                                    ? "visivel"
+                                    : "oculto"
+                            }">
 
-                    </button>
+                                ${
+                                    produto.disponivel !== false
+                                        ? "Visível"
+                                        : "Oculto"
+                                }
 
-                </td>
+                            </span>
 
-            </tr>
+                        </td>
 
-        `;
 
-    }).join("");
+                        <td>
+
+                            <button
+                                type="button"
+                                class="botao-pequeno"
+                                data-acao-produto="editar"
+                                data-id="${escaparHTML(
+                                    produto.id
+                                )}"
+                            >
+
+                                Editar
+
+                            </button>
+
+
+                            <button
+                                type="button"
+                                class="botao-pequeno botao-excluir"
+                                data-acao-produto="excluir"
+                                data-id="${escaparHTML(
+                                    produto.id
+                                )}"
+                            >
+
+                                Excluir
+
+                            </button>
+
+                        </td>
+
+                    </tr>
+
+                `;
+
+            }
+
+        ).join("");
 
 }
 
 
-// ==========================================
-// 21. ABRIR CADASTRO DE PRODUTO
-// ==========================================
+/* =====================================================
+   PRODUTOS
+===================================================== */
 
 function abrirNovoProduto() {
 
     estado.produtoEditando = null;
 
 
-    formProduto.reset();
+    const form =
+
+        $("#form-produto");
 
 
-    $("#titulo-modal-produto").textContent =
+    form.reset();
+
+
+    $("#titulo-modal-produto")
+        .textContent =
 
         "Novo produto";
 
 
-    formProduto.elements.nome.focus();
-
-
-    modalProduto.showModal();
+    $("#modal-produto")
+        .showModal();
 
 }
 
 
-// ==========================================
-// 22. EDITAR PRODUTO
-// ==========================================
-
 function editarProduto(id) {
 
-    const produto = estado.produtos.find(
+    const produto =
 
-        item => String(item.id) === String(id)
+        estado.produtos.find(
 
-    );
+            item =>
+
+                String(item.id) ===
+                String(id)
+
+        );
 
 
     if (!produto) {
 
-        avisar("Produto não encontrado.", true);
+        avisar(
+
+            "Produto não encontrado.",
+
+            true
+
+        );
 
         return;
 
     }
 
 
-    estado.produtoEditando = produto.id;
+    estado.produtoEditando =
+
+        produto.id;
 
 
-    formProduto.reset();
+    const form =
+
+        $("#form-produto");
 
 
-    const campos = formProduto.elements;
+    form.reset();
 
 
-    campos.nome.value = produto.nome || "";
+    const campos =
 
-    campos.categoria.value = produto.categoria || "";
+        form.elements;
 
-    campos.preco.value = numero(produto.preco);
 
-    campos.estoque.value = numero(produto.estoque);
+    campos.nome.value =
 
-    campos.prazo.value = produto.prazo || "";
+        produto.nome || "";
 
-    campos.imagem.value = produto.imagem || "";
 
-    campos.descricao.value = produto.descricao || "";
+    campos.categoria.value =
+
+        produto.categoria || "";
+
+
+    campos.preco.value =
+
+        numero(
+            produto.preco
+        );
+
+
+    campos.estoque.value =
+
+        numero(
+            produto.estoque
+        );
+
+
+    campos.prazo.value =
+
+        produto.prazo || "";
+
+
+    campos.imagem.value =
+
+        produto.imagem || "";
+
+
+    campos.descricao.value =
+
+        produto.descricao || "";
 
 
     campos.disponivel.checked =
@@ -1340,9 +3331,6 @@ function editarProduto(id) {
         produto.destaque === true;
 
 
-    // Atualizar a pré-visualização
-    // do fotos-empresa.js.
-
     campos.imagem.dispatchEvent(
 
         new Event("change")
@@ -1350,30 +3338,39 @@ function editarProduto(id) {
     );
 
 
-    $("#titulo-modal-produto").textContent =
+    $("#titulo-modal-produto")
+        .textContent =
 
         "Editar produto";
 
 
-    modalProduto.showModal();
+    $("#modal-produto")
+        .showModal();
 
 }
 
 
-// ==========================================
-// 23. SALVAR PRODUTO
-// ==========================================
+async function salvarProduto(
 
-async function salvarProduto(evento) {
+    evento
+
+) {
 
     evento.preventDefault();
 
 
-    const botao = formProduto.querySelector(
+    const form =
 
-        'button[type="submit"]'
+        $("#form-produto");
 
-    );
+
+    const botao =
+
+        form.querySelector(
+
+            'button[type="submit"]'
+
+        );
 
 
     if (estado.salvando) {
@@ -1388,35 +3385,72 @@ async function salvarProduto(evento) {
 
     try {
 
-        const campos = formProduto.elements;
+        const campos =
+
+            form.elements;
 
 
-        const nome = campos.nome.value.trim();
+        const nome =
 
-        const categoria = campos.categoria.value.trim();
+            campos.nome.value.trim();
 
 
-        if (!nome || !categoria) {
+        const categoria =
+
+            campos.categoria
+                .value
+                .trim();
+
+
+        const preco =
+
+            Number(
+                campos.preco.value
+            );
+
+
+        const estoque =
+
+            Number(
+                campos.estoque.value
+            );
+
+
+        if (
+
+            !nome ||
+
+            !categoria
+
+        ) {
 
             throw new Error(
 
-                "Preencha o nome e a categoria."
+                "Preencha nome e categoria."
 
             );
 
         }
 
 
-        const preco = Number(campos.preco.value);
-
-        const estoque = Number(campos.estoque.value);
-
-
         if (
 
             !Number.isFinite(preco) ||
 
-            preco < 0 ||
+            preco < 0
+
+        ) {
+
+            throw new Error(
+
+                "Informe um preço válido."
+
+            );
+
+        }
+
+
+        if (
 
             !Number.isInteger(estoque) ||
 
@@ -1426,16 +3460,14 @@ async function salvarProduto(evento) {
 
             throw new Error(
 
-                "Informe um preço válido e " +
-
-                "um estoque inteiro não negativo."
+                "Informe um estoque válido."
 
             );
 
         }
 
 
-        const produtoAnterior =
+        const anterior =
 
             estado.produtos.find(
 
@@ -1443,20 +3475,22 @@ async function salvarProduto(evento) {
 
                     String(produto.id) ===
 
-                    String(estado.produtoEditando)
+                    String(
+                        estado.produtoEditando
+                    )
 
             );
 
 
-        // Mantém campos adicionais de produtos
-        // existentes, caso tenham sido criados
-        // por versões anteriores do sistema.
-
         const produto = {
 
-            ...(produtoAnterior || {}),
+            ...(anterior || {}),
 
-            id: produtoAnterior?.id || criarID(),
+            id:
+
+                anterior?.id ||
+
+                criarID(),
 
             nome,
 
@@ -1466,17 +3500,37 @@ async function salvarProduto(evento) {
 
             estoque,
 
-            prazo: campos.prazo.value.trim(),
+            prazo:
 
-            imagem: campos.imagem.value.trim(),
+                campos.prazo
+                    .value
+                    .trim(),
 
-            descricao: campos.descricao.value.trim(),
+            imagem:
 
-            disponivel: campos.disponivel.checked,
+                campos.imagem
+                    .value
+                    .trim(),
 
-            destaque: campos.destaque.checked,
+            descricao:
 
-            atualizado_em: dataAtual()
+                campos.descricao
+                    .value
+                    .trim(),
+
+            disponivel:
+
+                campos.disponivel
+                    .checked,
+
+            destaque:
+
+                campos.destaque
+                    .checked,
+
+            atualizado_em:
+
+                agoraISO()
 
         };
 
@@ -1484,21 +3538,22 @@ async function salvarProduto(evento) {
         let novosProdutos;
 
 
-        if (produtoAnterior) {
+        if (anterior) {
 
-            novosProdutos = estado.produtos.map(
+            novosProdutos =
 
-                item =>
+                estado.produtos.map(
 
-                    String(item.id) ===
+                    item =>
 
-                    String(produtoAnterior.id)
+                        String(item.id) ===
+                        String(anterior.id)
 
-                        ? produto
+                            ? produto
 
-                        : item
+                            : item
 
-            );
+                );
 
         } else {
 
@@ -1513,29 +3568,44 @@ async function salvarProduto(evento) {
         }
 
 
-        await salvarCatalogo(novosProdutos);
+        await salvarCatalogo(
+
+            novosProdutos
+
+        );
 
 
-        modalProduto.close();
+        $("#modal-produto")
+            .close();
 
 
-        estado.produtoEditando = null;
+        estado.produtoEditando =
+
+            null;
 
 
-        avisar("Produto salvo com sucesso!");
+        avisar(
+
+            "Produto salvo com sucesso!"
+
+        );
 
 
     } catch (erro) {
 
         console.error(erro);
 
+
         avisar(
 
-            "Erro ao salvar produto: " + erro.message,
+            "Erro ao salvar produto: " +
+
+            erro.message,
 
             true
 
         );
+
 
     } finally {
 
@@ -1546,157 +3616,101 @@ async function salvarProduto(evento) {
 }
 
 
-// ==========================================
-// 24. EXCLUIR PRODUTO
-// ==========================================
-
 async function excluirProduto(id) {
 
-    const produto = estado.produtos.find(
+    const produto =
 
-        item => String(item.id) === String(id)
+        estado.produtos.find(
 
-    );
+            item =>
 
-
-    if (!produto) {
-
-        avisar("Produto não encontrado.", true);
-
-        return;
-
-    }
-
-
-    if (!confirm(
-
-        "Deseja excluir o produto " +
-
-        produto.nome +
-
-        " do catálogo?"
-
-    )) {
-
-        return;
-
-    }
-
-
-    const novosProdutos = estado.produtos.filter(
-
-        item => String(item.id) !== String(id)
-
-    );
-
-
-    try {
-
-        await salvarCatalogo(novosProdutos);
-
-
-        avisar("Produto excluído do catálogo.");
-
-
-        // A fotografia armazenada no Storage
-        // não é excluída automaticamente.
-
-    } catch (erro) {
-
-        console.error(erro);
-
-        avisar(erro.message, true);
-
-    }
-
-}
-
-
-// ==========================================
-// 25. PEDIDOS - ARMAZENAMENTO LOCAL
-// ==========================================
-
-function chavePedidos() {
-
-    return (
-
-        "criaitor3d_pedidos_" +
-
-        estado.usuario.id
-
-    );
-
-}
-
-
-function carregarPedidos() {
-
-    try {
-
-        const dados = localStorage.getItem(
-
-            chavePedidos()
+                String(item.id) ===
+                String(id)
 
         );
 
 
-        const pedidos = dados
+    if (!produto) {
 
-            ? JSON.parse(dados)
-
-            : [];
-
-
-        estado.pedidos = Array.isArray(pedidos)
-
-            ? pedidos
-
-            : [];
-
-
-    } catch (erro) {
-
-        console.error(erro);
-
-        estado.pedidos = [];
+        return;
 
     }
 
 
-    renderizarPedidos();
+    if (
+
+        !confirm(
+
+            `Deseja excluir "${produto.nome}"?`
+
+        )
+
+    ) {
+
+        return;
+
+    }
+
+
+    try {
+
+        const novosProdutos =
+
+            estado.produtos.filter(
+
+                item =>
+
+                    String(item.id) !==
+                    String(id)
+
+            );
+
+
+        await salvarCatalogo(
+
+            novosProdutos
+
+        );
+
+
+        avisar(
+
+            "Produto excluído."
+
+        );
+
+
+    } catch (erro) {
+
+        avisar(
+
+            erro.message,
+
+            true
+
+        );
+
+    }
 
 }
 
 
-// ==========================================
-// 26. SALVAR PEDIDOS
-// ==========================================
-
-function persistirPedidos() {
-
-    localStorage.setItem(
-
-        chavePedidos(),
-
-        JSON.stringify(estado.pedidos)
-
-    );
-
-
-    atualizarIndicadores();
-
-    renderizarPedidos();
-
-}
-
-
-// ==========================================
-// 27. RENDERIZAR PEDIDOS
-// ==========================================
+/* =====================================================
+   PEDIDOS
+===================================================== */
 
 function renderizarPedidos() {
 
-    const tabela = $("#tabela-pedidos");
+    const tabela =
+
+        $("#tabela-pedidos");
+
+
+    if (!tabela) {
+
+        return;
+
+    }
 
 
     if (!estado.pedidos.length) {
@@ -1720,125 +3734,137 @@ function renderizarPedidos() {
     }
 
 
-    tabela.innerHTML = [...estado.pedidos]
+    tabela.innerHTML =
+
+        [...estado.pedidos]
 
         .reverse()
 
-        .map(pedido => `
+        .map(
 
-            <tr>
+            pedido => `
 
-                <td>
+                <tr>
 
-                    <strong>
+                    <td>
 
-                        ${escaparHTML(pedido.cliente)}
+                        <strong>
 
-                    </strong>
+                            ${escaparHTML(
+                                pedido.cliente
+                            )}
 
-                    <small>
+                        </strong>
 
-                        ${escaparHTML(pedido.contato)}
+                        <small>
 
-                    </small>
+                            ${escaparHTML(
+                                pedido.contato
+                            )}
 
-                </td>
+                        </small>
 
+                    </td>
 
-                <td>
+                    <td>
 
-                    ${escaparHTML(pedido.itens)}
+                        ${escaparHTML(
+                            pedido.itens
+                        )}
 
-                </td>
+                    </td>
 
+                    <td>
 
-                <td>
+                        ${dinheiro(
+                            pedido.valor
+                        )}
 
-                    ${dinheiro(pedido.valor)}
+                    </td>
 
-                </td>
+                    <td>
 
+                        <span class="etiqueta">
 
-                <td>
+                            ${escaparHTML(
+                                pedido.status
+                            )}
 
-                    <span class="etiqueta">
+                        </span>
 
-                        ${escaparHTML(pedido.status)}
+                    </td>
 
-                    </span>
+                    <td>
 
-                </td>
+                        ${formatarData(
+                            pedido.data
+                        )}
 
+                    </td>
 
-                <td>
+                    <td>
 
-                    ${formatarData(pedido.data)}
+                        <button
+                            type="button"
+                            class="botao-pequeno"
+                            data-acao-pedido="editar"
+                            data-id="${escaparHTML(
+                                pedido.id
+                            )}"
+                        >
 
-                </td>
+                            Editar
 
+                        </button>
 
-                <td>
+                        <button
+                            type="button"
+                            class="botao-pequeno botao-excluir"
+                            data-acao-pedido="excluir"
+                            data-id="${escaparHTML(
+                                pedido.id
+                            )}"
+                        >
 
-                    <button
-                        type="button"
-                        class="botao-pequeno"
-                        data-acao-pedido="editar"
-                        data-id="${escaparHTML(pedido.id)}"
-                    >
+                            Excluir
 
-                        Editar
+                        </button>
 
-                    </button>
+                    </td>
 
+                </tr>
 
-                    <button
-                        type="button"
-                        class="botao-pequeno botao-excluir"
-                        data-acao-pedido="excluir"
-                        data-id="${escaparHTML(pedido.id)}"
-                    >
+            `
 
-                        Excluir
-
-                    </button>
-
-                </td>
-
-            </tr>
-
-        `).join("");
+        ).join("");
 
 }
 
-
-// ==========================================
-// 28. NOVO PEDIDO
-// ==========================================
 
 function abrirNovoPedido() {
 
     estado.pedidoEditando = null;
 
+    $("#form-pedido").reset();
 
-    formPedido.reset();
-
-
-    modalPedido.showModal();
+    $("#modal-pedido")
+        .showModal();
 
 }
 
 
-// ==========================================
-// 29. EDITAR PEDIDO
-// ==========================================
-
 function editarPedido(id) {
 
-    const pedido = estado.pedidos.find(
+    const pedido =
 
-        item => String(item.id) === String(id)
+        estado.pedidos.find(
 
-    );
+            item =>
+
+                String(item.id) ===
+                String(id)
+
+        );
 
 
     if (!pedido) {
@@ -1848,34 +3874,56 @@ function editarPedido(id) {
     }
 
 
-    estado.pedidoEditando = pedido.id;
+    estado.pedidoEditando =
+
+        pedido.id;
 
 
-    formPedido.reset();
+    const form =
+
+        $("#form-pedido");
 
 
-    const campos = formPedido.elements;
+    form.reset();
 
 
-    campos.cliente.value = pedido.cliente || "";
+    const campos =
 
-    campos.contato.value = pedido.contato || "";
-
-    campos.itens.value = pedido.itens || "";
-
-    campos.valor.value = numero(pedido.valor);
-
-    campos.status.value = pedido.status || "Novo";
+        form.elements;
 
 
-    modalPedido.showModal();
+    campos.cliente.value =
+
+        pedido.cliente || "";
+
+
+    campos.contato.value =
+
+        pedido.contato || "";
+
+
+    campos.itens.value =
+
+        pedido.itens || "";
+
+
+    campos.valor.value =
+
+        numero(
+            pedido.valor
+        );
+
+
+    campos.status.value =
+
+        pedido.status || "Novo";
+
+
+    $("#modal-pedido")
+        .showModal();
 
 }
 
-
-// ==========================================
-// 30. SALVAR PEDIDO
-// ==========================================
 
 function salvarPedido(evento) {
 
@@ -1884,48 +3932,89 @@ function salvarPedido(evento) {
 
     try {
 
-        const campos = formPedido.elements;
+        const campos =
+
+            $("#form-pedido")
+                .elements;
 
 
-        const anterior = estado.pedidos.find(
+        const anterior =
 
-            item =>
+            estado.pedidos.find(
 
-                String(item.id) ===
+                item =>
 
-                String(estado.pedidoEditando)
+                    String(item.id) ===
 
-        );
+                    String(
+                        estado.pedidoEditando
+                    )
+
+            );
 
 
         const pedido = {
 
             ...(anterior || {}),
 
-            id: anterior?.id || criarID(),
+            id:
 
-            cliente: campos.cliente.value.trim(),
+                anterior?.id ||
 
-            contato: campos.contato.value.trim(),
+                criarID(),
 
-            itens: campos.itens.value.trim(),
+            cliente:
 
-            valor: numero(campos.valor.value),
+                campos.cliente
+                    .value
+                    .trim(),
 
-            status: campos.status.value,
+            contato:
 
-            data: anterior?.data || dataAtual(),
+                campos.contato
+                    .value
+                    .trim(),
 
-            atualizado_em: dataAtual()
+            itens:
+
+                campos.itens
+                    .value
+                    .trim(),
+
+            valor:
+
+                numero(
+                    campos.valor.value
+                ),
+
+            status:
+
+                campos.status.value,
+
+            data:
+
+                anterior?.data ||
+
+                agoraISO(),
+
+            atualizado_em:
+
+                agoraISO()
 
         };
 
 
-        if (!pedido.cliente || !pedido.itens) {
+        if (
+
+            !pedido.cliente ||
+
+            !pedido.itens
+
+        ) {
 
             throw new Error(
 
-                "Preencha o cliente e os produtos solicitados."
+                "Preencha cliente e produtos."
 
             );
 
@@ -1934,21 +4023,28 @@ function salvarPedido(evento) {
 
         if (anterior) {
 
-            estado.pedidos = estado.pedidos.map(
+            estado.pedidos =
 
-                item =>
+                estado.pedidos.map(
 
-                    String(item.id) === String(anterior.id)
+                    item =>
 
-                        ? pedido
+                        String(item.id) ===
+                        String(anterior.id)
 
-                        : item
+                            ? pedido
 
-            );
+                            : item
+
+                );
 
         } else {
 
-            estado.pedidos.push(pedido);
+            estado.pedidos.push(
+
+                pedido
+
+            );
 
         }
 
@@ -1956,82 +4052,2107 @@ function salvarPedido(evento) {
         persistirPedidos();
 
 
-        modalPedido.close();
+        $("#modal-pedido")
+            .close();
 
 
-        estado.pedidoEditando = null;
+        estado.pedidoEditando =
+
+            null;
 
 
-        avisar("Pedido salvo com sucesso!");
+        avisar(
+
+            "Pedido salvo!"
+
+        );
 
 
     } catch (erro) {
 
-        avisar(erro.message, true);
+        avisar(
+
+            erro.message,
+
+            true
+
+        );
 
     }
 
 }
 
 
-// ==========================================
-// 31. EXCLUIR PEDIDO
-// ==========================================
-
 function excluirPedido(id) {
 
-    if (!confirm(
+    if (
 
-        "Deseja excluir este pedido?"
+        !confirm(
+            "Deseja excluir este pedido?"
+        )
 
-    )) {
+    ) {
 
         return;
 
     }
 
 
-    estado.pedidos = estado.pedidos.filter(
+    estado.pedidos =
 
-        item => String(item.id) !== String(id)
+        estado.pedidos.filter(
 
-    );
+            item =>
+
+                String(item.id) !==
+                String(id)
+
+        );
 
 
     persistirPedidos();
 
 
-    avisar("Pedido excluído.");
+    avisar(
+
+        "Pedido excluído."
+
+    );
 
 }
 
 
-// ==========================================
-// 32. EXPORTAR ARQUIVO
-// ==========================================
+/* =====================================================
+   CUSTOS
+===================================================== */
 
-function baixarArquivo(nome, conteudo, tipo) {
+function custosDoMesAtual() {
 
-    const blob = new Blob(
+    const agora = new Date();
 
-        [conteudo],
+    const ano =
 
-        { type: tipo }
+        agora.getFullYear();
+
+    const mes =
+
+        agora.getMonth();
+
+
+    return estado.custos.filter(
+
+        custo => {
+
+            if (!custo.data) {
+
+                return false;
+
+            }
+
+
+            const data =
+
+                new Date(
+
+                    custo.data +
+                    "T12:00:00"
+
+                );
+
+
+            return (
+
+                data.getFullYear() === ano &&
+
+                data.getMonth() === mes
+
+            );
+
+        }
 
     );
 
+}
 
-    const url = URL.createObjectURL(blob);
+
+function renderizarResumoCustos() {
+
+    if (!$("#custos-mes")) {
+
+        return;
+
+    }
 
 
-    const link = document.createElement("a");
+    const lista =
+
+        custosDoMesAtual();
+
+
+    const total =
+
+        lista.reduce(
+
+            (soma, item) =>
+
+                soma +
+
+                numero(item.valor),
+
+            0
+
+        );
+
+
+    const fixos =
+
+        lista
+
+        .filter(
+
+            item =>
+
+                item.tipo === "Fixo"
+
+        )
+
+        .reduce(
+
+            (soma, item) =>
+
+                soma +
+
+                numero(item.valor),
+
+            0
+
+        );
+
+
+    const variaveis =
+
+        lista
+
+        .filter(
+
+            item =>
+
+                item.tipo === "Variável"
+
+        )
+
+        .reduce(
+
+            (soma, item) =>
+
+                soma +
+
+                numero(item.valor),
+
+            0
+
+        );
+
+
+    $("#custos-mes")
+        .textContent =
+
+        dinheiro(total);
+
+
+    $("#custos-fixos")
+        .textContent =
+
+        dinheiro(fixos);
+
+
+    $("#custos-variaveis")
+        .textContent =
+
+        dinheiro(variaveis);
+
+
+    $("#total-custos")
+        .textContent =
+
+        estado.custos.length;
+
+}
+
+
+function renderizarCustos() {
+
+    const tabela =
+
+        $("#tabela-custos");
+
+
+    if (!tabela) {
+
+        return;
+
+    }
+
+
+    const busca =
+
+        (
+            $("#buscar-custo")
+                ?.value || ""
+        )
+
+        .trim()
+
+        .toLowerCase();
+
+
+    const filtro =
+
+        $("#filtro-custo")
+            ?.value ||
+
+        "Todos";
+
+
+    const lista =
+
+        [...estado.custos]
+
+        .filter(
+
+            item => {
+
+                const texto =
+
+                    `${item.descricao} ${item.categoria} ${item.tipo}`
+
+                    .toLowerCase();
+
+
+                return (
+
+                    (
+                        !busca ||
+
+                        texto.includes(busca)
+                    )
+
+                    &&
+
+                    (
+                        filtro === "Todos" ||
+
+                        item.tipo === filtro
+                    )
+
+                );
+
+            }
+
+        )
+
+        .sort(
+
+            (a, b) =>
+
+                String(b.data)
+
+                .localeCompare(
+                    String(a.data)
+                )
+
+        );
+
+
+    if (!lista.length) {
+
+        tabela.innerHTML = `
+
+            <tr>
+
+                <td colspan="6">
+
+                    Nenhum custo encontrado.
+
+                </td>
+
+            </tr>
+
+        `;
+
+        return;
+
+    }
+
+
+    tabela.innerHTML =
+
+        lista.map(
+
+            item => `
+
+                <tr>
+
+                    <td>
+
+                        <strong>
+
+                            ${escaparHTML(
+                                item.descricao
+                            )}
+
+                        </strong>
+
+                        ${
+
+                            item.observacoes
+
+                                ? `
+
+                                    <small>
+
+                                        ${escaparHTML(
+                                            item.observacoes
+                                        )}
+
+                                    </small>
+
+                                `
+
+                                : ""
+
+                        }
+
+                    </td>
+
+                    <td>
+
+                        ${escaparHTML(
+                            item.categoria
+                        )}
+
+                    </td>
+
+                    <td>
+
+                        <span class="etiqueta">
+
+                            ${escaparHTML(
+                                item.tipo
+                            )}
+
+                        </span>
+
+                    </td>
+
+                    <td>
+
+                        ${dinheiro(
+                            item.valor
+                        )}
+
+                    </td>
+
+                    <td>
+
+                        ${formatarData(
+                            item.data
+                        )}
+
+                    </td>
+
+                    <td>
+
+                        <button
+                            type="button"
+                            class="botao-pequeno"
+                            data-acao-custo="editar"
+                            data-id="${escaparHTML(
+                                item.id
+                            )}"
+                        >
+
+                            Editar
+
+                        </button>
+
+                        <button
+                            type="button"
+                            class="botao-pequeno botao-excluir"
+                            data-acao-custo="excluir"
+                            data-id="${escaparHTML(
+                                item.id
+                            )}"
+                        >
+
+                            Excluir
+
+                        </button>
+
+                    </td>
+
+                </tr>
+
+            `
+
+        ).join("");
+
+}
+
+
+function abrirNovoCusto() {
+
+    estado.custoEditando = null;
+
+
+    const form =
+
+        $("#form-custo");
+
+
+    form.reset();
+
+
+    form.elements.data.value =
+
+        dataHoje();
+
+
+    $("#titulo-modal-custo")
+        .textContent =
+
+        "Novo custo";
+
+
+    $("#modal-custo")
+        .showModal();
+
+}
+
+
+function editarCusto(id) {
+
+    const custo =
+
+        estado.custos.find(
+
+            item =>
+
+                String(item.id) ===
+                String(id)
+
+        );
+
+
+    if (!custo) {
+
+        return;
+
+    }
+
+
+    estado.custoEditando =
+
+        custo.id;
+
+
+    const form =
+
+        $("#form-custo");
+
+
+    form.reset();
+
+
+    form.elements.descricao.value =
+
+        custo.descricao || "";
+
+
+    form.elements.categoria.value =
+
+        custo.categoria || "";
+
+
+    form.elements.tipo.value =
+
+        custo.tipo || "Variável";
+
+
+    form.elements.valor.value =
+
+        numero(custo.valor);
+
+
+    form.elements.data.value =
+
+        custo.data ||
+        dataHoje();
+
+
+    form.elements.observacoes.value =
+
+        custo.observacoes || "";
+
+
+    $("#titulo-modal-custo")
+        .textContent =
+
+        "Editar custo";
+
+
+    $("#modal-custo")
+        .showModal();
+
+}
+
+
+function salvarCusto(evento) {
+
+    evento.preventDefault();
+
+
+    const campos =
+
+        $("#form-custo")
+            .elements;
+
+
+    const anterior =
+
+        estado.custos.find(
+
+            item =>
+
+                String(item.id) ===
+
+                String(
+                    estado.custoEditando
+                )
+
+        );
+
+
+    const custo = {
+
+        ...(anterior || {}),
+
+        id:
+
+            anterior?.id ||
+
+            criarID(),
+
+        descricao:
+
+            campos.descricao
+                .value
+                .trim(),
+
+        categoria:
+
+            campos.categoria
+                .value
+                .trim(),
+
+        tipo:
+
+            campos.tipo.value,
+
+        valor:
+
+            numero(
+                campos.valor.value
+            ),
+
+        data:
+
+            campos.data.value,
+
+        observacoes:
+
+            campos.observacoes
+                .value
+                .trim(),
+
+        atualizado_em:
+
+            agoraISO()
+
+    };
+
+
+    if (
+
+        !custo.descricao ||
+
+        !custo.categoria ||
+
+        !custo.data
+
+    ) {
+
+        avisar(
+
+            "Preencha os campos obrigatórios.",
+
+            true
+
+        );
+
+        return;
+
+    }
+
+
+    if (custo.valor < 0) {
+
+        avisar(
+
+            "Valor inválido.",
+
+            true
+
+        );
+
+        return;
+
+    }
+
+
+    if (anterior) {
+
+        estado.custos =
+
+            estado.custos.map(
+
+                item =>
+
+                    String(item.id) ===
+                    String(anterior.id)
+
+                        ? custo
+
+                        : item
+
+            );
+
+    } else {
+
+        estado.custos.push(
+
+            custo
+
+        );
+
+    }
+
+
+    persistirCustos();
+
+
+    $("#modal-custo")
+        .close();
+
+
+    estado.custoEditando =
+
+        null;
+
+
+    avisar(
+
+        "Custo salvo!"
+
+    );
+
+}
+
+
+function excluirCusto(id) {
+
+    if (
+
+        !confirm(
+            "Deseja excluir este custo?"
+        )
+
+    ) {
+
+        return;
+
+    }
+
+
+    estado.custos =
+
+        estado.custos.filter(
+
+            item =>
+
+                String(item.id) !==
+                String(id)
+
+        );
+
+
+    persistirCustos();
+
+
+    avisar(
+
+        "Custo excluído."
+
+    );
+
+}
+
+
+/* =====================================================
+   FILAMENTOS
+===================================================== */
+
+function custoPorGramaFilamento(
+
+    item
+
+) {
+
+    const peso =
+
+        numero(
+            item.pesoOriginal
+        );
+
+
+    const valor =
+
+        numero(
+            item.valorPago
+        );
+
+
+    return peso > 0
+
+        ? valor / peso
+
+        : 0;
+
+}
+
+
+function valorEstoqueFilamento(
+
+    item
+
+) {
+
+    return (
+
+        custoPorGramaFilamento(item) *
+
+        numero(
+            item.pesoRestante
+        )
+
+    );
+
+}
+
+
+function filamentoBaixo(item) {
+
+    return (
+
+        numero(
+            item.pesoRestante
+        )
+
+        <=
+
+        numero(
+            item.limiteBaixo
+        )
+
+    );
+
+}
+
+
+function renderizarResumoFilamentos() {
+
+    if (!$("#total-filamentos")) {
+
+        return;
+
+    }
+
+
+    const peso =
+
+        estado.filamentos.reduce(
+
+            (soma, item) =>
+
+                soma +
+
+                numero(
+                    item.pesoRestante
+                ),
+
+            0
+
+        );
+
+
+    const valor =
+
+        estado.filamentos.reduce(
+
+            (soma, item) =>
+
+                soma +
+
+                valorEstoqueFilamento(
+                    item
+                ),
+
+            0
+
+        );
+
+
+    const baixos =
+
+        estado.filamentos.filter(
+
+            filamentoBaixo
+
+        ).length;
+
+
+    $("#total-filamentos")
+        .textContent =
+
+        estado.filamentos.length;
+
+
+    $("#peso-filamentos")
+        .textContent =
+
+        (
+            peso / 1000
+        ).toLocaleString(
+
+            "pt-BR",
+
+            {
+
+                maximumFractionDigits: 2
+
+            }
+
+        ) +
+
+        " kg";
+
+
+    $("#valor-filamentos")
+        .textContent =
+
+        dinheiro(valor);
+
+
+    $("#filamentos-baixos")
+        .textContent =
+
+        baixos;
+
+}
+
+
+function atualizarFiltroMateriais() {
+
+    const select =
+
+        $("#filtro-material");
+
+
+    if (!select) {
+
+        return;
+
+    }
+
+
+    const atual =
+
+        select.value ||
+
+        "Todos";
+
+
+    const materiais =
+
+        Array.from(
+
+            new Set(
+
+                estado.filamentos
+
+                .map(
+
+                    item =>
+
+                        String(
+                            item.material || ""
+                        ).trim()
+
+                )
+
+                .filter(Boolean)
+
+            )
+
+        )
+
+        .sort(
+
+            (a, b) =>
+
+                a.localeCompare(
+
+                    b,
+
+                    "pt-BR"
+
+                )
+
+        );
+
+
+    select.innerHTML = `
+
+        <option value="Todos">
+
+            Todos os materiais
+
+        </option>
+
+        ${
+
+            materiais.map(
+
+                material => `
+
+                    <option
+                        value="${escaparHTML(
+                            material
+                        )}"
+                    >
+
+                        ${escaparHTML(
+                            material
+                        )}
+
+                    </option>
+
+                `
+
+            ).join("")
+
+        }
+
+    `;
+
+
+    select.value =
+
+        materiais.includes(atual)
+
+            ? atual
+
+            : "Todos";
+
+}
+
+
+function renderizarFilamentos() {
+
+    const tabela =
+
+        $("#tabela-filamentos");
+
+
+    if (!tabela) {
+
+        return;
+
+    }
+
+
+    atualizarFiltroMateriais();
+
+
+    const busca =
+
+        (
+            $("#buscar-filamento")
+                ?.value || ""
+        )
+
+        .trim()
+
+        .toLowerCase();
+
+
+    const filtro =
+
+        $("#filtro-material")
+            ?.value ||
+
+        "Todos";
+
+
+    const lista =
+
+        estado.filamentos.filter(
+
+            item => {
+
+                const texto =
+
+                    `${item.marca} ${item.material} ${item.cor}`
+
+                    .toLowerCase();
+
+
+                return (
+
+                    (
+                        !busca ||
+
+                        texto.includes(busca)
+                    )
+
+                    &&
+
+                    (
+                        filtro === "Todos" ||
+
+                        item.material === filtro
+                    )
+
+                );
+
+            }
+
+        );
+
+
+    if (!lista.length) {
+
+        tabela.innerHTML = `
+
+            <tr>
+
+                <td colspan="7">
+
+                    Nenhum filamento cadastrado.
+
+                </td>
+
+            </tr>
+
+        `;
+
+        return;
+
+    }
+
+
+    tabela.innerHTML =
+
+        lista.map(
+
+            item => {
+
+                const original =
+
+                    Math.max(
+
+                        1,
+
+                        numero(
+                            item.pesoOriginal
+                        )
+
+                    );
+
+
+                const restante =
+
+                    Math.max(
+
+                        0,
+
+                        numero(
+                            item.pesoRestante
+                        )
+
+                    );
+
+
+                const percentual =
+
+                    Math.max(
+
+                        0,
+
+                        Math.min(
+
+                            100,
+
+                            (
+                                restante /
+                                original
+                            ) * 100
+
+                        )
+
+                    );
+
+
+                const baixo =
+
+                    filamentoBaixo(
+                        item
+                    );
+
+
+                return `
+
+                    <tr>
+
+                        <td>
+
+                            <strong>
+
+                                ${escaparHTML(
+                                    item.marca
+                                )}
+
+                            </strong>
+
+                            <small>
+
+                                ${numero(
+                                    item.diametro
+                                ).toLocaleString(
+                                    "pt-BR"
+                                )}
+                                mm
+
+                            </small>
+
+                        </td>
+
+
+                        <td>
+
+                            ${escaparHTML(
+                                item.material
+                            )}
+
+                        </td>
+
+
+                        <td>
+
+                            ${escaparHTML(
+                                item.cor
+                            )}
+
+                        </td>
+
+
+                        <td>
+
+                            <strong>
+
+                                ${restante.toLocaleString(
+                                    "pt-BR"
+                                )}
+                                g
+
+                            </strong>
+
+                            <small>
+
+                                de
+                                ${original.toLocaleString(
+                                    "pt-BR"
+                                )}
+                                g
+
+                            </small>
+
+
+                            <div
+                                class="barra-estoque"
+                            >
+
+                                <span
+                                    style="
+                                        width:
+                                        ${percentual}%
+                                    "
+                                ></span>
+
+                            </div>
+
+                        </td>
+
+
+                        <td>
+
+                            ${dinheiro(
+                                custoPorGramaFilamento(
+                                    item
+                                )
+                            )}
+
+                        </td>
+
+
+                        <td>
+
+                            <span class="${
+                                baixo
+                                    ? "estoque-baixo"
+                                    : "estoque-ok"
+                            }">
+
+                                ${
+                                    baixo
+                                        ? "Baixo"
+                                        : "OK"
+                                }
+
+                            </span>
+
+                        </td>
+
+
+                        <td>
+
+                            <button
+                                type="button"
+                                class="botao-pequeno"
+                                data-acao-filamento="editar"
+                                data-id="${escaparHTML(
+                                    item.id
+                                )}"
+                            >
+
+                                Editar
+
+                            </button>
+
+
+                            <button
+                                type="button"
+                                class="botao-pequeno botao-excluir"
+                                data-acao-filamento="excluir"
+                                data-id="${escaparHTML(
+                                    item.id
+                                )}"
+                            >
+
+                                Excluir
+
+                            </button>
+
+                        </td>
+
+                    </tr>
+
+                `;
+
+            }
+
+        ).join("");
+
+}
+
+
+function abrirNovoFilamento() {
+
+    estado.filamentoEditando =
+
+        null;
+
+
+    const form =
+
+        $("#form-filamento");
+
+
+    form.reset();
+
+
+    form.elements.diametro.value =
+
+        "1.75";
+
+
+    form.elements.pesoOriginal.value =
+
+        "1000";
+
+
+    form.elements.pesoRestante.value =
+
+        "1000";
+
+
+    form.elements.limiteBaixo.value =
+
+        "200";
+
+
+    $("#titulo-modal-filamento")
+        .textContent =
+
+        "Novo filamento";
+
+
+    $("#modal-filamento")
+        .showModal();
+
+}
+
+
+function editarFilamento(id) {
+
+    const filamento =
+
+        estado.filamentos.find(
+
+            item =>
+
+                String(item.id) ===
+                String(id)
+
+        );
+
+
+    if (!filamento) {
+
+        return;
+
+    }
+
+
+    estado.filamentoEditando =
+
+        filamento.id;
+
+
+    const form =
+
+        $("#form-filamento");
+
+
+    form.reset();
+
+
+    form.elements.marca.value =
+
+        filamento.marca || "";
+
+
+    form.elements.material.value =
+
+        filamento.material || "";
+
+
+    form.elements.cor.value =
+
+        filamento.cor || "";
+
+
+    form.elements.diametro.value =
+
+        numero(
+            filamento.diametro
+        ) || 1.75;
+
+
+    form.elements.pesoOriginal.value =
+
+        numero(
+            filamento.pesoOriginal
+        ) || 1000;
+
+
+    form.elements.pesoRestante.value =
+
+        numero(
+            filamento.pesoRestante
+        );
+
+
+    form.elements.valorPago.value =
+
+        numero(
+            filamento.valorPago
+        );
+
+
+    form.elements.limiteBaixo.value =
+
+        numero(
+            filamento.limiteBaixo
+        ) || 200;
+
+
+    form.elements.observacoes.value =
+
+        filamento.observacoes || "";
+
+
+    $("#titulo-modal-filamento")
+        .textContent =
+
+        "Editar filamento";
+
+
+    $("#modal-filamento")
+        .showModal();
+
+}
+
+
+function salvarFilamento(evento) {
+
+    evento.preventDefault();
+
+
+    const campos =
+
+        $("#form-filamento")
+            .elements;
+
+
+    const anterior =
+
+        estado.filamentos.find(
+
+            item =>
+
+                String(item.id) ===
+
+                String(
+                    estado.filamentoEditando
+                )
+
+        );
+
+
+    const filamento = {
+
+        ...(anterior || {}),
+
+        id:
+
+            anterior?.id ||
+
+            criarID(),
+
+        marca:
+
+            campos.marca
+                .value
+                .trim(),
+
+        material:
+
+            campos.material
+                .value
+                .trim(),
+
+        cor:
+
+            campos.cor
+                .value
+                .trim(),
+
+        diametro:
+
+            numero(
+                campos.diametro.value
+            ),
+
+        pesoOriginal:
+
+            numero(
+                campos.pesoOriginal.value
+            ),
+
+        pesoRestante:
+
+            numero(
+                campos.pesoRestante.value
+            ),
+
+        valorPago:
+
+            numero(
+                campos.valorPago.value
+            ),
+
+        limiteBaixo:
+
+            numero(
+                campos.limiteBaixo.value
+            ),
+
+        observacoes:
+
+            campos.observacoes
+                .value
+                .trim(),
+
+        atualizado_em:
+
+            agoraISO()
+
+    };
+
+
+    if (
+
+        !filamento.marca ||
+
+        !filamento.material ||
+
+        !filamento.cor
+
+    ) {
+
+        avisar(
+
+            "Preencha marca, material e cor.",
+
+            true
+
+        );
+
+        return;
+
+    }
+
+
+    if (
+
+        filamento.pesoOriginal <= 0 ||
+
+        filamento.pesoRestante < 0 ||
+
+        filamento.valorPago < 0
+
+    ) {
+
+        avisar(
+
+            "Confira peso e valor.",
+
+            true
+
+        );
+
+        return;
+
+    }
+
+
+    if (
+
+        filamento.pesoRestante >
+
+        filamento.pesoOriginal
+
+    ) {
+
+        avisar(
+
+            "O peso restante não pode ser " +
+
+            "maior que o original.",
+
+            true
+
+        );
+
+        return;
+
+    }
+
+
+    if (anterior) {
+
+        estado.filamentos =
+
+            estado.filamentos.map(
+
+                item =>
+
+                    String(item.id) ===
+                    String(anterior.id)
+
+                        ? filamento
+
+                        : item
+
+            );
+
+    } else {
+
+        estado.filamentos.push(
+
+            filamento
+
+        );
+
+    }
+
+
+    persistirFilamentos();
+
+
+    $("#modal-filamento")
+        .close();
+
+
+    estado.filamentoEditando =
+
+        null;
+
+
+    avisar(
+
+        "Filamento salvo!"
+
+    );
+
+}
+
+
+function excluirFilamento(id) {
+
+    if (
+
+        !confirm(
+            "Deseja excluir este filamento?"
+        )
+
+    ) {
+
+        return;
+
+    }
+
+
+    estado.filamentos =
+
+        estado.filamentos.filter(
+
+            item =>
+
+                String(item.id) !==
+                String(id)
+
+        );
+
+
+    persistirFilamentos();
+
+
+    avisar(
+
+        "Filamento excluído."
+
+    );
+
+}
+
+
+/* =====================================================
+   SIMULADOR DE CUSTO
+===================================================== */
+
+function renderizarSeletorSimulador() {
+
+    const select =
+
+        $("#sim-filamento");
+
+
+    if (!select) {
+
+        return;
+
+    }
+
+
+    const atual =
+
+        select.value;
+
+
+    select.innerHTML = `
+
+        <option value="">
+
+            Selecione um filamento
+
+        </option>
+
+        ${
+
+            estado.filamentos.map(
+
+                item => `
+
+                    <option
+                        value="${escaparHTML(
+                            item.id
+                        )}"
+                    >
+
+                        ${escaparHTML(
+                            item.material
+                        )}
+                        -
+                        ${escaparHTML(
+                            item.cor
+                        )}
+                        -
+                        ${escaparHTML(
+                            item.marca
+                        )}
+
+                    </option>
+
+                `
+
+            ).join("")
+
+        }
+
+    `;
+
+
+    if (
+
+        estado.filamentos.some(
+
+            item =>
+
+                String(item.id) ===
+                String(atual)
+
+        )
+
+    ) {
+
+        select.value = atual;
+
+    }
+
+}
+
+
+function calcularSimulador() {
+
+    const select =
+
+        $("#sim-filamento");
+
+
+    if (!select) {
+
+        return;
+
+    }
+
+
+    const filamento =
+
+        estado.filamentos.find(
+
+            item =>
+
+                String(item.id) ===
+                String(select.value)
+
+        );
+
+
+    const gramas =
+
+        Math.max(
+
+            0,
+
+            numero(
+                $("#sim-gramas")
+                    ?.value
+            )
+
+        );
+
+
+    const horas =
+
+        Math.max(
+
+            0,
+
+            numero(
+                $("#sim-horas")
+                    ?.value
+            )
+
+        );
+
+
+    const potencia =
+
+        Math.max(
+
+            0,
+
+            numero(
+                $("#sim-potencia")
+                    ?.value
+            )
+
+        );
+
+
+    const tarifa =
+
+        Math.max(
+
+            0,
+
+            numero(
+                $("#sim-energia")
+                    ?.value
+            )
+
+        );
+
+
+    const margem =
+
+        Math.max(
+
+            0,
+
+            numero(
+                $("#sim-margem")
+                    ?.value
+            )
+
+        );
+
+
+    const material =
+
+        filamento
+
+            ? gramas *
+
+                custoPorGramaFilamento(
+                    filamento
+                )
+
+            : 0;
+
+
+    const energia =
+
+        (
+            potencia /
+            1000
+        )
+
+        *
+
+        horas
+
+        *
+
+        tarifa;
+
+
+    const direto =
+
+        material +
+
+        energia;
+
+
+    const sugerido =
+
+        direto *
+
+        (
+            1 +
+
+            margem / 100
+        );
+
+
+    $("#sim-custo-material")
+        .textContent =
+
+        dinheiro(material);
+
+
+    $("#sim-custo-energia")
+        .textContent =
+
+        dinheiro(energia);
+
+
+    $("#sim-custo-direto")
+        .textContent =
+
+        dinheiro(direto);
+
+
+    $("#sim-preco-sugerido")
+        .textContent =
+
+        dinheiro(sugerido);
+
+}
+
+
+/* =====================================================
+   ATUALIZAR TELA
+===================================================== */
+
+function atualizarPainel() {
+
+    atualizarIndicadores();
+
+    renderizarProdutosRecentes();
+
+    renderizarProdutos();
+
+    renderizarPedidos();
+
+    renderizarResumoCustos();
+
+    renderizarCustos();
+
+    renderizarResumoFilamentos();
+
+    renderizarFilamentos();
+
+    renderizarSeletorSimulador();
+
+    calcularSimulador();
+
+
+    const data =
+
+        $("#data-atual");
+
+
+    if (data) {
+
+        data.textContent =
+
+            new Date()
+
+            .toLocaleDateString(
+
+                "pt-BR",
+
+                {
+
+                    day: "2-digit",
+
+                    month: "long",
+
+                    year: "numeric"
+
+                }
+
+            );
+
+    }
+
+}
+
+
+/* =====================================================
+   EXPORTAÇÃO
+===================================================== */
+
+function baixarArquivo(
+
+    nome,
+
+    conteudo,
+
+    tipo
+
+) {
+
+    const blob =
+
+        new Blob(
+
+            [conteudo],
+
+            {
+
+                type: tipo
+
+            }
+
+        );
+
+
+    const url =
+
+        URL.createObjectURL(
+            blob
+        );
+
+
+    const link =
+
+        document.createElement(
+            "a"
+        );
+
 
     link.href = url;
 
     link.download = nome;
 
 
-    document.body.appendChild(link);
+    document.body.appendChild(
+        link
+    );
 
 
     link.click();
@@ -2040,22 +6161,64 @@ function baixarArquivo(nome, conteudo, tipo) {
     link.remove();
 
 
-    setTimeout(() => {
+    setTimeout(
 
-        URL.revokeObjectURL(url);
+        () =>
 
-    }, 1000);
+            URL.revokeObjectURL(
+                url
+            ),
+
+        1000
+
+    );
 
 }
 
 
-// ==========================================
-// 33. EXPORTAR CATÁLOGO JS
-// ==========================================
+function campoCSV(valor) {
+
+    let texto =
+
+        String(valor ?? "");
+
+
+    if (
+
+        /^[\s]*[=+\-@]/
+        .test(texto)
+
+    ) {
+
+        texto = "'" + texto;
+
+    }
+
+
+    return (
+
+        '"' +
+
+        texto.replaceAll(
+
+            '"',
+
+            '""'
+
+        ) +
+
+        '"'
+
+    );
+
+}
+
 
 function exportarCatalogo() {
 
-    const conteudo =
+    baixarArquivo(
+
+        "catalogo.js",
 
         "window.CRIAITOR_CATALOGO = " +
 
@@ -2069,49 +6232,9 @@ function exportarCatalogo() {
 
         ) +
 
-        ";\n";
-
-
-    baixarArquivo(
-
-        "catalogo.js",
-
-        conteudo,
+        ";\n",
 
         "text/javascript;charset=utf-8"
-
-    );
-
-}
-
-
-// ==========================================
-// 34. EXPORTAR PEDIDOS CSV
-// ==========================================
-
-function campoCSV(valor) {
-
-    let texto = String(valor ?? "");
-
-
-    // Evita que valores recebidos de clientes
-    // sejam interpretados como fórmulas
-    // por aplicativos de planilhas.
-
-    if (/^[\s]*[=+\-@]/.test(texto)) {
-
-        texto = "'" + texto;
-
-    }
-
-
-    return (
-
-        '"' +
-
-        texto.replaceAll('"', '""') +
-
-        '"'
 
     );
 
@@ -2137,45 +6260,52 @@ function exportarPedidos() {
     ];
 
 
-    const linhas = estado.pedidos.map(
+    const linhas =
 
-        pedido => [
+        estado.pedidos.map(
 
-            pedido.cliente,
+            item => [
 
-            pedido.contato,
+                item.cliente,
 
-            pedido.itens,
+                item.contato,
 
-            pedido.valor,
+                item.itens,
 
-            pedido.status,
+                item.valor,
 
-            formatarData(pedido.data)
+                item.status,
 
-        ].map(campoCSV).join(";")
+                formatarData(
+                    item.data
+                )
 
-    );
+            ]
 
+            .map(campoCSV)
 
-    const conteudo =
+            .join(";")
 
-        "\uFEFF" +
-
-        [
-
-            cabecalho.map(campoCSV).join(";"),
-
-            ...linhas
-
-        ].join("\r\n");
+        );
 
 
     baixarArquivo(
 
         "pedidos-criaitor3d.csv",
 
-        conteudo,
+        "\uFEFF" +
+
+        [
+
+            cabecalho
+
+                .map(campoCSV)
+
+                .join(";"),
+
+            ...linhas
+
+        ].join("\r\n"),
 
         "text/csv;charset=utf-8"
 
@@ -2184,23 +6314,193 @@ function exportarPedidos() {
 }
 
 
-// ==========================================
-// 35. EXPORTAR BACKUP
-// ==========================================
+function exportarCustos() {
+
+    const cabecalho = [
+
+        "Descrição",
+
+        "Categoria",
+
+        "Tipo",
+
+        "Valor",
+
+        "Data",
+
+        "Observações"
+
+    ];
+
+
+    const linhas =
+
+        estado.custos.map(
+
+            item => [
+
+                item.descricao,
+
+                item.categoria,
+
+                item.tipo,
+
+                item.valor,
+
+                item.data,
+
+                item.observacoes
+
+            ]
+
+            .map(campoCSV)
+
+            .join(";")
+
+        );
+
+
+    baixarArquivo(
+
+        "custos-criaitor3d.csv",
+
+        "\uFEFF" +
+
+        [
+
+            cabecalho
+
+                .map(campoCSV)
+
+                .join(";"),
+
+            ...linhas
+
+        ].join("\r\n"),
+
+        "text/csv;charset=utf-8"
+
+    );
+
+}
+
+
+function exportarFilamentos() {
+
+    const cabecalho = [
+
+        "Marca",
+
+        "Material",
+
+        "Cor",
+
+        "Diâmetro",
+
+        "Peso original",
+
+        "Peso restante",
+
+        "Valor pago",
+
+        "Custo por grama"
+
+    ];
+
+
+    const linhas =
+
+        estado.filamentos.map(
+
+            item => [
+
+                item.marca,
+
+                item.material,
+
+                item.cor,
+
+                item.diametro,
+
+                item.pesoOriginal,
+
+                item.pesoRestante,
+
+                item.valorPago,
+
+                custoPorGramaFilamento(
+                    item
+                )
+
+            ]
+
+            .map(campoCSV)
+
+            .join(";")
+
+        );
+
+
+    baixarArquivo(
+
+        "filamentos-criaitor3d.csv",
+
+        "\uFEFF" +
+
+        [
+
+            cabecalho
+
+                .map(campoCSV)
+
+                .join(";"),
+
+            ...linhas
+
+        ].join("\r\n"),
+
+        "text/csv;charset=utf-8"
+
+    );
+
+}
+
+
+/* =====================================================
+   BACKUP
+===================================================== */
 
 function exportarBackup() {
 
     const backup = {
 
-        empresa: CONFIG.tituloEmpresa,
+        empresa:
 
-        data: dataAtual(),
+            CONFIG.tituloEmpresa,
 
-        versaoCatalogo: estado.versao,
+        data:
 
-        produtos: estado.produtos,
+            agoraISO(),
 
-        pedidos: estado.pedidos
+        versaoCatalogo:
+
+            estado.versao,
+
+        produtos:
+
+            estado.produtos,
+
+        pedidos:
+
+            estado.pedidos,
+
+        custos:
+
+            estado.custos,
+
+        filamentos:
+
+            estado.filamentos
 
     };
 
@@ -2209,33 +6509,39 @@ function exportarBackup() {
 
         "backup-criaitor3d.json",
 
-        JSON.stringify(backup, null, 2),
+        JSON.stringify(
+
+            backup,
+
+            null,
+
+            2
+
+        ),
 
         "application/json;charset=utf-8"
 
     );
 
 
-    avisar("Backup exportado.");
+    avisar(
+
+        "Backup exportado."
+
+    );
 
 }
 
 
-// ==========================================
-// 36. RESTAURAR PEDIDOS DO BACKUP
-// ==========================================
+async function restaurarBackup(
 
-// A restauração automática altera somente
-// os pedidos locais.
-//
-// Produtos não são sobrescritos para evitar
-// substituir acidentalmente o catálogo
-// compartilhado com os clientes.
+    evento
 
+) {
 
-async function restaurarBackup(evento) {
+    const arquivo =
 
-    const arquivo = evento.target.files?.[0];
+        evento.target.files?.[0];
 
 
     if (!arquivo) {
@@ -2247,52 +6553,154 @@ async function restaurarBackup(evento) {
 
     try {
 
-        const texto = await arquivo.text();
+        const backup =
+
+            JSON.parse(
+
+                await arquivo.text()
+
+            );
 
 
-        const backup = JSON.parse(texto);
+        if (
 
+            !Array.isArray(
+                backup.pedidos
+            )
 
-        if (!Array.isArray(backup.pedidos)) {
+            &&
+
+            !Array.isArray(
+                backup.custos
+            )
+
+            &&
+
+            !Array.isArray(
+                backup.filamentos
+            )
+
+        ) {
 
             throw new Error(
 
-                "O arquivo não contém uma lista válida de pedidos."
+                "Backup incompatível."
 
             );
 
         }
 
 
-        if (!confirm(
+        if (
 
-            "Restaurar os pedidos deste backup? " +
+            !confirm(
 
-            "Os pedidos locais atuais serão substituídos."
+                "Restaurar pedidos, custos " +
 
-        )) {
+                "e filamentos? " +
+
+                "Os produtos do Supabase " +
+
+                "não serão alterados."
+
+            )
+
+        ) {
 
             return;
 
         }
 
 
-        estado.pedidos = backup.pedidos;
+        if (
+
+            Array.isArray(
+                backup.pedidos
+            )
+
+        ) {
+
+            estado.pedidos =
+
+                backup.pedidos;
+
+        }
 
 
-        persistirPedidos();
+        if (
+
+            Array.isArray(
+                backup.custos
+            )
+
+        ) {
+
+            estado.custos =
+
+                backup.custos;
+
+        }
 
 
-        avisar("Pedidos restaurados com sucesso.");
+        if (
+
+            Array.isArray(
+                backup.filamentos
+            )
+
+        ) {
+
+            estado.filamentos =
+
+                backup.filamentos;
+
+        }
+
+
+        salvarListaLocal(
+
+            "pedidos",
+
+            estado.pedidos
+
+        );
+
+
+        salvarListaLocal(
+
+            "custos",
+
+            estado.custos
+
+        );
+
+
+        salvarListaLocal(
+
+            "filamentos",
+
+            estado.filamentos
+
+        );
+
+
+        atualizarPainel();
+
+
+        avisar(
+
+            "Backup restaurado."
+
+        );
 
 
     } catch (erro) {
 
-        console.error(erro);
-
         avisar(
 
-            "Erro ao restaurar backup: " + erro.message,
+            "Erro no backup: " +
+
+            erro.message,
 
             true
 
@@ -2308,274 +6716,76 @@ async function restaurarBackup(evento) {
 }
 
 
-// ==========================================
-// 37. ATUALIZAR PAINEL
-// ==========================================
+/* =====================================================
+   EVENTOS
+===================================================== */
 
-function atualizarPainel() {
+function configurarEventos() {
 
-    atualizarIndicadores();
+    /* MENU */
 
-    renderizarProdutosRecentes();
-
-    renderizarProdutos();
-
-    renderizarPedidos();
-
-
-    const campoData = $("#data-atual");
-
-
-    if (campoData) {
-
-        campoData.textContent =
-
-            new Date().toLocaleDateString(
-
-                "pt-BR",
-
-                {
-
-                    day: "2-digit",
-
-                    month: "long",
-
-                    year: "numeric"
-
-                }
-
-            );
-
-    }
-
-}
-
-
-// ==========================================
-// 38. EVENTOS DE NAVEGAÇÃO
-// ==========================================
-
-function configurarNavegacao() {
-
-    $$("[data-pagina]").forEach(botao => {
-
-        botao.addEventListener(
-
-            "click",
-
-            () => {
-
-                abrirPagina(
-
-                    botao.dataset.pagina
-
-                );
-
-            }
-
-        );
-
-    });
-
-
-    $$("[data-ir]").forEach(botao => {
-
-        botao.addEventListener(
-
-            "click",
-
-            () => {
-
-                abrirPagina(
-
-                    botao.dataset.ir
-
-                );
-
-            }
-
-        );
-
-    });
-
-}
-
-
-// ==========================================
-// 39. EVENTOS DE PRODUTOS
-// ==========================================
-
-function configurarEventosProdutos() {
-
-    $("#novo-produto").addEventListener(
-
-        "click",
-
-        abrirNovoProduto
-
-    );
-
-
-    $("#novo-produto-topo").addEventListener(
-
-        "click",
-
-        abrirNovoProduto
-
-    );
-
-
-    formProduto.addEventListener(
-
-        "submit",
-
-        salvarProduto
-
-    );
-
-
-    $("#buscar-produto").addEventListener(
-
-        "input",
-
-        renderizarProdutos
-
-    );
-
-
-    $("#tabela-produtos").addEventListener(
+    document.addEventListener(
 
         "click",
 
         evento => {
 
-            const botao = evento.target.closest(
+            const pagina =
 
-                "[data-acao-produto]"
+                evento.target.closest(
+                    "[data-pagina]"
+                );
 
-            );
 
+            if (pagina) {
 
-            if (!botao) {
+                abrirPagina(
+
+                    pagina.dataset.pagina
+
+                );
 
                 return;
 
             }
 
 
-            const acao = botao.dataset.acaoProduto;
+            const ir =
 
-            const id = botao.dataset.id;
-
-
-            if (acao === "editar") {
-
-                editarProduto(id);
-
-            }
+                evento.target.closest(
+                    "[data-ir]"
+                );
 
 
-            if (acao === "excluir") {
+            if (ir) {
 
-                excluirProduto(id);
+                abrirPagina(
 
-            }
+                    ir.dataset.ir
 
-        }
-
-    );
-
-}
-
-
-// ==========================================
-// 40. EVENTOS DE PEDIDOS
-// ==========================================
-
-function configurarEventosPedidos() {
-
-    $("#novo-pedido").addEventListener(
-
-        "click",
-
-        abrirNovoPedido
-
-    );
-
-
-    formPedido.addEventListener(
-
-        "submit",
-
-        salvarPedido
-
-    );
-
-
-    $("#tabela-pedidos").addEventListener(
-
-        "click",
-
-        evento => {
-
-            const botao = evento.target.closest(
-
-                "[data-acao-pedido]"
-
-            );
-
-
-            if (!botao) {
+                );
 
                 return;
 
             }
 
 
-            const id = botao.dataset.id;
+            const fechar =
 
-            const acao = botao.dataset.acaoPedido;
-
-
-            if (acao === "editar") {
-
-                editarPedido(id);
-
-            }
-
-
-            if (acao === "excluir") {
-
-                excluirPedido(id);
-
-            }
-
-        }
-
-    );
-
-}
-
-
-// ==========================================
-// 41. FECHAR MODAIS
-// ==========================================
-
-function configurarModais() {
-
-    $$("[data-fechar]").forEach(botao => {
-
-        botao.addEventListener(
-
-            "click",
-
-            () => {
-
-                const modal = document.getElementById(
-
-                    botao.dataset.fechar
-
+                evento.target.closest(
+                    "[data-fechar]"
                 );
+
+
+            if (fechar) {
+
+                const modal =
+
+                    document.getElementById(
+
+                        fechar.dataset.fechar
+
+                    );
 
 
                 if (modal?.open) {
@@ -2586,69 +6796,470 @@ function configurarModais() {
 
             }
 
+        }
+
+    );
+
+
+    /* PRODUTOS */
+
+    $("#novo-produto")
+        ?.addEventListener(
+
+            "click",
+
+            abrirNovoProduto
+
         );
 
-    });
+
+    $("#novo-produto-topo")
+        ?.addEventListener(
+
+            "click",
+
+            abrirNovoProduto
+
+        );
+
+
+    $("#form-produto")
+        ?.addEventListener(
+
+            "submit",
+
+            salvarProduto
+
+        );
+
+
+    $("#buscar-produto")
+        ?.addEventListener(
+
+            "input",
+
+            renderizarProdutos
+
+        );
+
+
+    $("#tabela-produtos")
+        ?.addEventListener(
+
+            "click",
+
+            evento => {
+
+                const botao =
+
+                    evento.target.closest(
+                        "[data-acao-produto]"
+                    );
+
+
+                if (!botao) {
+
+                    return;
+
+                }
+
+
+                if (
+
+                    botao.dataset
+                        .acaoProduto ===
+                    "editar"
+
+                ) {
+
+                    editarProduto(
+
+                        botao.dataset.id
+
+                    );
+
+                } else {
+
+                    excluirProduto(
+
+                        botao.dataset.id
+
+                    );
+
+                }
+
+            }
+
+        );
+
+
+    /* PEDIDOS */
+
+    $("#novo-pedido")
+        ?.addEventListener(
+
+            "click",
+
+            abrirNovoPedido
+
+        );
+
+
+    $("#form-pedido")
+        ?.addEventListener(
+
+            "submit",
+
+            salvarPedido
+
+        );
+
+
+    $("#tabela-pedidos")
+        ?.addEventListener(
+
+            "click",
+
+            evento => {
+
+                const botao =
+
+                    evento.target.closest(
+                        "[data-acao-pedido]"
+                    );
+
+
+                if (!botao) {
+
+                    return;
+
+                }
+
+
+                if (
+
+                    botao.dataset
+                        .acaoPedido ===
+                    "editar"
+
+                ) {
+
+                    editarPedido(
+
+                        botao.dataset.id
+
+                    );
+
+                } else {
+
+                    excluirPedido(
+
+                        botao.dataset.id
+
+                    );
+
+                }
+
+            }
+
+        );
+
+
+    /* CUSTOS */
+
+    $("#novo-custo")
+        ?.addEventListener(
+
+            "click",
+
+            abrirNovoCusto
+
+        );
+
+
+    $("#form-custo")
+        ?.addEventListener(
+
+            "submit",
+
+            salvarCusto
+
+        );
+
+
+    $("#buscar-custo")
+        ?.addEventListener(
+
+            "input",
+
+            renderizarCustos
+
+        );
+
+
+    $("#filtro-custo")
+        ?.addEventListener(
+
+            "change",
+
+            renderizarCustos
+
+        );
+
+
+    $("#tabela-custos")
+        ?.addEventListener(
+
+            "click",
+
+            evento => {
+
+                const botao =
+
+                    evento.target.closest(
+                        "[data-acao-custo]"
+                    );
+
+
+                if (!botao) {
+
+                    return;
+
+                }
+
+
+                if (
+
+                    botao.dataset
+                        .acaoCusto ===
+                    "editar"
+
+                ) {
+
+                    editarCusto(
+
+                        botao.dataset.id
+
+                    );
+
+                } else {
+
+                    excluirCusto(
+
+                        botao.dataset.id
+
+                    );
+
+                }
+
+            }
+
+        );
+
+
+    /* FILAMENTOS */
+
+    $("#novo-filamento")
+        ?.addEventListener(
+
+            "click",
+
+            abrirNovoFilamento
+
+        );
+
+
+    $("#form-filamento")
+        ?.addEventListener(
+
+            "submit",
+
+            salvarFilamento
+
+        );
+
+
+    $("#buscar-filamento")
+        ?.addEventListener(
+
+            "input",
+
+            renderizarFilamentos
+
+        );
+
+
+    $("#filtro-material")
+        ?.addEventListener(
+
+            "change",
+
+            renderizarFilamentos
+
+        );
+
+
+    $("#tabela-filamentos")
+        ?.addEventListener(
+
+            "click",
+
+            evento => {
+
+                const botao =
+
+                    evento.target.closest(
+                        "[data-acao-filamento]"
+                    );
+
+
+                if (!botao) {
+
+                    return;
+
+                }
+
+
+                if (
+
+                    botao.dataset
+                        .acaoFilamento ===
+                    "editar"
+
+                ) {
+
+                    editarFilamento(
+
+                        botao.dataset.id
+
+                    );
+
+                } else {
+
+                    excluirFilamento(
+
+                        botao.dataset.id
+
+                    );
+
+                }
+
+            }
+
+        );
+
+
+    /* SIMULADOR */
+
+    [
+
+        "#sim-filamento",
+
+        "#sim-gramas",
+
+        "#sim-horas",
+
+        "#sim-potencia",
+
+        "#sim-energia",
+
+        "#sim-margem"
+
+    ].forEach(
+
+        seletor => {
+
+            $(seletor)
+                ?.addEventListener(
+
+                    "input",
+
+                    calcularSimulador
+
+                );
+
+
+            $(seletor)
+                ?.addEventListener(
+
+                    "change",
+
+                    calcularSimulador
+
+                );
+
+        }
+
+    );
+
+
+    /* EXPORTAÇÃO */
+
+    $("#exportar-catalogo")
+        ?.addEventListener(
+
+            "click",
+
+            exportarCatalogo
+
+        );
+
+
+    $("#exportar-pedidos")
+        ?.addEventListener(
+
+            "click",
+
+            exportarPedidos
+
+        );
+
+
+    $("#exportar-custos")
+        ?.addEventListener(
+
+            "click",
+
+            exportarCustos
+
+        );
+
+
+    $("#exportar-filamentos")
+        ?.addEventListener(
+
+            "click",
+
+            exportarFilamentos
+
+        );
+
+
+    $("#baixar-backup")
+        ?.addEventListener(
+
+            "click",
+
+            exportarBackup
+
+        );
+
+
+    $("#restaurar-backup")
+        ?.addEventListener(
+
+            "change",
+
+            restaurarBackup
+
+        );
 
 }
 
 
-// ==========================================
-// 42. EVENTOS DE BACKUP
-// ==========================================
-
-function configurarEventosBackup() {
-
-    $("#exportar-catalogo").addEventListener(
-
-        "click",
-
-        exportarCatalogo
-
-    );
-
-
-    $("#exportar-pedidos").addEventListener(
-
-        "click",
-
-        exportarPedidos
-
-    );
-
-
-    $("#baixar-backup").addEventListener(
-
-        "click",
-
-        exportarBackup
-
-    );
-
-
-    $("#restaurar-backup").addEventListener(
-
-        "change",
-
-        restaurarBackup
-
-    );
-
-}
-
-
-// ==========================================
-// 43. SINCRONIZAÇÃO PERIÓDICA
-// ==========================================
-
-// Consulta a versão do catálogo periodicamente.
-//
-// Caso outra sessão tenha atualizado
-// os produtos, recarrega os dados.
-//
-// Não recarrega enquanto um produto
-// estiver sendo editado.
-
+/* =====================================================
+   VERIFICAR ATUALIZAÇÕES SUPABASE
+===================================================== */
 
 async function verificarAtualizacoes() {
 
@@ -2658,7 +7269,8 @@ async function verificarAtualizacoes() {
 
         estado.salvando ||
 
-        modalProduto.open
+        $("#modal-produto")
+            ?.open
 
     ) {
 
@@ -2679,9 +7291,12 @@ async function verificarAtualizacoes() {
 
             .from(CONFIG.tabela)
 
-            .select(CONFIG.chaveVersao)
+            .select("versao")
 
-            .eq("id", CONFIG.registro)
+            .eq(
+                "id",
+                CONFIG.registro
+            )
 
             .single();
 
@@ -2695,7 +7310,9 @@ async function verificarAtualizacoes() {
 
         if (
 
-            Number(data.versao) !== estado.versao
+            Number(data.versao) !==
+
+            estado.versao
 
         ) {
 
@@ -2708,7 +7325,7 @@ async function verificarAtualizacoes() {
 
         console.warn(
 
-            "Não foi possível verificar atualizações:",
+            "Falha ao verificar atualizações:",
 
             erro.message
 
@@ -2719,36 +7336,56 @@ async function verificarAtualizacoes() {
 }
 
 
-// ==========================================
-// 44. API DE INTEGRAÇÃO
-// ==========================================
-
-// Disponibiliza funções para integração
-// com outros módulos da empresa.
-
+/* =====================================================
+   API PARA OUTROS ARQUIVOS
+===================================================== */
 
 window.CRIAITOR_ADMIN = {
 
-    recarregar: carregarCatalogo,
+    recarregar:
+        carregarCatalogo,
 
-    atualizar: atualizarPainel,
+    atualizar:
+        atualizarPainel,
 
     abrirPagina,
 
     abrirNovoProduto,
 
-    getProdutos: () => [...estado.produtos],
+    getProdutos:
 
-    getVersao: () => estado.versao,
+        () => [
+            ...estado.produtos
+        ],
 
-    getUsuario: () => estado.usuario
+    getVersao:
+
+        () => estado.versao,
+
+    getUsuario:
+
+        () => estado.usuario,
+
+    getCustos:
+
+        () => [
+            ...estado.custos
+        ],
+
+    getFilamentos:
+
+        () => [
+            ...estado.filamentos
+        ],
+
+    custoPorGramaFilamento
 
 };
 
 
-// ==========================================
-// 45. INICIALIZAÇÃO
-// ==========================================
+/* =====================================================
+   INICIALIZAÇÃO
+===================================================== */
 
 async function iniciarPainel() {
 
@@ -2756,28 +7393,34 @@ async function iniciarPainel() {
 
         criarTelaLogin();
 
+        injetarEstilosExtras();
 
-        app.hidden = true;
+        criarAreasExtras();
 
+        criarModaisExtras();
 
         criarBotaoSair();
 
 
-        configurarNavegacao();
+        configurarEventos();
 
-        configurarEventosProdutos();
 
-        configurarEventosPedidos();
+        $("#form-login")
+            .addEventListener(
 
-        configurarEventosBackup();
+                "submit",
 
-        configurarModais();
+                realizarLogin
+
+            );
 
 
         verificarConfiguracao();
 
 
-        const usuario = await verificarSessao();
+        const usuario =
+
+            await verificarSessao();
 
 
         if (usuario) {
@@ -2802,15 +7445,21 @@ async function iniciarPainel() {
         );
 
 
+        criarTelaLogin();
+
         mostrarLogin();
 
 
-        const mensagem = $("#mensagem-login");
+        const mensagem =
+
+            $("#mensagem-login");
 
 
         if (mensagem) {
 
-            mensagem.textContent = erro.message;
+            mensagem.textContent =
+
+                erro.message;
 
         }
 
@@ -2819,34 +7468,46 @@ async function iniciarPainel() {
 }
 
 
-// ==========================================
-// 46. MONITORAR LOGIN E LOGOUT
-// ==========================================
+/* =====================================================
+   MONITORAR SESSÃO
+===================================================== */
 
 if (supabase) {
 
-    supabase.auth.onAuthStateChange(
+    supabase.auth
+        .onAuthStateChange(
 
-        (_evento, sessao) => {
+            (
 
-            if (!sessao) {
+                _evento,
 
-                mostrarLogin();
+                sessao
+
+            ) => {
+
+                if (!sessao) {
+
+                    mostrarLogin();
+
+                }
 
             }
 
-        }
-
-    );
+        );
 
 }
 
 
-// ==========================================
-// 47. INICIAR
-// ==========================================
+/* =====================================================
+   INICIAR
+===================================================== */
 
-if (document.readyState === "loading") {
+if (
+
+    document.readyState ===
+    "loading"
+
+) {
 
     document.addEventListener(
 
@@ -2854,7 +7515,11 @@ if (document.readyState === "loading") {
 
         iniciarPainel,
 
-        { once: true }
+        {
+
+            once: true
+
+        }
 
     );
 
@@ -2865,9 +7530,9 @@ if (document.readyState === "loading") {
 }
 
 
-// ==========================================
-// 48. VERIFICAR CATÁLOGO
-// ==========================================
+/* =====================================================
+   VERIFICAÇÃO AUTOMÁTICA
+===================================================== */
 
 setInterval(
 
@@ -2876,6 +7541,5 @@ setInterval(
     30000
 
 );
-
 
 })();
