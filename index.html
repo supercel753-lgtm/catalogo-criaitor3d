@@ -24,21 +24,11 @@
         CriAItor 3D | Administração
     </title>
 
-
-    <!-- =========================================
-         LOGO
-    ========================================== -->
-
     <link
         rel="icon"
         type="image/jpeg"
         href="./src/assets/logo-criaitor3d.jpg"
     >
-
-
-    <!-- =========================================
-         FONTES
-    ========================================== -->
 
     <link
         rel="preconnect"
@@ -56,100 +46,51 @@
         rel="stylesheet"
     >
 
-
-    <!-- =========================================
-         CSS
-    ========================================== -->
-
     <link
         rel="stylesheet"
         href="./src/style.css"
     >
 
-
-    <!-- =========================================
-         CSS DE SEGURANÇA VISUAL
-    ========================================== -->
-
     <style>
 
         html,
         body {
-
             margin: 0;
-
             min-height: 100%;
-
             background: #100c15;
-
-            color: #ffffff;
-
-            font-family: Arial, sans-serif;
-
+            color: white;
         }
 
         [hidden] {
-
             display: none !important;
-
         }
 
     </style>
-
-
-    <!-- =========================================
-         SUPABASE
-    ========================================== -->
 
     <script
         src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
         defer
     ></script>
 
-
-    <!-- =========================================
-         CONFIGURAÇÃO
-    ========================================== -->
-
     <script
         src="./src/supabase-config.js"
         defer
     ></script>
-
-
-    <!-- =========================================
-         CATÁLOGO
-    ========================================== -->
 
     <script
         src="./src/catalogo.js"
         defer
     ></script>
 
-
-    <!-- =========================================
-         ADMINISTRAÇÃO
-    ========================================== -->
-
     <script
         src="./src/admin.js"
         defer
     ></script>
 
-
-    <!-- =========================================
-         FOTOS DOS PRODUTOS
-    ========================================== -->
-
     <script
         src="./src/fotos-empresa.js"
         defer
     ></script>
-
-
-    <!-- =========================================
-         SINCRONIZAÇÃO
-    ========================================== -->
 
     <script
         src="./src/sync-empresa.js"
@@ -158,118 +99,14 @@
 
 </head>
 
-
 <body data-area="empresa">
-
-
-    <!-- =================================================
-         LOGIN
-    ================================================== -->
-
-    <section
-        class="tela-login"
-        id="tela-login"
-    >
-
-        <form
-            class="form-login"
-            id="form-login"
-        >
-
-            <div class="login-marca">
-
-                <img
-                    src="./src/assets/logo-criaitor3d.jpg"
-                    alt="CriAItor 3D"
-                    class="logo-empresa"
-                    draggable="false"
-                >
-
-            </div>
-
-
-            <h2>
-                Painel administrativo
-            </h2>
-
-
-            <p>
-
-                Acesso exclusivo à administração
-                da CriAItor 3D.
-
-            </p>
-
-
-            <label for="email-login">
-
-                E-mail
-
-            </label>
-
-
-            <input
-                type="email"
-                id="email-login"
-                autocomplete="username"
-                placeholder="criaitor3d@gmail.com"
-                required
-            >
-
-
-            <label for="senha-login">
-
-                Senha
-
-            </label>
-
-
-            <input
-                type="password"
-                id="senha-login"
-                autocomplete="current-password"
-                required
-            >
-
-
-            <button
-                type="submit"
-                id="botao-login"
-            >
-
-                Entrar no painel
-
-            </button>
-
-
-            <p
-                id="mensagem-login"
-                role="status"
-                aria-live="polite"
-            ></p>
-
-        </form>
-
-    </section>
-
-
-    <!-- =================================================
-         SISTEMA
-    ================================================== -->
 
     <div
         class="app"
         id="app"
-        hidden
     >
 
-
-        <!-- =============================================
-             MENU
-        ============================================== -->
-
         <aside class="sidebar">
-
 
             <div class="marca">
 
@@ -282,234 +119,151 @@
 
             </div>
 
-
             <p class="menu-titulo">
-
                 MENU PRINCIPAL
-
             </p>
-
 
             <nav
                 class="menu"
                 aria-label="Menu administrativo"
             >
 
-
                 <button
                     type="button"
                     class="menu-item ativo"
                     data-pagina="dashboard"
                 >
-
                     ◈ Visão geral
-
                 </button>
-
 
                 <button
                     type="button"
                     class="menu-item"
                     data-pagina="produtos"
                 >
-
                     ▦ Produtos
-
                 </button>
-
 
                 <button
                     type="button"
                     class="menu-item"
                     data-pagina="pedidos"
                 >
-
                     ▤ Pedidos
-
                 </button>
-
 
                 <button
                     type="button"
                     class="menu-item"
                     data-pagina="custos"
                 >
-
                     ◫ Custos
-
                 </button>
-
 
                 <button
                     type="button"
                     class="menu-item"
                     data-pagina="filamentos"
                 >
-
                     ◉ Filamentos
-
                 </button>
-
 
                 <button
                     type="button"
                     class="menu-item"
                     data-pagina="publicar"
                 >
-
                     ↥ Sincronização
-
                 </button>
 
-
             </nav>
-
 
             <div class="sidebar-rodape">
 
                 <strong>
-
                     ● CriAItor 3D
-
                 </strong>
 
                 <p>
-
-                    Gestão de produção
-                    e catálogo.
-
+                    Gestão de produção e catálogo.
                 </p>
 
             </div>
 
-
         </aside>
-
-
-        <!-- =============================================
-             CONTEÚDO
-        ============================================== -->
 
         <div class="conteudo">
 
-
             <header class="topbar">
-
 
                 <div>
 
                     <small>
-
                         CRIAITOR 3D / ADMINISTRAÇÃO
-
                     </small>
 
-
                     <h2 id="titulo-pagina">
-
                         Visão geral
-
                     </h2>
 
                 </div>
 
-
-                <div class="grupo-botoes">
-
-
-                    <button
-                        type="button"
-                        class="botao botao-laranja"
-                        id="novo-produto-topo"
-                    >
-
-                        + Novo produto
-
-                    </button>
-
-
-                    <button
-                        type="button"
-                        class="botao botao-secundario"
-                        id="botao-sair"
-                    >
-
-                        Sair
-
-                    </button>
-
-
-                </div>
-
+                <button
+                    type="button"
+                    class="botao botao-laranja"
+                    id="novo-produto-topo"
+                >
+                    + Novo produto
+                </button>
 
             </header>
 
-
             <main>
-
 
                 <div class="aviso">
 
-                    O catálogo de produtos é
-                    sincronizado com o site dos clientes
-                    através do Supabase.
+                    Produtos e fotografias são sincronizados
+                    com a loja dos clientes pelo Supabase.
 
                 </div>
 
-
-                <!-- =====================================
+                <!-- =========================
                      DASHBOARD
-                ====================================== -->
+                ========================== -->
 
                 <section
                     class="pagina ativa"
                     id="dashboard"
                 >
 
-
                     <div class="cabecalho-pagina">
-
 
                         <div>
 
                             <span class="subtitulo">
-
                                 PAINEL CRIAITOR 3D
-
                             </span>
 
-
                             <h1>
-
                                 Bem-vindo ao
-
                                 <em>atelier.</em>
-
                             </h1>
 
-
                             <p>
-
-                                Produtos, pedidos,
-                                custos e matéria-prima
-                                em um único painel.
-
+                                Produtos, pedidos, custos
+                                e matéria-prima em um único painel.
                             </p>
 
                         </div>
-
 
                         <span
                             class="data-atual"
                             id="data-atual"
                         ></span>
 
-
                     </div>
 
-
                     <div class="indicadores">
-
 
                         <div class="indicador">
 
@@ -527,7 +281,6 @@
 
                         </div>
 
-
                         <div class="indicador">
 
                             <span>
@@ -543,7 +296,6 @@
                             </small>
 
                         </div>
-
 
                         <div class="indicador">
 
@@ -561,7 +313,6 @@
 
                         </div>
 
-
                         <div class="indicador">
 
                             <span>
@@ -578,53 +329,37 @@
 
                         </div>
 
-
                     </div>
-
 
                     <div class="painel">
 
-
                         <div class="painel-cabecalho">
 
-
                             <h2>
-
                                 Produtos recentes
-
                             </h2>
-
 
                             <button
                                 type="button"
                                 class="botao-link"
                                 data-ir="produtos"
                             >
-
                                 Ver todos →
-
                             </button>
 
-
                         </div>
-
 
                         <div id="produtos-recentes">
-
                             Carregando...
-
                         </div>
-
 
                     </div>
 
-
                 </section>
 
-
-                <!-- =====================================
+                <!-- =========================
                      PRODUTOS
-                ====================================== -->
+                ========================== -->
 
                 <section
                     class="pagina"
@@ -632,9 +367,7 @@
                     hidden
                 >
 
-
                     <div class="cabecalho-pagina">
-
 
                         <div>
 
@@ -643,34 +376,25 @@
                             </span>
 
                             <h1>
-
                                 Gerenciar
                                 <em>produtos.</em>
-
                             </h1>
 
                         </div>
-
 
                         <button
                             type="button"
                             class="botao botao-laranja"
                             id="novo-produto"
                         >
-
                             + Adicionar produto
-
                         </button>
-
 
                     </div>
 
-
                     <div class="painel">
 
-
                         <div class="barra-ferramentas">
-
 
                             <input
                                 type="search"
@@ -678,76 +402,44 @@
                                 placeholder="Buscar produto..."
                             >
 
-
                             <span id="contador-produtos">
-
                                 0 produtos
-
                             </span>
-
 
                         </div>
 
-
                         <div class="tabela-container">
 
-
                             <table>
-
 
                                 <thead>
 
                                     <tr>
-
-                                        <th>
-                                            PRODUTO
-                                        </th>
-
-                                        <th>
-                                            CATEGORIA
-                                        </th>
-
-                                        <th>
-                                            PREÇO
-                                        </th>
-
-                                        <th>
-                                            ESTOQUE
-                                        </th>
-
-                                        <th>
-                                            VISIBILIDADE
-                                        </th>
-
-                                        <th>
-                                            AÇÕES
-                                        </th>
-
+                                        <th>PRODUTO</th>
+                                        <th>CATEGORIA</th>
+                                        <th>PREÇO</th>
+                                        <th>ESTOQUE</th>
+                                        <th>VISIBILIDADE</th>
+                                        <th>AÇÕES</th>
                                     </tr>
 
                                 </thead>
-
 
                                 <tbody
                                     id="tabela-produtos"
                                 ></tbody>
 
-
                             </table>
-
 
                         </div>
 
-
                     </div>
-
 
                 </section>
 
-
-                <!-- =====================================
+                <!-- =========================
                      PEDIDOS
-                ====================================== -->
+                ========================== -->
 
                 <section
                     class="pagina"
@@ -755,9 +447,7 @@
                     hidden
                 >
 
-
                     <div class="cabecalho-pagina">
-
 
                         <div>
 
@@ -765,110 +455,69 @@
                                 VENDAS
                             </span>
 
-
                             <h1>
-
                                 Controle de
                                 <em>pedidos.</em>
-
                             </h1>
 
                         </div>
 
-
                         <div class="grupo-botoes">
-
 
                             <button
                                 type="button"
                                 class="botao botao-secundario"
                                 id="exportar-pedidos"
                             >
-
                                 Exportar CSV
-
                             </button>
-
 
                             <button
                                 type="button"
                                 class="botao botao-laranja"
                                 id="novo-pedido"
                             >
-
                                 + Registrar pedido
-
                             </button>
-
 
                         </div>
 
-
                     </div>
-
 
                     <div class="painel">
 
-
                         <div class="tabela-container">
 
-
                             <table>
-
 
                                 <thead>
 
                                     <tr>
-
-                                        <th>
-                                            CLIENTE
-                                        </th>
-
-                                        <th>
-                                            PRODUTOS
-                                        </th>
-
-                                        <th>
-                                            VALOR
-                                        </th>
-
-                                        <th>
-                                            STATUS
-                                        </th>
-
-                                        <th>
-                                            DATA
-                                        </th>
-
-                                        <th>
-                                            AÇÕES
-                                        </th>
-
+                                        <th>CLIENTE</th>
+                                        <th>PRODUTOS</th>
+                                        <th>VALOR</th>
+                                        <th>STATUS</th>
+                                        <th>DATA</th>
+                                        <th>AÇÕES</th>
                                     </tr>
 
                                 </thead>
-
 
                                 <tbody
                                     id="tabela-pedidos"
                                 ></tbody>
 
-
                             </table>
-
 
                         </div>
 
-
                     </div>
-
 
                 </section>
 
-
-                <!-- =====================================
+                <!-- =========================
                      CUSTOS
-                ====================================== -->
+                ========================== -->
 
                 <section
                     class="pagina"
@@ -876,9 +525,7 @@
                     hidden
                 >
 
-
                     <div class="cabecalho-pagina">
-
 
                         <div>
 
@@ -886,58 +533,41 @@
                                 GESTÃO FINANCEIRA
                             </span>
 
-
                             <h1>
-
                                 Controle de
                                 <em>custos.</em>
-
                             </h1>
 
-
                             <p>
-
-                                Registre despesas e
-                                simule custos de produção.
-
+                                Registre despesas e simule
+                                custos de produção.
                             </p>
 
                         </div>
 
-
                         <div class="grupo-botoes">
-
 
                             <button
                                 type="button"
                                 class="botao botao-secundario"
                                 id="exportar-custos"
                             >
-
                                 Exportar CSV
-
                             </button>
-
 
                             <button
                                 type="button"
                                 class="botao botao-laranja"
                                 id="novo-custo"
                             >
-
                                 + Adicionar custo
-
                             </button>
-
 
                         </div>
 
-
                     </div>
 
-
                     <div class="gestao-resumos">
-
 
                         <div class="gestao-card">
 
@@ -951,7 +581,6 @@
 
                         </div>
 
-
                         <div class="gestao-card">
 
                             <span>
@@ -963,7 +592,6 @@
                             </strong>
 
                         </div>
-
 
                         <div class="gestao-card">
 
@@ -977,7 +605,6 @@
 
                         </div>
 
-
                         <div class="gestao-card">
 
                             <span>
@@ -990,22 +617,15 @@
 
                         </div>
 
-
                     </div>
-
 
                     <div class="painel">
 
-
                         <h2>
-
                             Simulador de impressão
-
                         </h2>
 
-
                         <div class="simulador-grid">
-
 
                             <label>
 
@@ -1014,15 +634,12 @@
                                 <select id="sim-filamento">
 
                                     <option value="">
-
                                         Selecione
-
                                     </option>
 
                                 </select>
 
                             </label>
-
 
                             <label>
 
@@ -1038,7 +655,6 @@
 
                             </label>
 
-
                             <label>
 
                                 Tempo de impressão (h)
@@ -1053,7 +669,6 @@
 
                             </label>
 
-
                             <label>
 
                                 Potência média (W)
@@ -1066,7 +681,6 @@
                                 >
 
                             </label>
-
 
                             <label>
 
@@ -1082,7 +696,6 @@
 
                             </label>
 
-
                             <label>
 
                                 Acréscimo (%)
@@ -1096,12 +709,9 @@
 
                             </label>
 
-
                         </div>
 
-
                         <div class="resultado-custo">
-
 
                             <div>
 
@@ -1117,7 +727,6 @@
 
                             </div>
 
-
                             <div>
 
                                 <span>
@@ -1131,7 +740,6 @@
                                 </strong>
 
                             </div>
-
 
                             <div>
 
@@ -1147,7 +755,6 @@
 
                             </div>
 
-
                             <div>
 
                                 <span>
@@ -1162,25 +769,19 @@
 
                             </div>
 
-
                         </div>
-
 
                     </div>
 
-
                     <div class="painel">
 
-
                         <div class="gestao-toolbar">
-
 
                             <input
                                 type="search"
                                 id="buscar-custo"
                                 placeholder="Buscar custo..."
                             >
-
 
                             <select id="filtro-custo">
 
@@ -1198,69 +799,40 @@
 
                             </select>
 
-
                         </div>
-
 
                         <div class="tabela-container">
 
-
                             <table>
-
 
                                 <thead>
 
                                     <tr>
-
-                                        <th>
-                                            DESCRIÇÃO
-                                        </th>
-
-                                        <th>
-                                            CATEGORIA
-                                        </th>
-
-                                        <th>
-                                            TIPO
-                                        </th>
-
-                                        <th>
-                                            VALOR
-                                        </th>
-
-                                        <th>
-                                            DATA
-                                        </th>
-
-                                        <th>
-                                            AÇÕES
-                                        </th>
-
+                                        <th>DESCRIÇÃO</th>
+                                        <th>CATEGORIA</th>
+                                        <th>TIPO</th>
+                                        <th>VALOR</th>
+                                        <th>DATA</th>
+                                        <th>AÇÕES</th>
                                     </tr>
 
                                 </thead>
-
 
                                 <tbody
                                     id="tabela-custos"
                                 ></tbody>
 
-
                             </table>
-
 
                         </div>
 
-
                     </div>
-
 
                 </section>
 
-
-                <!-- =====================================
+                <!-- =========================
                      FILAMENTOS
-                ====================================== -->
+                ========================== -->
 
                 <section
                     class="pagina"
@@ -1268,9 +840,7 @@
                     hidden
                 >
 
-
                     <div class="cabecalho-pagina">
-
 
                         <div>
 
@@ -1278,58 +848,41 @@
                                 MATÉRIA-PRIMA
                             </span>
 
-
                             <h1>
-
                                 Controle de
                                 <em>filamentos.</em>
-
                             </h1>
 
-
                             <p>
-
                                 Estoque, peso,
                                 custo e cores.
-
                             </p>
 
                         </div>
 
-
                         <div class="grupo-botoes">
-
 
                             <button
                                 type="button"
                                 class="botao botao-secundario"
                                 id="exportar-filamentos"
                             >
-
                                 Exportar CSV
-
                             </button>
-
 
                             <button
                                 type="button"
                                 class="botao botao-laranja"
                                 id="novo-filamento"
                             >
-
                                 + Adicionar filamento
-
                             </button>
-
 
                         </div>
 
-
                     </div>
 
-
                     <div class="gestao-resumos">
-
 
                         <div class="gestao-card">
 
@@ -1343,7 +896,6 @@
 
                         </div>
 
-
                         <div class="gestao-card">
 
                             <span>
@@ -1355,7 +907,6 @@
                             </strong>
 
                         </div>
-
 
                         <div class="gestao-card">
 
@@ -1369,7 +920,6 @@
 
                         </div>
 
-
                         <div class="gestao-card">
 
                             <span>
@@ -1382,15 +932,11 @@
 
                         </div>
 
-
                     </div>
-
 
                     <div class="painel">
 
-
                         <div class="gestao-toolbar">
-
 
                             <input
                                 type="search"
@@ -1398,84 +944,49 @@
                                 placeholder="Buscar filamento..."
                             >
 
-
                             <select id="filtro-material">
 
                                 <option value="Todos">
-
                                     Todos os materiais
-
                                 </option>
 
                             </select>
 
-
                         </div>
-
 
                         <div class="tabela-container">
 
-
                             <table>
-
 
                                 <thead>
 
                                     <tr>
-
-                                        <th>
-                                            FILAMENTO
-                                        </th>
-
-                                        <th>
-                                            MATERIAL
-                                        </th>
-
-                                        <th>
-                                            COR
-                                        </th>
-
-                                        <th>
-                                            RESTANTE
-                                        </th>
-
-                                        <th>
-                                            CUSTO/GRAMA
-                                        </th>
-
-                                        <th>
-                                            STATUS
-                                        </th>
-
-                                        <th>
-                                            AÇÕES
-                                        </th>
-
+                                        <th>FILAMENTO</th>
+                                        <th>MATERIAL</th>
+                                        <th>COR</th>
+                                        <th>RESTANTE</th>
+                                        <th>CUSTO/GRAMA</th>
+                                        <th>STATUS</th>
+                                        <th>AÇÕES</th>
                                     </tr>
 
                                 </thead>
-
 
                                 <tbody
                                     id="tabela-filamentos"
                                 ></tbody>
 
-
                             </table>
-
 
                         </div>
 
-
                     </div>
-
 
                 </section>
 
-
-                <!-- =====================================
+                <!-- =========================
                      SINCRONIZAÇÃO
-                ====================================== -->
+                ========================== -->
 
                 <section
                     class="pagina"
@@ -1483,9 +994,7 @@
                     hidden
                 >
 
-
                     <div class="cabecalho-pagina">
-
 
                         <div>
 
@@ -1493,87 +1002,62 @@
                                 SUPABASE
                             </span>
 
-
                             <h1>
-
                                 Catálogo
                                 <em>sincronizado.</em>
-
                             </h1>
 
                         </div>
 
-
                     </div>
-
 
                     <div class="painel">
 
                         <h2>
-
                             Site dos clientes
-
                         </h2>
-
 
                         <p>
 
-                            Alterações de produtos
-                            realizadas neste painel
-                            são gravadas no Supabase.
+                            Os produtos cadastrados
+                            neste painel são compartilhados
+                            com a loja através do Supabase.
 
                         </p>
 
                     </div>
 
-
                     <div class="painel">
 
-
                         <h2>
-
                             Exportar catálogo
-
                         </h2>
-
 
                         <button
                             type="button"
                             class="botao botao-secundario"
                             id="exportar-catalogo"
                         >
-
                             Exportar catalogo.js
-
                         </button>
-
 
                     </div>
 
-
                     <div class="painel">
 
-
                         <h2>
-
                             Backup
-
                         </h2>
 
-
                         <div class="grupo-botoes">
-
 
                             <button
                                 type="button"
                                 class="botao botao-secundario"
                                 id="baixar-backup"
                             >
-
                                 Exportar backup
-
                             </button>
-
 
                             <label
                                 class="botao botao-secundario"
@@ -1590,64 +1074,46 @@
 
                             </label>
 
-
                         </div>
-
 
                     </div>
 
-
                 </section>
-
 
             </main>
 
-
         </div>
-
 
     </div>
 
-
-    <!-- =================================================
-         PRODUTO
-    ================================================== -->
+    <!-- =========================
+         MODAL PRODUTO
+    ========================== -->
 
     <dialog
         class="modal"
         id="modal-produto"
     >
 
-
         <form id="form-produto">
-
 
             <div class="modal-cabecalho">
 
-
                 <h2 id="titulo-modal-produto">
-
                     Novo produto
-
                 </h2>
-
 
                 <button
                     type="button"
                     class="fechar-modal"
                     data-fechar="modal-produto"
                 >
-
                     ×
-
                 </button>
-
 
             </div>
 
-
             <div class="campos">
-
 
                 <label class="campo campo-inteiro">
 
@@ -1661,7 +1127,6 @@
 
                 </label>
 
-
                 <label class="campo">
 
                     Categoria
@@ -1673,7 +1138,6 @@
                     >
 
                 </label>
-
 
                 <label class="campo">
 
@@ -1688,7 +1152,6 @@
                     >
 
                 </label>
-
 
                 <label class="campo">
 
@@ -1705,7 +1168,6 @@
 
                 </label>
 
-
                 <label class="campo">
 
                     Prazo
@@ -1717,7 +1179,6 @@
                     >
 
                 </label>
-
 
                 <label
                     class="campo campo-inteiro campo-url-legado"
@@ -1733,7 +1194,6 @@
 
                 </label>
 
-
                 <label class="campo campo-inteiro">
 
                     Descrição
@@ -1744,7 +1204,6 @@
                     ></textarea>
 
                 </label>
-
 
                 <label class="campo checkbox-campo">
 
@@ -1758,7 +1217,6 @@
 
                 </label>
 
-
                 <label class="campo checkbox-campo">
 
                     <input
@@ -1770,82 +1228,59 @@
 
                 </label>
 
-
             </div>
 
-
             <div class="modal-acoes">
-
 
                 <button
                     type="button"
                     class="botao botao-secundario"
                     data-fechar="modal-produto"
                 >
-
                     Cancelar
-
                 </button>
-
 
                 <button
                     type="submit"
                     class="botao botao-laranja"
                 >
-
                     Salvar produto
-
                 </button>
-
 
             </div>
 
-
         </form>
-
 
     </dialog>
 
-
-    <!-- =================================================
-         PEDIDO
-    ================================================== -->
+    <!-- =========================
+         MODAL PEDIDO
+    ========================== -->
 
     <dialog
         class="modal"
         id="modal-pedido"
     >
 
-
         <form id="form-pedido">
-
 
             <div class="modal-cabecalho">
 
-
                 <h2>
-
                     Pedido
-
                 </h2>
-
 
                 <button
                     type="button"
                     class="fechar-modal"
                     data-fechar="modal-pedido"
                 >
-
                     ×
-
                 </button>
-
 
             </div>
 
-
             <div class="campos">
-
 
                 <label class="campo">
 
@@ -1859,7 +1294,6 @@
 
                 </label>
 
-
                 <label class="campo">
 
                     Contato
@@ -1871,7 +1305,6 @@
 
                 </label>
 
-
                 <label class="campo campo-inteiro">
 
                     Produtos
@@ -1882,7 +1315,6 @@
                     ></textarea>
 
                 </label>
-
 
                 <label class="campo">
 
@@ -1897,7 +1329,6 @@
                     >
 
                 </label>
-
 
                 <label class="campo">
 
@@ -1929,82 +1360,59 @@
 
                 </label>
 
-
             </div>
 
-
             <div class="modal-acoes">
-
 
                 <button
                     type="button"
                     class="botao botao-secundario"
                     data-fechar="modal-pedido"
                 >
-
                     Cancelar
-
                 </button>
-
 
                 <button
                     type="submit"
                     class="botao botao-laranja"
                 >
-
                     Salvar
-
                 </button>
-
 
             </div>
 
-
         </form>
-
 
     </dialog>
 
-
-    <!-- =================================================
-         CUSTO
-    ================================================== -->
+    <!-- =========================
+         MODAL CUSTO
+    ========================== -->
 
     <dialog
         class="modal"
         id="modal-custo"
     >
 
-
         <form id="form-custo">
-
 
             <div class="modal-cabecalho">
 
-
                 <h2 id="titulo-modal-custo">
-
                     Novo custo
-
                 </h2>
-
 
                 <button
                     type="button"
                     class="fechar-modal"
                     data-fechar="modal-custo"
                 >
-
                     ×
-
                 </button>
-
 
             </div>
 
-
             <div class="campos">
-
 
                 <label class="campo campo-inteiro">
 
@@ -2018,7 +1426,6 @@
 
                 </label>
 
-
                 <label class="campo">
 
                     Categoria
@@ -2030,7 +1437,6 @@
                     >
 
                 </label>
-
 
                 <label class="campo">
 
@@ -2050,7 +1456,6 @@
 
                 </label>
 
-
                 <label class="campo">
 
                     Valor
@@ -2065,7 +1470,6 @@
 
                 </label>
 
-
                 <label class="campo">
 
                     Data
@@ -2078,7 +1482,6 @@
 
                 </label>
 
-
                 <label class="campo campo-inteiro">
 
                     Observações
@@ -2090,82 +1493,59 @@
 
                 </label>
 
-
             </div>
 
-
             <div class="modal-acoes">
-
 
                 <button
                     type="button"
                     class="botao botao-secundario"
                     data-fechar="modal-custo"
                 >
-
                     Cancelar
-
                 </button>
-
 
                 <button
                     type="submit"
                     class="botao botao-laranja"
                 >
-
                     Salvar
-
                 </button>
-
 
             </div>
 
-
         </form>
-
 
     </dialog>
 
-
-    <!-- =================================================
-         FILAMENTO
-    ================================================== -->
+    <!-- =========================
+         MODAL FILAMENTO
+    ========================== -->
 
     <dialog
         class="modal"
         id="modal-filamento"
     >
 
-
         <form id="form-filamento">
-
 
             <div class="modal-cabecalho">
 
-
                 <h2 id="titulo-modal-filamento">
-
                     Novo filamento
-
                 </h2>
-
 
                 <button
                     type="button"
                     class="fechar-modal"
                     data-fechar="modal-filamento"
                 >
-
                     ×
-
                 </button>
-
 
             </div>
 
-
             <div class="campos">
-
 
                 <label class="campo">
 
@@ -2178,7 +1558,6 @@
                     >
 
                 </label>
-
 
                 <label class="campo">
 
@@ -2193,7 +1572,6 @@
 
                 </label>
 
-
                 <label class="campo">
 
                     Cor
@@ -2205,7 +1583,6 @@
                     >
 
                 </label>
-
 
                 <label class="campo">
 
@@ -2221,7 +1598,6 @@
 
                 </label>
 
-
                 <label class="campo">
 
                     Peso original (g)
@@ -2235,7 +1611,6 @@
 
                 </label>
 
-
                 <label class="campo">
 
                     Peso restante (g)
@@ -2248,7 +1623,6 @@
                     >
 
                 </label>
-
 
                 <label class="campo">
 
@@ -2264,7 +1638,6 @@
 
                 </label>
 
-
                 <label class="campo">
 
                     Estoque baixo abaixo de (g)
@@ -2278,7 +1651,6 @@
 
                 </label>
 
-
                 <label class="campo campo-inteiro">
 
                     Observações
@@ -2290,46 +1662,30 @@
 
                 </label>
 
-
             </div>
 
-
             <div class="modal-acoes">
-
 
                 <button
                     type="button"
                     class="botao botao-secundario"
                     data-fechar="modal-filamento"
                 >
-
                     Cancelar
-
                 </button>
-
 
                 <button
                     type="submit"
                     class="botao botao-laranja"
                 >
-
                     Salvar
-
                 </button>
-
 
             </div>
 
-
         </form>
 
-
     </dialog>
-
-
-    <!-- =================================================
-         NOTIFICAÇÕES
-    ================================================== -->
 
     <div
         class="notificacao"
@@ -2337,7 +1693,6 @@
         role="status"
         aria-live="polite"
     ></div>
-
 
 </body>
 
