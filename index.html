@@ -24,11 +24,15 @@
         CriAItor 3D | Administração
     </title>
 
+    <!-- LOGO -->
+
     <link
         rel="icon"
         type="image/jpeg"
         href="./src/assets/logo-criaitor3d.jpg"
     >
+
+    <!-- FONTES -->
 
     <link
         rel="preconnect"
@@ -46,10 +50,14 @@
         rel="stylesheet"
     >
 
+    <!-- CSS -->
+
     <link
         rel="stylesheet"
-        href="./src/style.css"
+        href="./src/style.css?v=20260928-2"
     >
+
+    <!-- SEGURANÇA VISUAL -->
 
     <style>
 
@@ -58,7 +66,7 @@
             margin: 0;
             min-height: 100%;
             background: #100c15;
-            color: white;
+            color: #ffffff;
         }
 
         [hidden] {
@@ -67,33 +75,45 @@
 
     </style>
 
+    <!-- SUPABASE -->
+
     <script
         src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
         defer
     ></script>
 
+    <!-- CONFIGURAÇÃO -->
+
     <script
-        src="./src/supabase-config.js"
+        src="./src/supabase-config.js?v=20260928-2"
         defer
     ></script>
 
+    <!-- CATÁLOGO -->
+
     <script
-        src="./src/catalogo.js"
+        src="./src/catalogo.js?v=20260928-2"
         defer
     ></script>
 
+    <!-- ADMINISTRAÇÃO SEM LOGIN -->
+
     <script
-        src="./src/admin.js"
+        src="./src/admin-sem-login.js?v=20260928-2"
         defer
     ></script>
 
+    <!-- FOTOS -->
+
     <script
-        src="./src/fotos-empresa.js"
+        src="./src/fotos-empresa.js?v=20260928-2"
         defer
     ></script>
 
+    <!-- SINCRONIZAÇÃO -->
+
     <script
-        src="./src/sync-empresa.js"
+        src="./src/sync-empresa.js?v=20260928-2"
         defer
     ></script>
 
@@ -101,10 +121,17 @@
 
 <body data-area="empresa">
 
+    <!--
+        NÃO EXISTE TELA DE LOGIN.
+        O painel abre diretamente.
+    -->
+
     <div
         class="app"
         id="app"
     >
+
+        <!-- MENU -->
 
         <aside class="sidebar">
 
@@ -192,6 +219,9 @@
 
         </aside>
 
+
+        <!-- CONTEÚDO -->
+
         <div class="conteudo">
 
             <header class="topbar">
@@ -218,6 +248,7 @@
 
             </header>
 
+
             <main>
 
                 <div class="aviso">
@@ -227,9 +258,8 @@
 
                 </div>
 
-                <!-- =========================
-                     DASHBOARD
-                ========================== -->
+
+                <!-- DASHBOARD -->
 
                 <section
                     class="pagina ativa"
@@ -262,6 +292,7 @@
                         ></span>
 
                     </div>
+
 
                     <div class="indicadores">
 
@@ -331,6 +362,7 @@
 
                     </div>
 
+
                     <div class="painel">
 
                         <div class="painel-cabecalho">
@@ -357,9 +389,8 @@
 
                 </section>
 
-                <!-- =========================
-                     PRODUTOS
-                ========================== -->
+
+                <!-- PRODUTOS -->
 
                 <section
                     class="pagina"
@@ -380,6 +411,11 @@
                                 <em>produtos.</em>
                             </h1>
 
+                            <p>
+                                Cadastre produtos, preços,
+                                estoque, fotos e descrições.
+                            </p>
+
                         </div>
 
                         <button
@@ -391,6 +427,7 @@
                         </button>
 
                     </div>
+
 
                     <div class="painel">
 
@@ -437,9 +474,8 @@
 
                 </section>
 
-                <!-- =========================
-                     PEDIDOS
-                ========================== -->
+
+                <!-- PEDIDOS -->
 
                 <section
                     class="pagina"
@@ -484,6 +520,7 @@
 
                     </div>
 
+
                     <div class="painel">
 
                         <div class="tabela-container">
@@ -515,9 +552,8 @@
 
                 </section>
 
-                <!-- =========================
-                     CUSTOS
-                ========================== -->
+
+                <!-- CUSTOS -->
 
                 <section
                     class="pagina"
@@ -539,8 +575,8 @@
                             </h1>
 
                             <p>
-                                Registre despesas e simule
-                                custos de produção.
+                                Registre despesas e calcule
+                                o custo das impressões.
                             </p>
 
                         </div>
@@ -566,6 +602,7 @@
                         </div>
 
                     </div>
+
 
                     <div class="gestao-resumos">
 
@@ -619,11 +656,19 @@
 
                     </div>
 
+
+                    <!-- SIMULADOR -->
+
                     <div class="painel">
 
                         <h2>
-                            Simulador de impressão
+                            Simulador de custo de impressão
                         </h2>
+
+                        <p>
+                            Selecione o filamento e informe
+                            o consumo da peça.
+                        </p>
 
                         <div class="simulador-grid">
 
@@ -684,7 +729,7 @@
 
                             <label>
 
-                                Energia R$/kWh
+                                Energia (R$/kWh)
 
                                 <input
                                     type="number"
@@ -704,12 +749,14 @@
                                     type="number"
                                     id="sim-margem"
                                     min="0"
+                                    step="1"
                                     value="0"
                                 >
 
                             </label>
 
                         </div>
+
 
                         <div class="resultado-custo">
 
@@ -719,9 +766,7 @@
                                     MATERIAL
                                 </span>
 
-                                <strong
-                                    id="sim-custo-material"
-                                >
+                                <strong id="sim-custo-material">
                                     R$ 0,00
                                 </strong>
 
@@ -733,9 +778,7 @@
                                     ENERGIA
                                 </span>
 
-                                <strong
-                                    id="sim-custo-energia"
-                                >
+                                <strong id="sim-custo-energia">
                                     R$ 0,00
                                 </strong>
 
@@ -747,9 +790,7 @@
                                     CUSTO DIRETO
                                 </span>
 
-                                <strong
-                                    id="sim-custo-direto"
-                                >
+                                <strong id="sim-custo-direto">
                                     R$ 0,00
                                 </strong>
 
@@ -761,9 +802,7 @@
                                     VALOR CALCULADO
                                 </span>
 
-                                <strong
-                                    id="sim-preco-sugerido"
-                                >
+                                <strong id="sim-preco-sugerido">
                                     R$ 0,00
                                 </strong>
 
@@ -772,6 +811,7 @@
                         </div>
 
                     </div>
+
 
                     <div class="painel">
 
@@ -830,9 +870,8 @@
 
                 </section>
 
-                <!-- =========================
-                     FILAMENTOS
-                ========================== -->
+
+                <!-- FILAMENTOS -->
 
                 <section
                     class="pagina"
@@ -854,8 +893,8 @@
                             </h1>
 
                             <p>
-                                Estoque, peso,
-                                custo e cores.
+                                Estoque, peso, cores
+                                e custo por grama.
                             </p>
 
                         </div>
@@ -881,6 +920,7 @@
                         </div>
 
                     </div>
+
 
                     <div class="gestao-resumos">
 
@@ -934,6 +974,7 @@
 
                     </div>
 
+
                     <div class="painel">
 
                         <div class="gestao-toolbar">
@@ -941,7 +982,7 @@
                             <input
                                 type="search"
                                 id="buscar-filamento"
-                                placeholder="Buscar filamento..."
+                                placeholder="Buscar marca, material ou cor..."
                             >
 
                             <select id="filtro-material">
@@ -984,9 +1025,8 @@
 
                 </section>
 
-                <!-- =========================
-                     SINCRONIZAÇÃO
-                ========================== -->
+
+                <!-- SINCRONIZAÇÃO -->
 
                 <section
                     class="pagina"
@@ -1019,13 +1059,30 @@
 
                         <p>
 
-                            Os produtos cadastrados
-                            neste painel são compartilhados
-                            com a loja através do Supabase.
+                            Quando o catálogo é salvo aqui,
+                            a loja dos clientes recebe
+                            a nova versão pelo Supabase.
 
                         </p>
 
+                        <div class="sync-empresa">
+
+                            <p id="status-sync">
+                                Verificando catálogo...
+                            </p>
+
+                            <button
+                                type="button"
+                                class="botao botao-secundario"
+                                id="recarregar-catalogo"
+                            >
+                                Recarregar catálogo
+                            </button>
+
+                        </div>
+
                     </div>
+
 
                     <div class="painel">
 
@@ -1042,6 +1099,7 @@
                         </button>
 
                     </div>
+
 
                     <div class="painel">
 
@@ -1068,7 +1126,7 @@
                                 <input
                                     type="file"
                                     id="restaurar-backup"
-                                    accept=".json"
+                                    accept=".json,application/json"
                                     hidden
                                 >
 
@@ -1086,9 +1144,8 @@
 
     </div>
 
-    <!-- =========================
-         MODAL PRODUTO
-    ========================== -->
+
+    <!-- MODAL PRODUTO -->
 
     <dialog
         class="modal"
@@ -1112,6 +1169,7 @@
                 </button>
 
             </div>
+
 
             <div class="campos">
 
@@ -1141,7 +1199,7 @@
 
                 <label class="campo">
 
-                    Preço
+                    Preço (R$)
 
                     <input
                         type="number"
@@ -1179,6 +1237,8 @@
                     >
 
                 </label>
+
+                <!-- fotos-empresa.js insere o upload aqui -->
 
                 <label
                     class="campo campo-inteiro campo-url-legado"
@@ -1230,6 +1290,7 @@
 
             </div>
 
+
             <div class="modal-acoes">
 
                 <button
@@ -1243,6 +1304,7 @@
                 <button
                     type="submit"
                     class="botao botao-laranja"
+                    id="salvar-produto"
                 >
                     Salvar produto
                 </button>
@@ -1253,9 +1315,8 @@
 
     </dialog>
 
-    <!-- =========================
-         MODAL PEDIDO
-    ========================== -->
+
+    <!-- MODAL PEDIDO -->
 
     <dialog
         class="modal"
@@ -1267,7 +1328,7 @@
             <div class="modal-cabecalho">
 
                 <h2>
-                    Pedido
+                    Registrar pedido
                 </h2>
 
                 <button
@@ -1311,6 +1372,7 @@
 
                     <textarea
                         name="itens"
+                        rows="3"
                         required
                     ></textarea>
 
@@ -1385,9 +1447,8 @@
 
     </dialog>
 
-    <!-- =========================
-         MODAL CUSTO
-    ========================== -->
+
+    <!-- MODAL CUSTO -->
 
     <dialog
         class="modal"
@@ -1433,6 +1494,7 @@
                     <input
                         type="text"
                         name="categoria"
+                        placeholder="Energia, embalagem..."
                         required
                     >
 
@@ -1458,7 +1520,7 @@
 
                 <label class="campo">
 
-                    Valor
+                    Valor (R$)
 
                     <input
                         type="number"
@@ -1518,9 +1580,8 @@
 
     </dialog>
 
-    <!-- =========================
-         MODAL FILAMENTO
-    ========================== -->
+
+    <!-- MODAL FILAMENTO -->
 
     <dialog
         class="modal"
@@ -1545,6 +1606,7 @@
 
             </div>
 
+
             <div class="campos">
 
                 <label class="campo">
@@ -1566,7 +1628,7 @@
                     <input
                         type="text"
                         name="material"
-                        placeholder="PLA, PETG..."
+                        placeholder="PLA, PETG, PETG CF..."
                         required
                     >
 
@@ -1626,7 +1688,7 @@
 
                 <label class="campo">
 
-                    Valor pago
+                    Valor pago (R$)
 
                     <input
                         type="number"
@@ -1640,7 +1702,7 @@
 
                 <label class="campo">
 
-                    Estoque baixo abaixo de (g)
+                    Avisar abaixo de (g)
 
                     <input
                         type="number"
@@ -1664,6 +1726,7 @@
 
             </div>
 
+
             <div class="modal-acoes">
 
                 <button
@@ -1686,6 +1749,7 @@
         </form>
 
     </dialog>
+
 
     <div
         class="notificacao"
