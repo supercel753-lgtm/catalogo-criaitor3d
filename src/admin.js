@@ -1,50 +1,7 @@
-/*
-========================================================
-CRIAITOR 3D
-PAINEL ADMINISTRATIVO
-========================================================
-
-VERSÃO 4.0
-
-MÓDULOS:
-
-- Login administrativo
-- Produtos
-- Estoque
-- Pedidos
-- Custos
-- Simulador de custo de impressão
-- Filamentos
-- Controle de peso dos filamentos
-- Custo por grama
-- Exportação CSV
-- Backup
-- Supabase
-- Compatibilidade com fotos-empresa.js
-- Compatibilidade com sync-empresa.js
-
-IMPORTANTE:
-
-PRODUTOS:
-Supabase
-
-FOTOS:
-Supabase Storage
-bucket: projetos
-pasta: catalogo
-
-CUSTOS:
-LocalStorage
-
-FILAMENTOS:
-LocalStorage
-
-========================================================
-*/
-
 (function () {
 
 "use strict";
+
 
 /* =====================================================
    CONFIGURAÇÃO
@@ -56,34 +13,12 @@ const CONFIG = {
 
     registro: 1,
 
-    tituloEmpresa: "CriAItor 3D"
+    titulo: "CriAItor 3D"
 
 };
 
-const supabase = window.sb;
 
-const UID_ADMIN =
-
-    typeof ADMIN_UID !== "undefined"
-
-        ? ADMIN_UID
-
-        : window.ADMIN_UID || "";
-
-
-/* =====================================================
-   ATALHOS
-===================================================== */
-
-const $ = seletor =>
-
-    document.querySelector(seletor);
-
-const $$ = seletor =>
-
-    Array.from(
-        document.querySelectorAll(seletor)
-    );
+const sb = window.sb;
 
 
 /* =====================================================
@@ -91,8 +26,6 @@ const $$ = seletor =>
 ===================================================== */
 
 const estado = {
-
-    usuario: null,
 
     produtos: [],
 
@@ -104,6 +37,8 @@ const estado = {
 
     versao: 0,
 
+    pagina: "dashboard",
+
     produtoEditando: null,
 
     pedidoEditando: null,
@@ -112,30 +47,37 @@ const estado = {
 
     filamentoEditando: null,
 
-    salvando: false,
-
-    paginaAtual: "dashboard"
+    salvandoCatalogo: false
 
 };
+
+
+/* =====================================================
+   ATALHOS
+===================================================== */
+
+const $ = seletor =>
+    document.querySelector(seletor);
+
+
+const $$ = seletor =>
+    Array.from(
+        document.querySelectorAll(seletor)
+    );
 
 
 /* =====================================================
    UTILITÁRIOS
 ===================================================== */
 
-function escaparHTML(valor) {
+function numero(valor) {
 
-    return String(valor ?? "")
+    const resultado =
+        Number(valor);
 
-        .replaceAll("&", "&amp;")
-
-        .replaceAll("<", "&lt;")
-
-        .replaceAll(">", "&gt;")
-
-        .replaceAll('"', "&quot;")
-
-        .replaceAll("'", "&#39;");
+    return Number.isFinite(resultado)
+        ? resultado
+        : 0;
 
 }
 
@@ -156,39 +98,51 @@ function dinheiro(valor) {
 
     ).format(
 
-        Number(valor) || 0
+        numero(valor)
 
     );
 
 }
 
 
-function numero(valor) {
+function escaparHTML(valor) {
 
-    const convertido = Number(valor);
+    return String(valor ?? "")
 
-    return Number.isFinite(convertido)
+        .replaceAll("&", "&amp;")
 
-        ? convertido
+        .replaceAll("<", "&lt;")
 
-        : 0;
+        .replaceAll(">", "&gt;")
+
+        .replaceAll('"', "&quot;")
+
+        .replaceAll("'", "&#39;");
 
 }
 
 
 function criarID() {
 
-    if (crypto.randomUUID) {
+    if (
+
+        window.crypto &&
+        crypto.randomUUID
+
+    ) {
 
         return crypto.randomUUID();
 
     }
 
+
     return (
 
         Date.now().toString(36) +
 
-        Math.random().toString(36).slice(2)
+        Math.random()
+            .toString(36)
+            .slice(2)
 
     );
 
@@ -197,7 +151,8 @@ function criarID() {
 
 function agoraISO() {
 
-    return new Date().toISOString();
+    return new Date()
+        .toISOString();
 
 }
 
@@ -221,13 +176,20 @@ function formatarData(valor) {
 
     }
 
+
     let data;
 
-    if (String(valor).length === 10) {
+
+    if (
+
+        String(valor).length === 10
+
+    ) {
 
         data = new Date(
 
-            valor + "T12:00:00"
+            valor +
+            "T12:00:00"
 
         );
 
@@ -236,6 +198,7 @@ function formatarData(valor) {
         data = new Date(valor);
 
     }
+
 
     if (
 
@@ -249,38 +212,10 @@ function formatarData(valor) {
 
     }
 
+
     return data.toLocaleDateString(
         "pt-BR"
     );
-
-}
-
-
-function imagemSegura(valor) {
-
-    const endereco = String(
-
-        valor || ""
-
-    ).trim();
-
-    if (
-
-        endereco.startsWith("https://") ||
-
-        endereco.startsWith("http://localhost") ||
-
-        endereco.startsWith("assets/") ||
-
-        endereco.startsWith("./assets/")
-
-    ) {
-
-        return endereco;
-
-    }
-
-    return "";
 
 }
 
@@ -289,7 +224,7 @@ function imagemSegura(valor) {
    NOTIFICAÇÕES
 ===================================================== */
 
-let temporizadorNotificacao;
+let timerAviso;
 
 
 function avisar(
@@ -300,29 +235,24 @@ function avisar(
 
 ) {
 
-    const notificacao =
-
+    const elemento =
         $("#notificacao");
 
-    if (!notificacao) {
 
-        console[
+    if (!elemento) {
 
-            erro
-                ? "error"
-                : "log"
-
-        ](mensagem);
+        console.log(mensagem);
 
         return;
 
     }
 
-    notificacao.textContent =
 
+    elemento.textContent =
         mensagem;
 
-    notificacao.classList.toggle(
+
+    elemento.classList.toggle(
 
         "erro",
 
@@ -330,25 +260,25 @@ function avisar(
 
     );
 
-    notificacao.classList.add(
+
+    elemento.classList.add(
 
         "visivel"
 
     );
 
+
     clearTimeout(
-
-        temporizadorNotificacao
-
+        timerAviso
     );
 
-    temporizadorNotificacao =
 
+    timerAviso =
         setTimeout(
 
             () => {
 
-                notificacao.classList.remove(
+                elemento.classList.remove(
 
                     "visivel"
 
@@ -356,7 +286,7 @@ function avisar(
 
             },
 
-            4200
+            3500
 
         );
 
@@ -364,28 +294,18 @@ function avisar(
 
 
 /* =====================================================
-   VALIDAR CONFIGURAÇÃO
+   SUPABASE
 ===================================================== */
 
-function verificarConfiguracao() {
+function verificarSupabase() {
 
-    if (!supabase) {
+    if (!sb) {
 
         throw new Error(
 
             "Supabase não inicializado. " +
 
-            "Verifique supabase-config.js."
-
-        );
-
-    }
-
-    if (!UID_ADMIN) {
-
-        throw new Error(
-
-            "ADMIN_UID não foi configurada."
+            "Confira src/supabase-config.js."
 
         );
 
@@ -393,1873 +313,6 @@ function verificarConfiguracao() {
 
 }
 
-
-/* =====================================================
-   LOGIN
-===================================================== */
-
-function criarTelaLogin() {
-
-    if ($("#tela-login")) {
-
-        return;
-
-    }
-
-    const tela = document.createElement(
-
-        "section"
-
-    );
-
-    tela.id = "tela-login";
-
-    tela.className = "tela-login";
-
-    tela.innerHTML = `
-
-        <form
-            id="form-login"
-            class="form-login"
-        >
-
-            <div class="login-marca">
-
-                <img
-                    src="assets/logo-criaitor3d.jpg"
-                    alt="CriAItor 3D"
-                    class="logo-empresa"
-                    draggable="false"
-                >
-
-            </div>
-
-            <h2>
-                Painel administrativo
-            </h2>
-
-            <p>
-
-                Entre com sua conta administrativa
-                para gerenciar a CriAItor 3D.
-
-            </p>
-
-            <label for="email-login">
-
-                E-mail
-
-            </label>
-
-            <input
-                type="email"
-                id="email-login"
-                autocomplete="username"
-                required
-            >
-
-            <label for="senha-login">
-
-                Senha
-
-            </label>
-
-            <input
-                type="password"
-                id="senha-login"
-                autocomplete="current-password"
-                required
-            >
-
-            <button
-                type="submit"
-                id="botao-login"
-            >
-
-                Entrar no painel
-
-            </button>
-
-            <p
-                id="mensagem-login"
-                role="status"
-                aria-live="polite"
-            ></p>
-
-        </form>
-
-    `;
-
-    document.body.prepend(
-
-        tela
-
-    );
-
-}
-
-
-/* =====================================================
-   ESTILOS EXTRAS
-   CUSTOS + FILAMENTOS
-===================================================== */
-
-function injetarEstilosExtras() {
-
-    if (
-
-        $("#criaitor-estilos-gestao")
-
-    ) {
-
-        return;
-
-    }
-
-    const style = document.createElement(
-
-        "style"
-
-    );
-
-    style.id =
-
-        "criaitor-estilos-gestao";
-
-    style.textContent = `
-
-        .gestao-resumos {
-
-            display: grid;
-
-            grid-template-columns:
-                repeat(4, minmax(0, 1fr));
-
-            gap: 15px;
-
-            margin-bottom: 22px;
-
-        }
-
-
-        .gestao-card {
-
-            padding: 20px;
-
-            background: var(--painel, #211829);
-
-            border:
-                1px solid
-                var(--borda, #493550);
-
-            border-radius: 15px;
-
-        }
-
-
-        .gestao-card span {
-
-            display: block;
-
-            color:
-                var(--cinza, #b8a8c3);
-
-            font-size: 10px;
-
-            font-weight: 900;
-
-            letter-spacing: 1px;
-
-        }
-
-
-        .gestao-card strong {
-
-            display: block;
-
-            margin-top: 10px;
-
-            font-size: 26px;
-
-        }
-
-
-        .gestao-toolbar {
-
-            display: flex;
-
-            align-items: center;
-
-            justify-content:
-                space-between;
-
-            flex-wrap: wrap;
-
-            gap: 12px;
-
-            margin-bottom: 18px;
-
-        }
-
-
-        .gestao-toolbar input,
-        .gestao-toolbar select {
-
-            min-height: 42px;
-
-            padding: 10px 12px;
-
-            background:
-                var(--campo, #302438);
-
-            color: white;
-
-            border:
-                1px solid
-                var(--borda, #493550);
-
-            border-radius: 9px;
-
-        }
-
-
-        .simulador-grid {
-
-            display: grid;
-
-            grid-template-columns:
-                repeat(3, minmax(0, 1fr));
-
-            gap: 14px;
-
-        }
-
-
-        .simulador-grid label {
-
-            display: flex;
-
-            flex-direction: column;
-
-            gap: 7px;
-
-            color: #e8d7ee;
-
-            font-size: 12px;
-
-            font-weight: 800;
-
-        }
-
-
-        .simulador-grid input,
-        .simulador-grid select {
-
-            width: 100%;
-
-            min-height: 43px;
-
-            padding: 11px;
-
-            background:
-                var(--campo, #302438);
-
-            color: white;
-
-            border:
-                1px solid #6c5177;
-
-            border-radius: 9px;
-
-        }
-
-
-        .resultado-custo {
-
-            display: grid;
-
-            grid-template-columns:
-                repeat(4, minmax(0, 1fr));
-
-            gap: 12px;
-
-            margin-top: 18px;
-
-        }
-
-
-        .resultado-custo div {
-
-            padding: 14px;
-
-            background: #191221;
-
-            border:
-                1px solid
-                var(--borda, #493550);
-
-            border-radius: 10px;
-
-        }
-
-
-        .resultado-custo span {
-
-            display: block;
-
-            color:
-                var(--cinza, #b8a8c3);
-
-            font-size: 10px;
-
-            font-weight: 800;
-
-        }
-
-
-        .resultado-custo strong {
-
-            display: block;
-
-            margin-top: 6px;
-
-            color:
-                var(--laranja, #ff8927);
-
-            font-size: 18px;
-
-        }
-
-
-        .barra-estoque {
-
-            width: 100%;
-
-            height: 8px;
-
-            margin-top: 7px;
-
-            overflow: hidden;
-
-            background: #34283c;
-
-            border-radius: 999px;
-
-        }
-
-
-        .barra-estoque > span {
-
-            display: block;
-
-            height: 100%;
-
-            background:
-                var(--roxo, #b12bff);
-
-            border-radius: 999px;
-
-        }
-
-
-        .estoque-baixo {
-
-            color: #ffb0b0;
-
-            font-weight: 800;
-
-        }
-
-
-        .estoque-ok {
-
-            color: #91e4b1;
-
-            font-weight: 800;
-
-        }
-
-
-        @media
-        (max-width: 900px) {
-
-            .gestao-resumos,
-            .resultado-custo {
-
-                grid-template-columns:
-                    repeat(
-                        2,
-                        minmax(0, 1fr)
-                    );
-
-            }
-
-            .simulador-grid {
-
-                grid-template-columns:
-                    1fr 1fr;
-
-            }
-
-        }
-
-
-        @media
-        (max-width: 600px) {
-
-            .gestao-resumos,
-            .resultado-custo,
-            .simulador-grid {
-
-                grid-template-columns:
-                    1fr;
-
-            }
-
-        }
-
-    `;
-
-    document.head.appendChild(
-
-        style
-
-    );
-
-}
-
-
-/* =====================================================
-   CRIAR ABAS
-===================================================== */
-
-function criarAreasExtras() {
-
-    const menu = $(".menu");
-
-    const main = $("main");
-
-    if (
-
-        !menu ||
-
-        !main
-
-    ) {
-
-        return;
-
-    }
-
-
-    /* =================================================
-       BOTÕES DO MENU
-    ================================================= */
-
-    if (
-
-        !menu.querySelector(
-            '[data-pagina="custos"]'
-        )
-
-    ) {
-
-        menu.insertAdjacentHTML(
-
-            "beforeend",
-
-            `
-
-            <button
-                type="button"
-                class="menu-item"
-                data-pagina="custos"
-            >
-
-                ◫ Custos
-
-            </button>
-
-
-            <button
-                type="button"
-                class="menu-item"
-                data-pagina="filamentos"
-            >
-
-                ◉ Filamentos
-
-            </button>
-
-            `
-
-        );
-
-    }
-
-
-    /* =================================================
-       PÁGINA CUSTOS
-    ================================================= */
-
-    if (!$("#custos")) {
-
-        main.insertAdjacentHTML(
-
-            "beforeend",
-
-            `
-
-            <section
-                class="pagina"
-                id="custos"
-                hidden
-            >
-
-                <div class="cabecalho-pagina">
-
-                    <div>
-
-                        <span class="subtitulo">
-
-                            GESTÃO FINANCEIRA
-
-                        </span>
-
-                        <h1>
-
-                            Controle de
-
-                            <em>custos.</em>
-
-                        </h1>
-
-                        <p>
-
-                            Registre despesas e
-                            estime o custo de produção
-                            das suas impressões.
-
-                        </p>
-
-                    </div>
-
-
-                    <div class="grupo-botoes">
-
-                        <button
-                            type="button"
-                            class="botao botao-secundario"
-                            id="exportar-custos"
-                        >
-
-                            Exportar CSV
-
-                        </button>
-
-
-                        <button
-                            type="button"
-                            class="botao botao-laranja"
-                            id="novo-custo"
-                        >
-
-                            + Adicionar custo
-
-                        </button>
-
-                    </div>
-
-                </div>
-
-
-                <!-- RESUMOS -->
-
-                <div class="gestao-resumos">
-
-                    <div class="gestao-card">
-
-                        <span>
-                            CUSTOS NO MÊS
-                        </span>
-
-                        <strong id="custos-mes">
-
-                            R$ 0,00
-
-                        </strong>
-
-                    </div>
-
-
-                    <div class="gestao-card">
-
-                        <span>
-                            CUSTOS FIXOS
-                        </span>
-
-                        <strong id="custos-fixos">
-
-                            R$ 0,00
-
-                        </strong>
-
-                    </div>
-
-
-                    <div class="gestao-card">
-
-                        <span>
-                            CUSTOS VARIÁVEIS
-                        </span>
-
-                        <strong id="custos-variaveis">
-
-                            R$ 0,00
-
-                        </strong>
-
-                    </div>
-
-
-                    <div class="gestao-card">
-
-                        <span>
-                            LANÇAMENTOS
-                        </span>
-
-                        <strong id="total-custos">
-
-                            0
-
-                        </strong>
-
-                    </div>
-
-                </div>
-
-
-                <!-- SIMULADOR -->
-
-                <div class="painel">
-
-                    <h2>
-
-                        Simulador de custo
-                        de impressão
-
-                    </h2>
-
-                    <p>
-
-                        Selecione um filamento
-                        cadastrado e informe o
-                        consumo da impressão.
-
-                    </p>
-
-
-                    <div class="simulador-grid">
-
-                        <label>
-
-                            Filamento
-
-                            <select
-                                id="sim-filamento"
-                            ></select>
-
-                        </label>
-
-
-                        <label>
-
-                            Material usado (g)
-
-                            <input
-                                type="number"
-                                id="sim-gramas"
-                                min="0"
-                                step="0.01"
-                                value="0"
-                            >
-
-                        </label>
-
-
-                        <label>
-
-                            Tempo de impressão (h)
-
-                            <input
-                                type="number"
-                                id="sim-horas"
-                                min="0"
-                                step="0.01"
-                                value="0"
-                            >
-
-                        </label>
-
-
-                        <label>
-
-                            Potência média (W)
-
-                            <input
-                                type="number"
-                                id="sim-potencia"
-                                min="0"
-                                step="1"
-                                value="100"
-                            >
-
-                        </label>
-
-
-                        <label>
-
-                            Energia (R$/kWh)
-
-                            <input
-                                type="number"
-                                id="sim-energia"
-                                min="0"
-                                step="0.01"
-                                value="1"
-                            >
-
-                        </label>
-
-
-                        <label>
-
-                            Acréscimo (%)
-
-                            <input
-                                type="number"
-                                id="sim-margem"
-                                min="0"
-                                step="1"
-                                value="0"
-                            >
-
-                        </label>
-
-                    </div>
-
-
-                    <div class="resultado-custo">
-
-                        <div>
-
-                            <span>
-                                MATERIAL
-                            </span>
-
-                            <strong
-                                id="sim-custo-material"
-                            >
-
-                                R$ 0,00
-
-                            </strong>
-
-                        </div>
-
-
-                        <div>
-
-                            <span>
-                                ENERGIA
-                            </span>
-
-                            <strong
-                                id="sim-custo-energia"
-                            >
-
-                                R$ 0,00
-
-                            </strong>
-
-                        </div>
-
-
-                        <div>
-
-                            <span>
-                                CUSTO DIRETO
-                            </span>
-
-                            <strong
-                                id="sim-custo-direto"
-                            >
-
-                                R$ 0,00
-
-                            </strong>
-
-                        </div>
-
-
-                        <div>
-
-                            <span>
-
-                                VALOR COM
-                                ACRÉSCIMO
-
-                            </span>
-
-                            <strong
-                                id="sim-preco-sugerido"
-                            >
-
-                                R$ 0,00
-
-                            </strong>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-
-                <!-- TABELA -->
-
-                <div class="painel">
-
-                    <div class="gestao-toolbar">
-
-                        <input
-                            type="search"
-                            id="buscar-custo"
-                            placeholder="Buscar custo..."
-                        >
-
-
-                        <select id="filtro-custo">
-
-                            <option value="Todos">
-
-                                Todos os tipos
-
-                            </option>
-
-                            <option value="Fixo">
-
-                                Fixo
-
-                            </option>
-
-                            <option value="Variável">
-
-                                Variável
-
-                            </option>
-
-                        </select>
-
-                    </div>
-
-
-                    <div class="tabela-container">
-
-                        <table>
-
-                            <thead>
-
-                                <tr>
-
-                                    <th>
-                                        DESCRIÇÃO
-                                    </th>
-
-                                    <th>
-                                        CATEGORIA
-                                    </th>
-
-                                    <th>
-                                        TIPO
-                                    </th>
-
-                                    <th>
-                                        VALOR
-                                    </th>
-
-                                    <th>
-                                        DATA
-                                    </th>
-
-                                    <th>
-                                        AÇÕES
-                                    </th>
-
-                                </tr>
-
-                            </thead>
-
-                            <tbody
-                                id="tabela-custos"
-                            ></tbody>
-
-                        </table>
-
-                    </div>
-
-                </div>
-
-            </section>
-
-            `
-
-        );
-
-    }
-
-
-    /* =================================================
-       FILAMENTOS
-    ================================================= */
-
-    if (!$("#filamentos")) {
-
-        main.insertAdjacentHTML(
-
-            "beforeend",
-
-            `
-
-            <section
-                class="pagina"
-                id="filamentos"
-                hidden
-            >
-
-                <div class="cabecalho-pagina">
-
-                    <div>
-
-                        <span class="subtitulo">
-
-                            ESTOQUE DE
-                            MATÉRIA-PRIMA
-
-                        </span>
-
-                        <h1>
-
-                            Controle de
-
-                            <em>filamentos.</em>
-
-                        </h1>
-
-                        <p>
-
-                            Acompanhe material,
-                            cor, custo por grama
-                            e quantidade disponível.
-
-                        </p>
-
-                    </div>
-
-
-                    <div class="grupo-botoes">
-
-                        <button
-                            type="button"
-                            class="botao botao-secundario"
-                            id="exportar-filamentos"
-                        >
-
-                            Exportar CSV
-
-                        </button>
-
-
-                        <button
-                            type="button"
-                            class="botao botao-laranja"
-                            id="novo-filamento"
-                        >
-
-                            + Adicionar filamento
-
-                        </button>
-
-                    </div>
-
-                </div>
-
-
-                <div class="gestao-resumos">
-
-                    <div class="gestao-card">
-
-                        <span>
-                            ROLOS CADASTRADOS
-                        </span>
-
-                        <strong
-                            id="total-filamentos"
-                        >
-
-                            0
-
-                        </strong>
-
-                    </div>
-
-
-                    <div class="gestao-card">
-
-                        <span>
-                            PESO DISPONÍVEL
-                        </span>
-
-                        <strong
-                            id="peso-filamentos"
-                        >
-
-                            0 kg
-
-                        </strong>
-
-                    </div>
-
-
-                    <div class="gestao-card">
-
-                        <span>
-                            VALOR DO ESTOQUE
-                        </span>
-
-                        <strong
-                            id="valor-filamentos"
-                        >
-
-                            R$ 0,00
-
-                        </strong>
-
-                    </div>
-
-
-                    <div class="gestao-card">
-
-                        <span>
-                            ESTOQUE BAIXO
-                        </span>
-
-                        <strong
-                            id="filamentos-baixos"
-                        >
-
-                            0
-
-                        </strong>
-
-                    </div>
-
-                </div>
-
-
-                <div class="painel">
-
-                    <div class="gestao-toolbar">
-
-                        <input
-                            type="search"
-                            id="buscar-filamento"
-                            placeholder="Buscar marca, material ou cor..."
-                        >
-
-
-                        <select
-                            id="filtro-material"
-                        >
-
-                            <option value="Todos">
-
-                                Todos os materiais
-
-                            </option>
-
-                        </select>
-
-                    </div>
-
-
-                    <div class="tabela-container">
-
-                        <table>
-
-                            <thead>
-
-                                <tr>
-
-                                    <th>
-                                        FILAMENTO
-                                    </th>
-
-                                    <th>
-                                        MATERIAL
-                                    </th>
-
-                                    <th>
-                                        COR
-                                    </th>
-
-                                    <th>
-                                        RESTANTE
-                                    </th>
-
-                                    <th>
-                                        CUSTO/GRAMA
-                                    </th>
-
-                                    <th>
-                                        STATUS
-                                    </th>
-
-                                    <th>
-                                        AÇÕES
-                                    </th>
-
-                                </tr>
-
-                            </thead>
-
-                            <tbody
-                                id="tabela-filamentos"
-                            ></tbody>
-
-                        </table>
-
-                    </div>
-
-                </div>
-
-            </section>
-
-            `
-
-        );
-
-    }
-
-}
-
-
-/* =====================================================
-   MODAL CUSTOS + FILAMENTOS
-===================================================== */
-
-function criarModaisExtras() {
-
-    if (!$("#modal-custo")) {
-
-        document.body.insertAdjacentHTML(
-
-            "beforeend",
-
-            `
-
-            <dialog
-                class="modal"
-                id="modal-custo"
-            >
-
-                <form id="form-custo">
-
-                    <div class="modal-cabecalho">
-
-                        <h2 id="titulo-modal-custo">
-
-                            Novo custo
-
-                        </h2>
-
-                        <button
-                            type="button"
-                            class="fechar-modal"
-                            data-fechar="modal-custo"
-                        >
-                            ×
-                        </button>
-
-                    </div>
-
-
-                    <div class="campos">
-
-                        <label class="campo campo-inteiro">
-
-                            Descrição
-
-                            <input
-                                type="text"
-                                name="descricao"
-                                maxlength="120"
-                                required
-                            >
-
-                        </label>
-
-
-                        <label class="campo">
-
-                            Categoria
-
-                            <input
-                                type="text"
-                                name="categoria"
-                                maxlength="60"
-                                placeholder="Energia, embalagem..."
-                                required
-                            >
-
-                        </label>
-
-
-                        <label class="campo">
-
-                            Tipo
-
-                            <select
-                                name="tipo"
-                                required
-                            >
-
-                                <option
-                                    value="Variável"
-                                >
-
-                                    Variável
-
-                                </option>
-
-                                <option
-                                    value="Fixo"
-                                >
-
-                                    Fixo
-
-                                </option>
-
-                            </select>
-
-                        </label>
-
-
-                        <label class="campo">
-
-                            Valor (R$)
-
-                            <input
-                                type="number"
-                                name="valor"
-                                min="0"
-                                step="0.01"
-                                required
-                            >
-
-                        </label>
-
-
-                        <label class="campo">
-
-                            Data
-
-                            <input
-                                type="date"
-                                name="data"
-                                required
-                            >
-
-                        </label>
-
-
-                        <label class="campo campo-inteiro">
-
-                            Observações
-
-                            <textarea
-                                name="observacoes"
-                                rows="3"
-                                maxlength="400"
-                            ></textarea>
-
-                        </label>
-
-                    </div>
-
-
-                    <div class="modal-acoes">
-
-                        <button
-                            type="button"
-                            class="botao botao-secundario"
-                            data-fechar="modal-custo"
-                        >
-
-                            Cancelar
-
-                        </button>
-
-                        <button
-                            type="submit"
-                            class="botao botao-laranja"
-                        >
-
-                            Salvar custo
-
-                        </button>
-
-                    </div>
-
-                </form>
-
-            </dialog>
-
-            `
-
-        );
-
-    }
-
-
-    if (!$("#modal-filamento")) {
-
-        document.body.insertAdjacentHTML(
-
-            "beforeend",
-
-            `
-
-            <dialog
-                class="modal"
-                id="modal-filamento"
-            >
-
-                <form id="form-filamento">
-
-                    <div class="modal-cabecalho">
-
-                        <h2
-                            id="titulo-modal-filamento"
-                        >
-
-                            Novo filamento
-
-                        </h2>
-
-                        <button
-                            type="button"
-                            class="fechar-modal"
-                            data-fechar="modal-filamento"
-                        >
-
-                            ×
-
-                        </button>
-
-                    </div>
-
-
-                    <div class="campos">
-
-                        <label class="campo">
-
-                            Marca
-
-                            <input
-                                type="text"
-                                name="marca"
-                                maxlength="80"
-                                required
-                            >
-
-                        </label>
-
-
-                        <label class="campo">
-
-                            Material
-
-                            <input
-                                type="text"
-                                name="material"
-                                placeholder="PLA, PETG..."
-                                required
-                            >
-
-                        </label>
-
-
-                        <label class="campo">
-
-                            Cor
-
-                            <input
-                                type="text"
-                                name="cor"
-                                required
-                            >
-
-                        </label>
-
-
-                        <label class="campo">
-
-                            Diâmetro (mm)
-
-                            <input
-                                type="number"
-                                name="diametro"
-                                min="1"
-                                max="3"
-                                step="0.01"
-                                value="1.75"
-                                required
-                            >
-
-                        </label>
-
-
-                        <label class="campo">
-
-                            Peso original (g)
-
-                            <input
-                                type="number"
-                                name="pesoOriginal"
-                                min="1"
-                                step="1"
-                                value="1000"
-                                required
-                            >
-
-                        </label>
-
-
-                        <label class="campo">
-
-                            Peso restante (g)
-
-                            <input
-                                type="number"
-                                name="pesoRestante"
-                                min="0"
-                                step="1"
-                                value="1000"
-                                required
-                            >
-
-                        </label>
-
-
-                        <label class="campo">
-
-                            Valor pago (R$)
-
-                            <input
-                                type="number"
-                                name="valorPago"
-                                min="0"
-                                step="0.01"
-                                required
-                            >
-
-                        </label>
-
-
-                        <label class="campo">
-
-                            Avisar abaixo de (g)
-
-                            <input
-                                type="number"
-                                name="limiteBaixo"
-                                min="0"
-                                step="1"
-                                value="200"
-                                required
-                            >
-
-                        </label>
-
-
-                        <label class="campo campo-inteiro">
-
-                            Observações
-
-                            <textarea
-                                name="observacoes"
-                                rows="3"
-                                maxlength="400"
-                            ></textarea>
-
-                        </label>
-
-                    </div>
-
-
-                    <div class="modal-acoes">
-
-                        <button
-                            type="button"
-                            class="botao botao-secundario"
-                            data-fechar="modal-filamento"
-                        >
-
-                            Cancelar
-
-                        </button>
-
-                        <button
-                            type="submit"
-                            class="botao botao-laranja"
-                        >
-
-                            Salvar filamento
-
-                        </button>
-
-                    </div>
-
-                </form>
-
-            </dialog>
-
-            `
-
-        );
-
-    }
-
-}
-
-
-/* =====================================================
-   LOGIN
-===================================================== */
-
-async function realizarLogin(evento) {
-
-    evento.preventDefault();
-
-    const email =
-
-        $("#email-login")
-            .value
-            .trim();
-
-    const senha =
-
-        $("#senha-login")
-            .value;
-
-    const botao =
-
-        $("#botao-login");
-
-    const mensagem =
-
-        $("#mensagem-login");
-
-
-    botao.disabled = true;
-
-    mensagem.textContent =
-
-        "Verificando acesso...";
-
-
-    try {
-
-        verificarConfiguracao();
-
-
-        const {
-
-            data,
-
-            error
-
-        } = await supabase.auth
-            .signInWithPassword({
-
-                email,
-
-                password: senha
-
-            });
-
-
-        if (error) {
-
-            throw error;
-
-        }
-
-
-        if (
-
-            !data.user ||
-
-            data.user.id !== UID_ADMIN
-
-        ) {
-
-            await supabase.auth.signOut();
-
-            throw new Error(
-
-                "Esta conta não possui " +
-                "acesso administrativo."
-
-            );
-
-        }
-
-
-        estado.usuario = data.user;
-
-        $("#senha-login").value = "";
-
-        await entrarPainel();
-
-
-    } catch (erro) {
-
-        console.error(
-
-            "Erro no login:",
-
-            erro
-
-        );
-
-        mensagem.textContent =
-
-            erro.message;
-
-    } finally {
-
-        botao.disabled = false;
-
-    }
-
-}
-
-
-/* =====================================================
-   SESSÃO
-===================================================== */
-
-async function verificarSessao() {
-
-    verificarConfiguracao();
-
-
-    const {
-
-        data,
-
-        error
-
-    } = await supabase.auth
-        .getUser();
-
-
-    if (
-
-        error ||
-
-        !data.user
-
-    ) {
-
-        return null;
-
-    }
-
-
-    if (
-
-        data.user.id !== UID_ADMIN
-
-    ) {
-
-        await supabase.auth.signOut();
-
-        return null;
-
-    }
-
-
-    return data.user;
-
-}
-
-
-/* =====================================================
-   LOGIN / LOGOUT
-===================================================== */
-
-function mostrarLogin() {
-
-    estado.usuario = null;
-
-    estado.produtos = [];
-
-    estado.pedidos = [];
-
-    estado.custos = [];
-
-    estado.filamentos = [];
-
-
-    const app = $(".app");
-
-    const tela = $("#tela-login");
-
-
-    if (app) {
-
-        app.hidden = true;
-
-    }
-
-
-    if (tela) {
-
-        tela.hidden = false;
-
-    }
-
-}
-
-
-async function entrarPainel() {
-
-    const usuario =
-
-        await verificarSessao();
-
-
-    if (!usuario) {
-
-        mostrarLogin();
-
-        return;
-
-    }
-
-
-    estado.usuario = usuario;
-
-
-    await carregarCatalogo();
-
-
-    carregarDadosLocais();
-
-
-    $("#tela-login").hidden = true;
-
-    $(".app").hidden = false;
-
-
-    abrirPagina("dashboard");
-
-    atualizarPainel();
-
-}
-
-
-async function sairPainel() {
-
-    try {
-
-        await supabase.auth
-            .signOut();
-
-    } finally {
-
-        mostrarLogin();
-
-    }
-
-}
-
-
-/* =====================================================
-   BOTÃO SAIR
-===================================================== */
-
-function criarBotaoSair() {
-
-    if ($("#botao-sair")) {
-
-        return;
-
-    }
-
-
-    const topbar = $(".topbar");
-
-
-    if (!topbar) {
-
-        return;
-
-    }
-
-
-    const botao =
-
-        document.createElement(
-            "button"
-        );
-
-
-    botao.id = "botao-sair";
-
-    botao.type = "button";
-
-    botao.className =
-
-        "botao botao-secundario";
-
-    botao.textContent = "Sair";
-
-
-    botao.addEventListener(
-
-        "click",
-
-        sairPainel
-
-    );
-
-
-    topbar.appendChild(
-
-        botao
-
-    );
-
-}
-
-
-/* =====================================================
-   SUPABASE - CATÁLOGO
-===================================================== */
 
 async function carregarCatalogo() {
 
@@ -2269,12 +322,12 @@ async function carregarCatalogo() {
 
         error
 
-    } = await supabase
+    } = await sb
 
         .from(CONFIG.tabela)
 
         .select(
-            "id, produtos, versao"
+            "produtos, versao"
         )
 
         .eq(
@@ -2298,33 +351,22 @@ async function carregarCatalogo() {
     }
 
 
-    if (
+    estado.produtos =
 
-        !Array.isArray(
+        Array.isArray(
             data.produtos
         )
 
-    ) {
+            ? data.produtos
 
-        throw new Error(
-
-            "A coluna produtos precisa " +
-
-            "conter uma lista JSON."
-
-        );
-
-    }
-
-
-    estado.produtos =
-
-        data.produtos;
+            : [];
 
 
     estado.versao =
 
-        Number(data.versao) || 0;
+        numero(
+            data.versao
+        );
 
 
     atualizarPainel();
@@ -2333,20 +375,22 @@ async function carregarCatalogo() {
 
 
 /* =====================================================
-   SALVAR CATÁLOGO
+   SALVAR PRODUTOS
 ===================================================== */
 
 async function salvarCatalogo(
-
-    novosProdutos
-
+    produtos
 ) {
 
-    if (estado.salvando) {
+    if (
+
+        estado.salvandoCatalogo
+
+    ) {
 
         throw new Error(
 
-            "Já existe uma alteração " +
+            "Já existe uma atualização " +
 
             "em andamento."
 
@@ -2355,25 +399,8 @@ async function salvarCatalogo(
     }
 
 
-    const usuario =
-
-        await verificarSessao();
-
-
-    if (!usuario) {
-
-        throw new Error(
-
-            "Sua sessão expirou. " +
-
-            "Faça login novamente."
-
-        );
-
-    }
-
-
-    estado.salvando = true;
+    estado.salvandoCatalogo =
+        true;
 
 
     try {
@@ -2389,15 +416,16 @@ async function salvarCatalogo(
 
             error
 
-        } = await supabase
+        } = await sb
 
             .from(CONFIG.tabela)
 
             .update({
 
-                produtos: novosProdutos,
+                produtos,
 
-                versao: novaVersao
+                versao:
+                    novaVersao
 
             })
 
@@ -2426,18 +454,15 @@ async function salvarCatalogo(
         if (
 
             !data ||
-
-            data.length === 0
+            !data.length
 
         ) {
 
             throw new Error(
 
-                "O catálogo foi alterado " +
+                "Não foi possível atualizar " +
 
-                "em outra sessão. " +
-
-                "Recarregue antes de salvar."
+                "o catálogo. Recarregue a página."
 
             );
 
@@ -2451,7 +476,7 @@ async function salvarCatalogo(
 
         estado.versao =
 
-            Number(
+            numero(
                 data[0].versao
             );
 
@@ -2459,12 +484,10 @@ async function salvarCatalogo(
         atualizarPainel();
 
 
-        return data[0];
-
-
     } finally {
 
-        estado.salvando = false;
+        estado.salvandoCatalogo =
+            false;
 
     }
 
@@ -2477,21 +500,23 @@ async function salvarCatalogo(
 
 function abrirPagina(nome) {
 
-    estado.paginaAtual = nome;
+    estado.pagina =
+        nome;
 
 
     $$(".pagina")
+
         .forEach(
 
             pagina => {
 
                 const ativa =
 
-                    pagina.id === nome;
+                    pagina.id ===
+                    nome;
 
 
                 pagina.hidden =
-
                     !ativa;
 
 
@@ -2509,6 +534,7 @@ function abrirPagina(nome) {
 
 
     $$("[data-pagina]")
+
         .forEach(
 
             botao => {
@@ -2518,7 +544,7 @@ function abrirPagina(nome) {
                     "ativo",
 
                     botao.dataset.pagina ===
-                        nome
+                    nome
 
                 );
 
@@ -2527,7 +553,7 @@ function abrirPagina(nome) {
         );
 
 
-    const titulos = {
+    const nomes = {
 
         dashboard:
             "Visão geral",
@@ -2538,28 +564,25 @@ function abrirPagina(nome) {
         pedidos:
             "Pedidos",
 
-        publicar:
-            "Sincronização",
-
         custos:
             "Custos",
 
         filamentos:
-            "Filamentos"
+            "Filamentos",
+
+        publicar:
+            "Sincronização"
 
     };
 
 
-    const titulo =
+    if ($("#titulo-pagina")) {
 
-        $("#titulo-pagina");
+        $("#titulo-pagina")
+            .textContent =
 
-
-    if (titulo) {
-
-        titulo.textContent =
-
-            titulos[nome] || nome;
+            nomes[nome] ||
+            nome;
 
     }
 
@@ -2572,51 +595,43 @@ function abrirPagina(nome) {
 
 function chaveLocal(tipo) {
 
-    const uid =
-
-        estado.usuario?.id ||
-
-        "sem_usuario";
-
-
     return (
 
         "criaitor3d_" +
-
-        tipo +
-
-        "_" +
-
-        uid
+        tipo
 
     );
 
 }
 
 
-function lerListaLocal(tipo) {
+function lerLocal(tipo) {
 
     try {
 
-        const dados =
+        const valor =
 
             localStorage.getItem(
+
                 chaveLocal(tipo)
+
             );
 
 
-        const lista =
+        if (!valor) {
 
-            dados
+            return [];
 
-                ? JSON.parse(dados)
-
-                : [];
+        }
 
 
-        return Array.isArray(lista)
+        const dados =
+            JSON.parse(valor);
 
-            ? lista
+
+        return Array.isArray(dados)
+
+            ? dados
 
             : [];
 
@@ -2630,19 +645,16 @@ function lerListaLocal(tipo) {
 }
 
 
-function salvarListaLocal(
-
+function gravarLocal(
     tipo,
-
-    lista
-
+    dados
 ) {
 
     localStorage.setItem(
 
         chaveLocal(tipo),
 
-        JSON.stringify(lista)
+        JSON.stringify(dados)
 
     );
 
@@ -2652,29 +664,22 @@ function salvarListaLocal(
 function carregarDadosLocais() {
 
     estado.pedidos =
-
-        lerListaLocal("pedidos");
+        lerLocal("pedidos");
 
 
     estado.custos =
-
-        lerListaLocal("custos");
+        lerLocal("custos");
 
 
     estado.filamentos =
-
-        lerListaLocal("filamentos");
+        lerLocal("filamentos");
 
 }
 
 
-/* =====================================================
-   PERSISTÊNCIA
-===================================================== */
+function salvarPedidos() {
 
-function persistirPedidos() {
-
-    salvarListaLocal(
+    gravarLocal(
 
         "pedidos",
 
@@ -2682,14 +687,15 @@ function persistirPedidos() {
 
     );
 
+
     atualizarPainel();
 
 }
 
 
-function persistirCustos() {
+function salvarCustos() {
 
-    salvarListaLocal(
+    gravarLocal(
 
         "custos",
 
@@ -2697,20 +703,22 @@ function persistirCustos() {
 
     );
 
+
     atualizarPainel();
 
 }
 
 
-function persistirFilamentos() {
+function salvarFilamentos() {
 
-    salvarListaLocal(
+    gravarLocal(
 
         "filamentos",
 
         estado.filamentos
 
     );
+
 
     atualizarPainel();
 
@@ -2730,7 +738,7 @@ function atualizarIndicadores() {
             produto =>
 
                 produto.disponivel !==
-                    false
+                false
 
         );
 
@@ -2740,11 +748,8 @@ function atualizarIndicadores() {
         estado.produtos.reduce(
 
             (
-
                 total,
-
                 produto
-
             ) =>
 
                 total +
@@ -2777,56 +782,31 @@ function atualizarIndicadores() {
         );
 
 
-    if ($("#total-produtos")) {
-
-        $("#total-produtos")
-            .textContent =
-
-            estado.produtos.length;
-
-    }
+    $("#total-produtos")
+        .textContent =
+        estado.produtos.length;
 
 
-    if ($("#total-visiveis")) {
-
-        $("#total-visiveis")
-            .textContent =
-
-            visiveis.length;
-
-    }
+    $("#total-visiveis")
+        .textContent =
+        visiveis.length;
 
 
-    if ($("#total-estoque")) {
-
-        $("#total-estoque")
-            .textContent =
-
-            estoque;
-
-    }
+    $("#total-estoque")
+        .textContent =
+        estoque;
 
 
-    if ($("#total-pedidos")) {
-
-        $("#total-pedidos")
-            .textContent =
-
-            pedidosAbertos.length;
-
-    }
+    $("#total-pedidos")
+        .textContent =
+        pedidosAbertos.length;
 
 }
 
 
-/* =====================================================
-   PRODUTOS RECENTES
-===================================================== */
-
-function renderizarProdutosRecentes() {
+function renderizarRecentes() {
 
     const container =
-
         $("#produtos-recentes");
 
 
@@ -2837,24 +817,21 @@ function renderizarProdutosRecentes() {
     }
 
 
-    const produtos =
+    const lista =
 
         estado.produtos
 
-            .slice(-5)
+        .slice(-5)
 
-            .reverse();
+        .reverse();
 
 
-    if (!produtos.length) {
+    if (!lista.length) {
 
         container.innerHTML = `
 
             <p>
-
-                Você ainda não cadastrou
-                produtos.
-
+                Nenhum produto cadastrado.
             </p>
 
         `;
@@ -2866,80 +843,64 @@ function renderizarProdutosRecentes() {
 
     container.innerHTML =
 
-        produtos.map(
+        lista.map(
 
-            produto => {
+            produto => `
 
-                const imagem =
+                <div class="produto-recente">
 
-                    imagemSegura(
+                    ${
+
                         produto.imagem
-                    );
 
+                            ? `
 
-                return `
+                                <img
+                                    src="${escaparHTML(
+                                        produto.imagem
+                                    )}"
+                                    alt=""
+                                >
+
+                            `
+
+                            : ""
+
+                    }
 
                     <div
-                        class="produto-recente"
+                        class="produto-recente-info"
                     >
 
-                        ${
+                        <strong>
 
-                            imagem
-
-                                ? `
-
-                                    <img
-                                        src="${escaparHTML(
-                                            imagem
-                                        )}"
-                                        alt=""
-                                        loading="lazy"
-                                    >
-
-                                `
-
-                                : ""
-
-                        }
-
-
-                        <div
-                            class="produto-recente-info"
-                        >
-
-                            <strong>
-
-                                ${escaparHTML(
-                                    produto.nome
-                                )}
-
-                            </strong>
-
-                            <span>
-
-                                ${escaparHTML(
-                                    produto.categoria
-                                )}
-
-                            </span>
-
-                        </div>
-
-
-                        <b>
-
-                            ${dinheiro(
-                                produto.preco
+                            ${escaparHTML(
+                                produto.nome
                             )}
 
-                        </b>
+                        </strong>
+
+                        <span>
+
+                            ${escaparHTML(
+                                produto.categoria
+                            )}
+
+                        </span>
 
                     </div>
 
-                `;
+                    <b>
 
-            }
+                        ${dinheiro(
+                            produto.preco
+                        )}
+
+                    </b>
+
+                </div>
+
+            `
 
         ).join("");
 
@@ -2947,13 +908,12 @@ function renderizarProdutosRecentes() {
 
 
 /* =====================================================
-   TABELA PRODUTOS
+   PRODUTOS
 ===================================================== */
 
 function renderizarProdutos() {
 
     const tabela =
-
         $("#tabela-produtos");
 
 
@@ -2964,7 +924,7 @@ function renderizarProdutos() {
     }
 
 
-    const busca =
+    const pesquisa =
 
         (
             $("#buscar-produto")
@@ -2982,30 +942,15 @@ function renderizarProdutos() {
 
             produto => {
 
-                const nome =
+                const texto =
 
-                    String(
-                        produto.nome || ""
-                    )
+                    `${produto.nome || ""} ${produto.categoria || ""}`
 
                     .toLowerCase();
 
 
-                const categoria =
-
-                    String(
-                        produto.categoria || ""
-                    )
-
-                    .toLowerCase();
-
-
-                return (
-
-                    nome.includes(busca) ||
-
-                    categoria.includes(busca)
-
+                return texto.includes(
+                    pesquisa
                 );
 
             }
@@ -3013,19 +958,14 @@ function renderizarProdutos() {
         );
 
 
-    if ($("#contador-produtos")) {
+    $("#contador-produtos")
+        .textContent =
 
-        $("#contador-produtos")
-            .textContent =
+        produtos.length === 1
 
-            produtos.length === 1
+            ? "1 produto"
 
-                ? "1 produto"
-
-                : produtos.length +
-                    " produtos";
-
-    }
+            : `${produtos.length} produtos`;
 
 
     if (!produtos.length) {
@@ -3036,7 +976,7 @@ function renderizarProdutos() {
 
                 <td colspan="6">
 
-                    Nenhum produto encontrado.
+                    Nenhum produto cadastrado.
 
                 </td>
 
@@ -3053,179 +993,132 @@ function renderizarProdutos() {
 
         produtos.map(
 
-            produto => {
+            produto => `
 
-                const imagem =
+                <tr>
 
-                    imagemSegura(
-                        produto.imagem
-                    );
+                    <td>
 
-
-                return `
-
-                    <tr>
-
-                        <td>
-
-                            <div
-                                class="produto-celula"
-                            >
-
-                                ${
-
-                                    imagem
-
-                                        ? `
-
-                                            <img
-                                                src="${escaparHTML(
-                                                    imagem
-                                                )}"
-                                                alt=""
-                                            >
-
-                                        `
-
-                                        : ""
-
-                                }
-
-
-                                <div>
-
-                                    <strong>
-
-                                        ${escaparHTML(
-                                            produto.nome
-                                        )}
-
-                                    </strong>
-
-                                    <small>
-
-                                        ${escaparHTML(
-                                            produto.prazo ||
-                                            ""
-                                        )}
-
-                                    </small>
-
-                                </div>
-
-                            </div>
-
-                        </td>
-
-
-                        <td>
+                        <strong>
 
                             ${escaparHTML(
-                                produto.categoria
+                                produto.nome
                             )}
 
-                        </td>
+                        </strong>
 
+                        <small>
 
-                        <td>
-
-                            ${dinheiro(
-                                produto.preco
+                            ${escaparHTML(
+                                produto.prazo || ""
                             )}
 
-                        </td>
+                        </small>
 
+                    </td>
 
-                        <td>
+                    <td>
 
-                            ${numero(
-                                produto.estoque
-                            )}
+                        ${escaparHTML(
+                            produto.categoria
+                        )}
 
-                        </td>
+                    </td>
 
+                    <td>
 
-                        <td>
+                        ${dinheiro(
+                            produto.preco
+                        )}
 
-                            <span class="${
+                    </td>
+
+                    <td>
+
+                        ${numero(
+                            produto.estoque
+                        )}
+
+                    </td>
+
+                    <td>
+
+                        <span class="${
+                            produto.disponivel !== false
+                                ? "visivel"
+                                : "oculto"
+                        }">
+
+                            ${
                                 produto.disponivel !== false
-                                    ? "visivel"
-                                    : "oculto"
-                            }">
+                                    ? "Visível"
+                                    : "Oculto"
+                            }
 
-                                ${
-                                    produto.disponivel !== false
-                                        ? "Visível"
-                                        : "Oculto"
-                                }
+                        </span>
 
-                            </span>
+                    </td>
 
-                        </td>
+                    <td>
 
+                        <button
+                            type="button"
+                            class="botao-pequeno"
+                            data-produto-editar="${escaparHTML(
+                                produto.id
+                            )}"
+                        >
+                            Editar
+                        </button>
 
-                        <td>
+                        <button
+                            type="button"
+                            class="botao-pequeno botao-excluir"
+                            data-produto-excluir="${escaparHTML(
+                                produto.id
+                            )}"
+                        >
+                            Excluir
+                        </button>
 
-                            <button
-                                type="button"
-                                class="botao-pequeno"
-                                data-acao-produto="editar"
-                                data-id="${escaparHTML(
-                                    produto.id
-                                )}"
-                            >
+                    </td>
 
-                                Editar
+                </tr>
 
-                            </button>
-
-
-                            <button
-                                type="button"
-                                class="botao-pequeno botao-excluir"
-                                data-acao-produto="excluir"
-                                data-id="${escaparHTML(
-                                    produto.id
-                                )}"
-                            >
-
-                                Excluir
-
-                            </button>
-
-                        </td>
-
-                    </tr>
-
-                `;
-
-            }
+            `
 
         ).join("");
 
 }
 
 
-/* =====================================================
-   PRODUTOS
-===================================================== */
-
 function abrirNovoProduto() {
 
-    estado.produtoEditando = null;
+    estado.produtoEditando =
+        null;
 
 
     const form =
-
         $("#form-produto");
 
 
     form.reset();
 
 
+    form.elements.estoque.value =
+        0;
+
+
+    form.elements.prazo.value =
+        "Produção sob encomenda";
+
+
+    form.elements.disponivel.checked =
+        true;
+
+
     $("#titulo-modal-produto")
         .textContent =
-
         "Novo produto";
 
 
@@ -3251,96 +1144,76 @@ function editarProduto(id) {
 
     if (!produto) {
 
-        avisar(
-
-            "Produto não encontrado.",
-
-            true
-
-        );
-
         return;
 
     }
 
 
     estado.produtoEditando =
-
         produto.id;
 
 
     const form =
-
         $("#form-produto");
 
 
     form.reset();
 
 
-    const campos =
-
-        form.elements;
-
-
-    campos.nome.value =
-
+    form.elements.nome.value =
         produto.nome || "";
 
 
-    campos.categoria.value =
-
+    form.elements.categoria.value =
         produto.categoria || "";
 
 
-    campos.preco.value =
-
+    form.elements.preco.value =
         numero(
             produto.preco
         );
 
 
-    campos.estoque.value =
-
+    form.elements.estoque.value =
         numero(
             produto.estoque
         );
 
 
-    campos.prazo.value =
-
+    form.elements.prazo.value =
         produto.prazo || "";
 
 
-    campos.imagem.value =
-
+    form.elements.imagem.value =
         produto.imagem || "";
 
 
-    campos.descricao.value =
-
+    form.elements.descricao.value =
         produto.descricao || "";
 
 
-    campos.disponivel.checked =
+    form.elements.disponivel.checked =
 
-        produto.disponivel !== false;
-
-
-    campos.destaque.checked =
-
-        produto.destaque === true;
+        produto.disponivel !==
+        false;
 
 
-    campos.imagem.dispatchEvent(
+    form.elements.destaque.checked =
 
-        new Event("change")
+        produto.destaque ===
+        true;
 
-    );
+
+    form.elements.imagem
+        .dispatchEvent(
+
+            new Event("change")
+
+        );
 
 
     $("#titulo-modal-produto")
         .textContent =
-
         "Editar produto";
 
 
@@ -3351,227 +1224,173 @@ function editarProduto(id) {
 
 
 async function salvarProduto(
-
     evento
-
 ) {
 
     evento.preventDefault();
 
 
     const form =
-
         $("#form-produto");
 
 
-    const botao =
+    const campos =
+        form.elements;
 
-        form.querySelector(
 
-            'button[type="submit"]'
+    const nome =
+        campos.nome
+            .value
+            .trim();
+
+
+    const categoria =
+        campos.categoria
+            .value
+            .trim();
+
+
+    if (
+
+        !nome ||
+        !categoria
+
+    ) {
+
+        avisar(
+
+            "Informe nome e categoria.",
+
+            true
 
         );
-
-
-    if (estado.salvando) {
 
         return;
 
     }
 
 
-    botao.disabled = true;
+    const anterior =
+
+        estado.produtos.find(
+
+            item =>
+
+                String(item.id) ===
+
+                String(
+                    estado.produtoEditando
+                )
+
+        );
+
+
+    const produto = {
+
+        ...(anterior || {}),
+
+        id:
+
+            anterior?.id ||
+            criarID(),
+
+        nome,
+
+        categoria,
+
+        preco:
+
+            numero(
+                campos.preco.value
+            ),
+
+        estoque:
+
+            Math.max(
+
+                0,
+
+                Math.trunc(
+
+                    numero(
+                        campos.estoque.value
+                    )
+
+                )
+
+            ),
+
+        prazo:
+
+            campos.prazo
+                .value
+                .trim(),
+
+        imagem:
+
+            campos.imagem
+                .value
+                .trim(),
+
+        descricao:
+
+            campos.descricao
+                .value
+                .trim(),
+
+        disponivel:
+
+            campos.disponivel
+                .checked,
+
+        destaque:
+
+            campos.destaque
+                .checked,
+
+        atualizado_em:
+            agoraISO()
+
+    };
+
+
+    let lista;
+
+
+    if (anterior) {
+
+        lista =
+
+            estado.produtos.map(
+
+                item =>
+
+                    String(item.id) ===
+                    String(anterior.id)
+
+                        ? produto
+
+                        : item
+
+            );
+
+    } else {
+
+        lista = [
+
+            ...estado.produtos,
+
+            produto
+
+        ];
+
+    }
 
 
     try {
 
-        const campos =
-
-            form.elements;
-
-
-        const nome =
-
-            campos.nome.value.trim();
-
-
-        const categoria =
-
-            campos.categoria
-                .value
-                .trim();
-
-
-        const preco =
-
-            Number(
-                campos.preco.value
-            );
-
-
-        const estoque =
-
-            Number(
-                campos.estoque.value
-            );
-
-
-        if (
-
-            !nome ||
-
-            !categoria
-
-        ) {
-
-            throw new Error(
-
-                "Preencha nome e categoria."
-
-            );
-
-        }
-
-
-        if (
-
-            !Number.isFinite(preco) ||
-
-            preco < 0
-
-        ) {
-
-            throw new Error(
-
-                "Informe um preço válido."
-
-            );
-
-        }
-
-
-        if (
-
-            !Number.isInteger(estoque) ||
-
-            estoque < 0
-
-        ) {
-
-            throw new Error(
-
-                "Informe um estoque válido."
-
-            );
-
-        }
-
-
-        const anterior =
-
-            estado.produtos.find(
-
-                produto =>
-
-                    String(produto.id) ===
-
-                    String(
-                        estado.produtoEditando
-                    )
-
-            );
-
-
-        const produto = {
-
-            ...(anterior || {}),
-
-            id:
-
-                anterior?.id ||
-
-                criarID(),
-
-            nome,
-
-            categoria,
-
-            preco,
-
-            estoque,
-
-            prazo:
-
-                campos.prazo
-                    .value
-                    .trim(),
-
-            imagem:
-
-                campos.imagem
-                    .value
-                    .trim(),
-
-            descricao:
-
-                campos.descricao
-                    .value
-                    .trim(),
-
-            disponivel:
-
-                campos.disponivel
-                    .checked,
-
-            destaque:
-
-                campos.destaque
-                    .checked,
-
-            atualizado_em:
-
-                agoraISO()
-
-        };
-
-
-        let novosProdutos;
-
-
-        if (anterior) {
-
-            novosProdutos =
-
-                estado.produtos.map(
-
-                    item =>
-
-                        String(item.id) ===
-                        String(anterior.id)
-
-                            ? produto
-
-                            : item
-
-                );
-
-        } else {
-
-            novosProdutos = [
-
-                ...estado.produtos,
-
-                produto
-
-            ];
-
-        }
-
-
         await salvarCatalogo(
-
-            novosProdutos
-
+            lista
         );
 
 
@@ -3580,36 +1399,23 @@ async function salvarProduto(
 
 
         estado.produtoEditando =
-
             null;
 
 
         avisar(
-
-            "Produto salvo com sucesso!"
-
+            "Produto salvo."
         );
 
 
     } catch (erro) {
 
-        console.error(erro);
-
-
         avisar(
-
-            "Erro ao salvar produto: " +
 
             erro.message,
 
             true
 
         );
-
-
-    } finally {
-
-        botao.disabled = false;
 
     }
 
@@ -3641,7 +1447,7 @@ async function excluirProduto(id) {
 
         !confirm(
 
-            `Deseja excluir "${produto.nome}"?`
+            `Excluir "${produto.nome}"?`
 
         )
 
@@ -3654,7 +1460,7 @@ async function excluirProduto(id) {
 
     try {
 
-        const novosProdutos =
+        await salvarCatalogo(
 
             estado.produtos.filter(
 
@@ -3663,20 +1469,13 @@ async function excluirProduto(id) {
                     String(item.id) !==
                     String(id)
 
-            );
-
-
-        await salvarCatalogo(
-
-            novosProdutos
+            )
 
         );
 
 
         avisar(
-
             "Produto excluído."
-
         );
 
 
@@ -3702,7 +1501,6 @@ async function excluirProduto(id) {
 function renderizarPedidos() {
 
     const tabela =
-
         $("#tabela-pedidos");
 
 
@@ -3759,7 +1557,7 @@ function renderizarPedidos() {
                         <small>
 
                             ${escaparHTML(
-                                pedido.contato
+                                pedido.contato || ""
                             )}
 
                         </small>
@@ -3784,13 +1582,9 @@ function renderizarPedidos() {
 
                     <td>
 
-                        <span class="etiqueta">
-
-                            ${escaparHTML(
-                                pedido.status
-                            )}
-
-                        </span>
+                        ${escaparHTML(
+                            pedido.status
+                        )}
 
                     </td>
 
@@ -3807,27 +1601,21 @@ function renderizarPedidos() {
                         <button
                             type="button"
                             class="botao-pequeno"
-                            data-acao-pedido="editar"
-                            data-id="${escaparHTML(
+                            data-pedido-editar="${escaparHTML(
                                 pedido.id
                             )}"
                         >
-
                             Editar
-
                         </button>
 
                         <button
                             type="button"
                             class="botao-pequeno botao-excluir"
-                            data-acao-pedido="excluir"
-                            data-id="${escaparHTML(
+                            data-pedido-excluir="${escaparHTML(
                                 pedido.id
                             )}"
                         >
-
                             Excluir
-
                         </button>
 
                     </td>
@@ -3841,11 +1629,19 @@ function renderizarPedidos() {
 }
 
 
+/* =====================================================
+   PEDIDO - NOVO
+===================================================== */
+
 function abrirNovoPedido() {
 
-    estado.pedidoEditando = null;
+    estado.pedidoEditando =
+        null;
 
-    $("#form-pedido").reset();
+
+    $("#form-pedido")
+        .reset();
+
 
     $("#modal-pedido")
         .showModal();
@@ -3875,48 +1671,35 @@ function editarPedido(id) {
 
 
     estado.pedidoEditando =
-
         pedido.id;
 
 
-    const form =
-
-        $("#form-pedido");
-
-
-    form.reset();
-
-
     const campos =
-
-        form.elements;
+        $("#form-pedido")
+            .elements;
 
 
     campos.cliente.value =
-
         pedido.cliente || "";
 
 
     campos.contato.value =
-
         pedido.contato || "";
 
 
     campos.itens.value =
-
         pedido.itens || "";
 
 
     campos.valor.value =
-
         numero(
             pedido.valor
         );
 
 
     campos.status.value =
-
-        pedido.status || "Novo";
+        pedido.status ||
+        "Novo";
 
 
     $("#modal-pedido")
@@ -3925,160 +1708,141 @@ function editarPedido(id) {
 }
 
 
-function salvarPedido(evento) {
+function salvarPedidoEvento(
+    evento
+) {
 
     evento.preventDefault();
 
 
-    try {
+    const campos =
+        evento.currentTarget
+            .elements;
 
-        const campos =
 
-            $("#form-pedido")
-                .elements;
+    const anterior =
 
+        estado.pedidos.find(
 
-        const anterior =
+            item =>
 
-            estado.pedidos.find(
+                String(item.id) ===
 
-                item =>
-
-                    String(item.id) ===
-
-                    String(
-                        estado.pedidoEditando
-                    )
-
-            );
-
-
-        const pedido = {
-
-            ...(anterior || {}),
-
-            id:
-
-                anterior?.id ||
-
-                criarID(),
-
-            cliente:
-
-                campos.cliente
-                    .value
-                    .trim(),
-
-            contato:
-
-                campos.contato
-                    .value
-                    .trim(),
-
-            itens:
-
-                campos.itens
-                    .value
-                    .trim(),
-
-            valor:
-
-                numero(
-                    campos.valor.value
-                ),
-
-            status:
-
-                campos.status.value,
-
-            data:
-
-                anterior?.data ||
-
-                agoraISO(),
-
-            atualizado_em:
-
-                agoraISO()
-
-        };
-
-
-        if (
-
-            !pedido.cliente ||
-
-            !pedido.itens
-
-        ) {
-
-            throw new Error(
-
-                "Preencha cliente e produtos."
-
-            );
-
-        }
-
-
-        if (anterior) {
-
-            estado.pedidos =
-
-                estado.pedidos.map(
-
-                    item =>
-
-                        String(item.id) ===
-                        String(anterior.id)
-
-                            ? pedido
-
-                            : item
-
-                );
-
-        } else {
-
-            estado.pedidos.push(
-
-                pedido
-
-            );
-
-        }
-
-
-        persistirPedidos();
-
-
-        $("#modal-pedido")
-            .close();
-
-
-        estado.pedidoEditando =
-
-            null;
-
-
-        avisar(
-
-            "Pedido salvo!"
+                String(
+                    estado.pedidoEditando
+                )
 
         );
 
 
-    } catch (erro) {
+    const pedido = {
+
+        ...(anterior || {}),
+
+        id:
+
+            anterior?.id ||
+            criarID(),
+
+        cliente:
+
+            campos.cliente
+                .value
+                .trim(),
+
+        contato:
+
+            campos.contato
+                .value
+                .trim(),
+
+        itens:
+
+            campos.itens
+                .value
+                .trim(),
+
+        valor:
+
+            numero(
+                campos.valor.value
+            ),
+
+        status:
+
+            campos.status.value,
+
+        data:
+
+            anterior?.data ||
+            agoraISO(),
+
+        atualizado_em:
+            agoraISO()
+
+    };
+
+
+    if (
+
+        !pedido.cliente ||
+        !pedido.itens
+
+    ) {
 
         avisar(
 
-            erro.message,
+            "Preencha cliente e produtos.",
 
             true
 
         );
 
+        return;
+
     }
+
+
+    if (anterior) {
+
+        estado.pedidos =
+
+            estado.pedidos.map(
+
+                item =>
+
+                    String(item.id) ===
+                    String(anterior.id)
+
+                        ? pedido
+
+                        : item
+
+            );
+
+    } else {
+
+        estado.pedidos.push(
+            pedido
+        );
+
+    }
+
+
+    salvarPedidos();
+
+
+    estado.pedidoEditando =
+        null;
+
+
+    $("#modal-pedido")
+        .close();
+
+
+    avisar(
+        "Pedido salvo."
+    );
 
 }
 
@@ -4088,7 +1852,7 @@ function excluirPedido(id) {
     if (
 
         !confirm(
-            "Deseja excluir este pedido?"
+            "Excluir este pedido?"
         )
 
     ) {
@@ -4110,14 +1874,7 @@ function excluirPedido(id) {
         );
 
 
-    persistirPedidos();
-
-
-    avisar(
-
-        "Pedido excluído."
-
-    );
+    salvarPedidos();
 
 }
 
@@ -4126,24 +1883,17 @@ function excluirPedido(id) {
    CUSTOS
 ===================================================== */
 
-function custosDoMesAtual() {
+function custosMesAtual() {
 
-    const agora = new Date();
-
-    const ano =
-
-        agora.getFullYear();
-
-    const mes =
-
-        agora.getMonth();
+    const hoje =
+        new Date();
 
 
     return estado.custos.filter(
 
-        custo => {
+        item => {
 
-            if (!custo.data) {
+            if (!item.data) {
 
                 return false;
 
@@ -4154,7 +1904,7 @@ function custosDoMesAtual() {
 
                 new Date(
 
-                    custo.data +
+                    item.data +
                     "T12:00:00"
 
                 );
@@ -4162,9 +1912,13 @@ function custosDoMesAtual() {
 
             return (
 
-                data.getFullYear() === ano &&
+                data.getFullYear() ===
+                hoje.getFullYear()
 
-                data.getMonth() === mes
+                &&
+
+                data.getMonth() ===
+                hoje.getMonth()
 
             );
 
@@ -4175,78 +1929,46 @@ function custosDoMesAtual() {
 }
 
 
-function renderizarResumoCustos() {
+function renderizarCustos() {
 
-    if (!$("#custos-mes")) {
+    if (!$("#tabela-custos")) {
 
         return;
 
     }
 
 
-    const lista =
-
-        custosDoMesAtual();
-
-
-    const total =
-
-        lista.reduce(
-
-            (soma, item) =>
-
-                soma +
-
-                numero(item.valor),
-
-            0
-
-        );
+    const mes =
+        custosMesAtual();
 
 
     const fixos =
 
-        lista
-
-        .filter(
+        mes.filter(
 
             item =>
-
                 item.tipo === "Fixo"
-
-        )
-
-        .reduce(
-
-            (soma, item) =>
-
-                soma +
-
-                numero(item.valor),
-
-            0
 
         );
 
 
     const variaveis =
 
-        lista
-
-        .filter(
+        mes.filter(
 
             item =>
-
                 item.tipo === "Variável"
 
-        )
+        );
 
-        .reduce(
 
-            (soma, item) =>
+    const somar = lista =>
 
-                soma +
+        lista.reduce(
 
+            (total, item) =>
+
+                total +
                 numero(item.valor),
 
             0
@@ -4256,52 +1978,36 @@ function renderizarResumoCustos() {
 
     $("#custos-mes")
         .textContent =
-
-        dinheiro(total);
+        dinheiro(
+            somar(mes)
+        );
 
 
     $("#custos-fixos")
         .textContent =
-
-        dinheiro(fixos);
+        dinheiro(
+            somar(fixos)
+        );
 
 
     $("#custos-variaveis")
         .textContent =
-
-        dinheiro(variaveis);
+        dinheiro(
+            somar(variaveis)
+        );
 
 
     $("#total-custos")
         .textContent =
-
         estado.custos.length;
 
-}
 
-
-function renderizarCustos() {
-
-    const tabela =
-
-        $("#tabela-custos");
-
-
-    if (!tabela) {
-
-        return;
-
-    }
-
-
-    const busca =
+    const pesquisa =
 
         (
             $("#buscar-custo")
                 ?.value || ""
         )
-
-        .trim()
 
         .toLowerCase();
 
@@ -4310,7 +2016,6 @@ function renderizarCustos() {
 
         $("#filtro-custo")
             ?.value ||
-
         "Todos";
 
 
@@ -4324,17 +2029,15 @@ function renderizarCustos() {
 
                 const texto =
 
-                    `${item.descricao} ${item.categoria} ${item.tipo}`
+                    `${item.descricao} ${item.categoria}`
 
                     .toLowerCase();
 
 
                 return (
 
-                    (
-                        !busca ||
-
-                        texto.includes(busca)
+                    texto.includes(
+                        pesquisa
                     )
 
                     &&
@@ -4356,36 +2059,37 @@ function renderizarCustos() {
             (a, b) =>
 
                 String(b.data)
-
-                .localeCompare(
-                    String(a.data)
-                )
+                    .localeCompare(
+                        String(a.data)
+                    )
 
         );
 
 
     if (!lista.length) {
 
-        tabela.innerHTML = `
+        $("#tabela-custos")
+            .innerHTML = `
 
-            <tr>
+                <tr>
 
-                <td colspan="6">
+                    <td colspan="6">
 
-                    Nenhum custo encontrado.
+                        Nenhum custo cadastrado.
 
-                </td>
+                    </td>
 
-            </tr>
+                </tr>
 
-        `;
+            `;
 
         return;
 
     }
 
 
-    tabela.innerHTML =
+    $("#tabela-custos")
+        .innerHTML =
 
         lista.map(
 
@@ -4394,71 +2098,33 @@ function renderizarCustos() {
                 <tr>
 
                     <td>
-
-                        <strong>
-
-                            ${escaparHTML(
-                                item.descricao
-                            )}
-
-                        </strong>
-
-                        ${
-
-                            item.observacoes
-
-                                ? `
-
-                                    <small>
-
-                                        ${escaparHTML(
-                                            item.observacoes
-                                        )}
-
-                                    </small>
-
-                                `
-
-                                : ""
-
-                        }
-
+                        ${escaparHTML(
+                            item.descricao
+                        )}
                     </td>
 
                     <td>
-
                         ${escaparHTML(
                             item.categoria
                         )}
-
                     </td>
 
                     <td>
-
-                        <span class="etiqueta">
-
-                            ${escaparHTML(
-                                item.tipo
-                            )}
-
-                        </span>
-
+                        ${escaparHTML(
+                            item.tipo
+                        )}
                     </td>
 
                     <td>
-
                         ${dinheiro(
                             item.valor
                         )}
-
                     </td>
 
                     <td>
-
                         ${formatarData(
                             item.data
                         )}
-
                     </td>
 
                     <td>
@@ -4466,27 +2132,21 @@ function renderizarCustos() {
                         <button
                             type="button"
                             class="botao-pequeno"
-                            data-acao-custo="editar"
-                            data-id="${escaparHTML(
+                            data-custo-editar="${escaparHTML(
                                 item.id
                             )}"
                         >
-
                             Editar
-
                         </button>
 
                         <button
                             type="button"
                             class="botao-pequeno botao-excluir"
-                            data-acao-custo="excluir"
-                            data-id="${escaparHTML(
+                            data-custo-excluir="${escaparHTML(
                                 item.id
                             )}"
                         >
-
                             Excluir
-
                         </button>
 
                     </td>
@@ -4502,11 +2162,11 @@ function renderizarCustos() {
 
 function abrirNovoCusto() {
 
-    estado.custoEditando = null;
+    estado.custoEditando =
+        null;
 
 
     const form =
-
         $("#form-custo");
 
 
@@ -4514,13 +2174,11 @@ function abrirNovoCusto() {
 
 
     form.elements.data.value =
-
         dataHoje();
 
 
     $("#titulo-modal-custo")
         .textContent =
-
         "Novo custo";
 
 
@@ -4552,52 +2210,43 @@ function editarCusto(id) {
 
 
     estado.custoEditando =
-
         custo.id;
 
 
-    const form =
-
-        $("#form-custo");
-
-
-    form.reset();
+    const campos =
+        $("#form-custo")
+            .elements;
 
 
-    form.elements.descricao.value =
-
+    campos.descricao.value =
         custo.descricao || "";
 
 
-    form.elements.categoria.value =
-
+    campos.categoria.value =
         custo.categoria || "";
 
 
-    form.elements.tipo.value =
-
+    campos.tipo.value =
         custo.tipo || "Variável";
 
 
-    form.elements.valor.value =
+    campos.valor.value =
+        numero(
+            custo.valor
+        );
 
-        numero(custo.valor);
 
-
-    form.elements.data.value =
-
+    campos.data.value =
         custo.data ||
         dataHoje();
 
 
-    form.elements.observacoes.value =
-
+    campos.observacoes.value =
         custo.observacoes || "";
 
 
     $("#titulo-modal-custo")
         .textContent =
-
         "Editar custo";
 
 
@@ -4607,14 +2256,15 @@ function editarCusto(id) {
 }
 
 
-function salvarCusto(evento) {
+function salvarCustoEvento(
+    evento
+) {
 
     evento.preventDefault();
 
 
     const campos =
-
-        $("#form-custo")
+        evento.currentTarget
             .elements;
 
 
@@ -4640,7 +2290,6 @@ function salvarCusto(evento) {
         id:
 
             anterior?.id ||
-
             criarID(),
 
         descricao:
@@ -4676,7 +2325,6 @@ function salvarCusto(evento) {
                 .trim(),
 
         atualizado_em:
-
             agoraISO()
 
     };
@@ -4685,9 +2333,7 @@ function salvarCusto(evento) {
     if (
 
         !custo.descricao ||
-
         !custo.categoria ||
-
         !custo.data
 
     ) {
@@ -4695,21 +2341,6 @@ function salvarCusto(evento) {
         avisar(
 
             "Preencha os campos obrigatórios.",
-
-            true
-
-        );
-
-        return;
-
-    }
-
-
-    if (custo.valor < 0) {
-
-        avisar(
-
-            "Valor inválido.",
 
             true
 
@@ -4740,30 +2371,25 @@ function salvarCusto(evento) {
     } else {
 
         estado.custos.push(
-
             custo
-
         );
 
     }
 
 
-    persistirCustos();
+    salvarCustos();
+
+
+    estado.custoEditando =
+        null;
 
 
     $("#modal-custo")
         .close();
 
 
-    estado.custoEditando =
-
-        null;
-
-
     avisar(
-
-        "Custo salvo!"
-
+        "Custo salvo."
     );
 
 }
@@ -4774,7 +2400,7 @@ function excluirCusto(id) {
     if (
 
         !confirm(
-            "Deseja excluir este custo?"
+            "Excluir este custo?"
         )
 
     ) {
@@ -4796,14 +2422,7 @@ function excluirCusto(id) {
         );
 
 
-    persistirCustos();
-
-
-    avisar(
-
-        "Custo excluído."
-
-    );
+    salvarCustos();
 
 }
 
@@ -4812,48 +2431,30 @@ function excluirCusto(id) {
    FILAMENTOS
 ===================================================== */
 
-function custoPorGramaFilamento(
-
-    item
-
-) {
+function custoGrama(item) {
 
     const peso =
-
         numero(
             item.pesoOriginal
         );
 
 
-    const valor =
+    if (peso <= 0) {
 
-        numero(
-            item.valorPago
-        );
+        return 0;
 
+    }
 
-    return peso > 0
-
-        ? valor / peso
-
-        : 0;
-
-}
-
-
-function valorEstoqueFilamento(
-
-    item
-
-) {
 
     return (
 
-        custoPorGramaFilamento(item) *
-
         numero(
-            item.pesoRestante
+            item.valorPago
         )
+
+        /
+
+        peso
 
     );
 
@@ -4879,106 +2480,13 @@ function filamentoBaixo(item) {
 }
 
 
-function renderizarResumoFilamentos() {
-
-    if (!$("#total-filamentos")) {
-
-        return;
-
-    }
-
-
-    const peso =
-
-        estado.filamentos.reduce(
-
-            (soma, item) =>
-
-                soma +
-
-                numero(
-                    item.pesoRestante
-                ),
-
-            0
-
-        );
-
-
-    const valor =
-
-        estado.filamentos.reduce(
-
-            (soma, item) =>
-
-                soma +
-
-                valorEstoqueFilamento(
-                    item
-                ),
-
-            0
-
-        );
-
-
-    const baixos =
-
-        estado.filamentos.filter(
-
-            filamentoBaixo
-
-        ).length;
-
-
-    $("#total-filamentos")
-        .textContent =
-
-        estado.filamentos.length;
-
-
-    $("#peso-filamentos")
-        .textContent =
-
-        (
-            peso / 1000
-        ).toLocaleString(
-
-            "pt-BR",
-
-            {
-
-                maximumFractionDigits: 2
-
-            }
-
-        ) +
-
-        " kg";
-
-
-    $("#valor-filamentos")
-        .textContent =
-
-        dinheiro(valor);
-
-
-    $("#filamentos-baixos")
-        .textContent =
-
-        baixos;
-
-}
-
-
 function atualizarFiltroMateriais() {
 
-    const select =
-
+    const elemento =
         $("#filtro-material");
 
 
-    if (!select) {
+    if (!elemento) {
 
         return;
 
@@ -4986,10 +2494,7 @@ function atualizarFiltroMateriais() {
 
 
     const atual =
-
-        select.value ||
-
-        "Todos";
+        elemento.value;
 
 
     const materiais =
@@ -5001,37 +2506,18 @@ function atualizarFiltroMateriais() {
                 estado.filamentos
 
                 .map(
-
                     item =>
-
-                        String(
-                            item.material || ""
-                        ).trim()
-
+                        item.material
                 )
 
                 .filter(Boolean)
 
             )
 
-        )
-
-        .sort(
-
-            (a, b) =>
-
-                a.localeCompare(
-
-                    b,
-
-                    "pt-BR"
-
-                )
-
         );
 
 
-    select.innerHTML = `
+    elemento.innerHTML = `
 
         <option value="Todos">
 
@@ -5043,16 +2529,16 @@ function atualizarFiltroMateriais() {
 
             materiais.map(
 
-                material => `
+                item => `
 
                     <option
                         value="${escaparHTML(
-                            material
+                            item
                         )}"
                     >
 
                         ${escaparHTML(
-                            material
+                            item
                         )}
 
                     </option>
@@ -5066,42 +2552,126 @@ function atualizarFiltroMateriais() {
     `;
 
 
-    select.value =
+    if (
 
         materiais.includes(atual)
 
-            ? atual
+    ) {
 
-            : "Todos";
+        elemento.value =
+            atual;
+
+    }
 
 }
 
 
 function renderizarFilamentos() {
 
-    const tabela =
-
-        $("#tabela-filamentos");
-
-
-    if (!tabela) {
+    if (!$("#tabela-filamentos")) {
 
         return;
 
     }
 
 
+    const pesoTotal =
+
+        estado.filamentos.reduce(
+
+            (total, item) =>
+
+                total +
+
+                numero(
+                    item.pesoRestante
+                ),
+
+            0
+
+        );
+
+
+    const valorEstoque =
+
+        estado.filamentos.reduce(
+
+            (total, item) =>
+
+                total +
+
+                (
+                    numero(
+                        item.pesoRestante
+                    )
+
+                    *
+
+                    custoGrama(item)
+
+                ),
+
+            0
+
+        );
+
+
+    $("#total-filamentos")
+        .textContent =
+        estado.filamentos.length;
+
+
+    $("#peso-filamentos")
+        .textContent =
+
+        (
+            pesoTotal /
+            1000
+        )
+
+        .toLocaleString(
+
+            "pt-BR",
+
+            {
+                maximumFractionDigits: 2
+            }
+
+        )
+
+        +
+
+        " kg";
+
+
+    $("#valor-filamentos")
+        .textContent =
+        dinheiro(
+            valorEstoque
+        );
+
+
+    $("#filamentos-baixos")
+        .textContent =
+
+        estado.filamentos
+
+            .filter(
+                filamentoBaixo
+            )
+
+            .length;
+
+
     atualizarFiltroMateriais();
 
 
-    const busca =
+    const pesquisa =
 
         (
             $("#buscar-filamento")
                 ?.value || ""
         )
-
-        .trim()
 
         .toLowerCase();
 
@@ -5110,7 +2680,6 @@ function renderizarFilamentos() {
 
         $("#filtro-material")
             ?.value ||
-
         "Todos";
 
 
@@ -5129,10 +2698,8 @@ function renderizarFilamentos() {
 
                 return (
 
-                    (
-                        !busca ||
-
-                        texto.includes(busca)
+                    texto.includes(
+                        pesquisa
                     )
 
                     &&
@@ -5140,7 +2707,8 @@ function renderizarFilamentos() {
                     (
                         filtro === "Todos" ||
 
-                        item.material === filtro
+                        item.material ===
+                        filtro
                     )
 
                 );
@@ -5152,30 +2720,41 @@ function renderizarFilamentos() {
 
     if (!lista.length) {
 
-        tabela.innerHTML = `
+        $("#tabela-filamentos")
+            .innerHTML = `
 
-            <tr>
+                <tr>
 
-                <td colspan="7">
+                    <td colspan="7">
 
-                    Nenhum filamento cadastrado.
+                        Nenhum filamento cadastrado.
 
-                </td>
+                    </td>
 
-            </tr>
+                </tr>
 
-        `;
+            `;
+
+
+        renderizarSimulador();
 
         return;
 
     }
 
 
-    tabela.innerHTML =
+    $("#tabela-filamentos")
+        .innerHTML =
 
         lista.map(
 
             item => {
+
+                const restante =
+                    numero(
+                        item.pesoRestante
+                    );
+
 
                 const original =
 
@@ -5185,19 +2764,6 @@ function renderizarFilamentos() {
 
                         numero(
                             item.pesoOriginal
-                        )
-
-                    );
-
-
-                const restante =
-
-                    Math.max(
-
-                        0,
-
-                        numero(
-                            item.pesoRestante
                         )
 
                     );
@@ -5213,20 +2779,12 @@ function renderizarFilamentos() {
 
                             100,
 
-                            (
-                                restante /
-                                original
-                            ) * 100
+                            restante /
+                            original *
+                            100
 
                         )
 
-                    );
-
-
-                const baixo =
-
-                    filamentoBaixo(
-                        item
                     );
 
 
@@ -5248,15 +2806,12 @@ function renderizarFilamentos() {
 
                                 ${numero(
                                     item.diametro
-                                ).toLocaleString(
-                                    "pt-BR"
                                 )}
                                 mm
 
                             </small>
 
                         </td>
-
 
                         <td>
 
@@ -5266,7 +2821,6 @@ function renderizarFilamentos() {
 
                         </td>
 
-
                         <td>
 
                             ${escaparHTML(
@@ -5275,28 +2829,10 @@ function renderizarFilamentos() {
 
                         </td>
 
-
                         <td>
 
-                            <strong>
-
-                                ${restante.toLocaleString(
-                                    "pt-BR"
-                                )}
-                                g
-
-                            </strong>
-
-                            <small>
-
-                                de
-                                ${original.toLocaleString(
-                                    "pt-BR"
-                                )}
-                                g
-
-                            </small>
-
+                            ${restante}
+                            g
 
                             <div
                                 class="barra-estoque"
@@ -5305,7 +2841,7 @@ function renderizarFilamentos() {
                                 <span
                                     style="
                                         width:
-                                        ${percentual}%
+                                        ${percentual}%;
                                     "
                                 ></span>
 
@@ -5313,28 +2849,24 @@ function renderizarFilamentos() {
 
                         </td>
 
-
                         <td>
 
                             ${dinheiro(
-                                custoPorGramaFilamento(
-                                    item
-                                )
+                                custoGrama(item)
                             )}
 
                         </td>
 
-
                         <td>
 
                             <span class="${
-                                baixo
+                                filamentoBaixo(item)
                                     ? "estoque-baixo"
                                     : "estoque-ok"
                             }">
 
                                 ${
-                                    baixo
+                                    filamentoBaixo(item)
                                         ? "Baixo"
                                         : "OK"
                                 }
@@ -5343,34 +2875,26 @@ function renderizarFilamentos() {
 
                         </td>
 
-
                         <td>
 
                             <button
                                 type="button"
                                 class="botao-pequeno"
-                                data-acao-filamento="editar"
-                                data-id="${escaparHTML(
+                                data-filamento-editar="${escaparHTML(
                                     item.id
                                 )}"
                             >
-
                                 Editar
-
                             </button>
-
 
                             <button
                                 type="button"
                                 class="botao-pequeno botao-excluir"
-                                data-acao-filamento="excluir"
-                                data-id="${escaparHTML(
+                                data-filamento-excluir="${escaparHTML(
                                     item.id
                                 )}"
                             >
-
                                 Excluir
-
                             </button>
 
                         </td>
@@ -5383,18 +2907,19 @@ function renderizarFilamentos() {
 
         ).join("");
 
+
+    renderizarSimulador();
+
 }
 
 
 function abrirNovoFilamento() {
 
     estado.filamentoEditando =
-
         null;
 
 
     const form =
-
         $("#form-filamento");
 
 
@@ -5402,28 +2927,23 @@ function abrirNovoFilamento() {
 
 
     form.elements.diametro.value =
-
-        "1.75";
+        1.75;
 
 
     form.elements.pesoOriginal.value =
-
-        "1000";
+        1000;
 
 
     form.elements.pesoRestante.value =
-
-        "1000";
+        1000;
 
 
     form.elements.limiteBaixo.value =
-
-        "200";
+        200;
 
 
     $("#titulo-modal-filamento")
         .textContent =
-
         "Novo filamento";
 
 
@@ -5435,19 +2955,21 @@ function abrirNovoFilamento() {
 
 function editarFilamento(id) {
 
-    const filamento =
+    const item =
 
         estado.filamentos.find(
 
-            item =>
+            filamento =>
 
-                String(item.id) ===
+                String(
+                    filamento.id
+                ) ===
                 String(id)
 
         );
 
 
-    if (!filamento) {
+    if (!item) {
 
         return;
 
@@ -5455,76 +2977,62 @@ function editarFilamento(id) {
 
 
     estado.filamentoEditando =
-
-        filamento.id;
-
-
-    const form =
-
-        $("#form-filamento");
+        item.id;
 
 
-    form.reset();
+    const campos =
+        $("#form-filamento")
+            .elements;
 
 
-    form.elements.marca.value =
-
-        filamento.marca || "";
-
-
-    form.elements.material.value =
-
-        filamento.material || "";
+    campos.marca.value =
+        item.marca || "";
 
 
-    form.elements.cor.value =
+    campos.material.value =
+        item.material || "";
 
-        filamento.cor || "";
+
+    campos.cor.value =
+        item.cor || "";
 
 
-    form.elements.diametro.value =
-
+    campos.diametro.value =
         numero(
-            filamento.diametro
+            item.diametro
         ) || 1.75;
 
 
-    form.elements.pesoOriginal.value =
-
+    campos.pesoOriginal.value =
         numero(
-            filamento.pesoOriginal
-        ) || 1000;
-
-
-    form.elements.pesoRestante.value =
-
-        numero(
-            filamento.pesoRestante
+            item.pesoOriginal
         );
 
 
-    form.elements.valorPago.value =
-
+    campos.pesoRestante.value =
         numero(
-            filamento.valorPago
+            item.pesoRestante
         );
 
 
-    form.elements.limiteBaixo.value =
-
+    campos.valorPago.value =
         numero(
-            filamento.limiteBaixo
-        ) || 200;
+            item.valorPago
+        );
 
 
-    form.elements.observacoes.value =
+    campos.limiteBaixo.value =
+        numero(
+            item.limiteBaixo
+        );
 
-        filamento.observacoes || "";
+
+    campos.observacoes.value =
+        item.observacoes || "";
 
 
     $("#titulo-modal-filamento")
         .textContent =
-
         "Editar filamento";
 
 
@@ -5534,14 +3042,15 @@ function editarFilamento(id) {
 }
 
 
-function salvarFilamento(evento) {
+function salvarFilamentoEvento(
+    evento
+) {
 
     evento.preventDefault();
 
 
     const campos =
-
-        $("#form-filamento")
+        evento.currentTarget
             .elements;
 
 
@@ -5560,14 +3069,13 @@ function salvarFilamento(evento) {
         );
 
 
-    const filamento = {
+    const item = {
 
         ...(anterior || {}),
 
         id:
 
             anterior?.id ||
-
             criarID(),
 
         marca:
@@ -5625,7 +3133,6 @@ function salvarFilamento(evento) {
                 .trim(),
 
         atualizado_em:
-
             agoraISO()
 
     };
@@ -5633,17 +3140,15 @@ function salvarFilamento(evento) {
 
     if (
 
-        !filamento.marca ||
-
-        !filamento.material ||
-
-        !filamento.cor
+        !item.marca ||
+        !item.material ||
+        !item.cor
 
     ) {
 
         avisar(
 
-            "Preencha marca, material e cor.",
+            "Informe marca, material e cor.",
 
             true
 
@@ -5656,17 +3161,15 @@ function salvarFilamento(evento) {
 
     if (
 
-        filamento.pesoOriginal <= 0 ||
+        item.pesoOriginal <= 0 ||
 
-        filamento.pesoRestante < 0 ||
-
-        filamento.valorPago < 0
+        item.pesoRestante < 0
 
     ) {
 
         avisar(
 
-            "Confira peso e valor.",
+            "Confira os pesos informados.",
 
             true
 
@@ -5679,17 +3182,16 @@ function salvarFilamento(evento) {
 
     if (
 
-        filamento.pesoRestante >
-
-        filamento.pesoOriginal
+        item.pesoRestante >
+        item.pesoOriginal
 
     ) {
 
         avisar(
 
-            "O peso restante não pode ser " +
+            "O peso restante não pode " +
 
-            "maior que o original.",
+            "ser maior que o peso original.",
 
             true
 
@@ -5706,44 +3208,41 @@ function salvarFilamento(evento) {
 
             estado.filamentos.map(
 
-                item =>
+                filamento =>
 
-                    String(item.id) ===
+                    String(
+                        filamento.id
+                    ) ===
                     String(anterior.id)
 
-                        ? filamento
+                        ? item
 
-                        : item
+                        : filamento
 
             );
 
     } else {
 
         estado.filamentos.push(
-
-            filamento
-
+            item
         );
 
     }
 
 
-    persistirFilamentos();
+    salvarFilamentos();
+
+
+    estado.filamentoEditando =
+        null;
 
 
     $("#modal-filamento")
         .close();
 
 
-    estado.filamentoEditando =
-
-        null;
-
-
     avisar(
-
-        "Filamento salvo!"
-
+        "Filamento salvo."
     );
 
 }
@@ -5754,7 +3253,7 @@ function excluirFilamento(id) {
     if (
 
         !confirm(
-            "Deseja excluir este filamento?"
+            "Excluir este filamento?"
         )
 
     ) {
@@ -5776,26 +3275,18 @@ function excluirFilamento(id) {
         );
 
 
-    persistirFilamentos();
-
-
-    avisar(
-
-        "Filamento excluído."
-
-    );
+    salvarFilamentos();
 
 }
 
 
 /* =====================================================
-   SIMULADOR DE CUSTO
+   SIMULADOR
 ===================================================== */
 
-function renderizarSeletorSimulador() {
+function renderizarSimulador() {
 
     const select =
-
         $("#sim-filamento");
 
 
@@ -5807,7 +3298,6 @@ function renderizarSeletorSimulador() {
 
 
     const atual =
-
         select.value;
 
 
@@ -5815,7 +3305,7 @@ function renderizarSeletorSimulador() {
 
         <option value="">
 
-            Selecione um filamento
+            Selecione
 
         </option>
 
@@ -5837,10 +3327,6 @@ function renderizarSeletorSimulador() {
                         -
                         ${escaparHTML(
                             item.cor
-                        )}
-                        -
-                        ${escaparHTML(
-                            item.marca
                         )}
 
                     </option>
@@ -5867,25 +3353,22 @@ function renderizarSeletorSimulador() {
 
     ) {
 
-        select.value = atual;
+        select.value =
+            atual;
 
     }
+
+
+    calcularSimulador();
 
 }
 
 
 function calcularSimulador() {
 
-    const select =
-
-        $("#sim-filamento");
-
-
-    if (!select) {
-
-        return;
-
-    }
+    const id =
+        $("#sim-filamento")
+            ?.value;
 
 
     const filamento =
@@ -5895,78 +3378,43 @@ function calcularSimulador() {
             item =>
 
                 String(item.id) ===
-                String(select.value)
+                String(id)
 
         );
 
 
     const gramas =
-
-        Math.max(
-
-            0,
-
-            numero(
-                $("#sim-gramas")
-                    ?.value
-            )
-
+        numero(
+            $("#sim-gramas")
+                ?.value
         );
 
 
     const horas =
-
-        Math.max(
-
-            0,
-
-            numero(
-                $("#sim-horas")
-                    ?.value
-            )
-
+        numero(
+            $("#sim-horas")
+                ?.value
         );
 
 
     const potencia =
-
-        Math.max(
-
-            0,
-
-            numero(
-                $("#sim-potencia")
-                    ?.value
-            )
-
+        numero(
+            $("#sim-potencia")
+                ?.value
         );
 
 
     const tarifa =
-
-        Math.max(
-
-            0,
-
-            numero(
-                $("#sim-energia")
-                    ?.value
-            )
-
+        numero(
+            $("#sim-energia")
+                ?.value
         );
 
 
-    const margem =
-
-        Math.max(
-
-            0,
-
-            numero(
-                $("#sim-margem")
-                    ?.value
-            )
-
+    const acrescimo =
+        numero(
+            $("#sim-margem")
+                ?.value
         );
 
 
@@ -5975,8 +3423,7 @@ function calcularSimulador() {
         filamento
 
             ? gramas *
-
-                custoPorGramaFilamento(
+                custoGrama(
                     filamento
                 )
 
@@ -6000,84 +3447,66 @@ function calcularSimulador() {
 
 
     const direto =
-
         material +
-
         energia;
 
 
-    const sugerido =
+    const calculado =
 
         direto *
 
         (
             1 +
-
-            margem / 100
+            acrescimo /
+            100
         );
 
 
     $("#sim-custo-material")
         .textContent =
-
         dinheiro(material);
 
 
     $("#sim-custo-energia")
         .textContent =
-
         dinheiro(energia);
 
 
     $("#sim-custo-direto")
         .textContent =
-
         dinheiro(direto);
 
 
     $("#sim-preco-sugerido")
         .textContent =
-
-        dinheiro(sugerido);
+        dinheiro(calculado);
 
 }
 
 
 /* =====================================================
-   ATUALIZAR TELA
+   ATUALIZAR PAINEL
 ===================================================== */
 
 function atualizarPainel() {
 
     atualizarIndicadores();
 
-    renderizarProdutosRecentes();
+    renderizarRecentes();
 
     renderizarProdutos();
 
     renderizarPedidos();
 
-    renderizarResumoCustos();
-
     renderizarCustos();
-
-    renderizarResumoFilamentos();
 
     renderizarFilamentos();
 
-    renderizarSeletorSimulador();
 
-    calcularSimulador();
+    if ($("#data-atual")) {
 
-
-    const data =
-
-        $("#data-atual");
-
-
-    if (data) {
-
-        data.textContent =
+        $("#data-atual")
+            .textContent =
 
             new Date()
 
@@ -6117,46 +3546,44 @@ function baixarArquivo(
 ) {
 
     const blob =
-
         new Blob(
 
             [conteudo],
 
             {
-
                 type: tipo
-
             }
 
         );
 
 
     const url =
-
         URL.createObjectURL(
             blob
         );
 
 
     const link =
-
         document.createElement(
             "a"
         );
 
 
-    link.href = url;
+    link.href =
+        url;
 
-    link.download = nome;
+
+    link.download =
+        nome;
 
 
-    document.body.appendChild(
-        link
-    );
+    document.body
+        .appendChild(
+            link
+        );
 
 
     link.click();
-
 
     link.remove();
 
@@ -6164,7 +3591,6 @@ function baixarArquivo(
     setTimeout(
 
         () =>
-
             URL.revokeObjectURL(
                 url
             ),
@@ -6179,7 +3605,6 @@ function baixarArquivo(
 function campoCSV(valor) {
 
     let texto =
-
         String(valor ?? "");
 
 
@@ -6190,7 +3615,8 @@ function campoCSV(valor) {
 
     ) {
 
-        texto = "'" + texto;
+        texto =
+            "'" + texto;
 
     }
 
@@ -6200,12 +3626,11 @@ function campoCSV(valor) {
         '"' +
 
         texto.replaceAll(
-
             '"',
-
             '""'
+        )
 
-        ) +
+        +
 
         '"'
 
@@ -6214,250 +3639,41 @@ function campoCSV(valor) {
 }
 
 
-function exportarCatalogo() {
+function exportarCSV(
 
-    baixarArquivo(
+    nome,
 
-        "catalogo.js",
+    cabecalho,
 
-        "window.CRIAITOR_CATALOGO = " +
+    linhas
 
-        JSON.stringify(
+) {
 
-            estado.produtos,
+    const conteudo = [
 
-            null,
-
-            2
-
-        ) +
-
-        ";\n",
-
-        "text/javascript;charset=utf-8"
-
-    );
-
-}
-
-
-function exportarPedidos() {
-
-    const cabecalho = [
-
-        "Cliente",
-
-        "Contato",
-
-        "Produtos",
-
-        "Valor",
-
-        "Status",
-
-        "Data"
-
-    ];
-
-
-    const linhas =
-
-        estado.pedidos.map(
-
-            item => [
-
-                item.cliente,
-
-                item.contato,
-
-                item.itens,
-
-                item.valor,
-
-                item.status,
-
-                formatarData(
-                    item.data
-                )
-
-            ]
-
+        cabecalho
             .map(campoCSV)
+            .join(";"),
 
-            .join(";")
+        ...linhas.map(
 
-        );
+            linha =>
+
+                linha
+                .map(campoCSV)
+                .join(";")
+
+        )
+
+    ].join("\r\n");
 
 
     baixarArquivo(
 
-        "pedidos-criaitor3d.csv",
+        nome,
 
         "\uFEFF" +
-
-        [
-
-            cabecalho
-
-                .map(campoCSV)
-
-                .join(";"),
-
-            ...linhas
-
-        ].join("\r\n"),
-
-        "text/csv;charset=utf-8"
-
-    );
-
-}
-
-
-function exportarCustos() {
-
-    const cabecalho = [
-
-        "Descrição",
-
-        "Categoria",
-
-        "Tipo",
-
-        "Valor",
-
-        "Data",
-
-        "Observações"
-
-    ];
-
-
-    const linhas =
-
-        estado.custos.map(
-
-            item => [
-
-                item.descricao,
-
-                item.categoria,
-
-                item.tipo,
-
-                item.valor,
-
-                item.data,
-
-                item.observacoes
-
-            ]
-
-            .map(campoCSV)
-
-            .join(";")
-
-        );
-
-
-    baixarArquivo(
-
-        "custos-criaitor3d.csv",
-
-        "\uFEFF" +
-
-        [
-
-            cabecalho
-
-                .map(campoCSV)
-
-                .join(";"),
-
-            ...linhas
-
-        ].join("\r\n"),
-
-        "text/csv;charset=utf-8"
-
-    );
-
-}
-
-
-function exportarFilamentos() {
-
-    const cabecalho = [
-
-        "Marca",
-
-        "Material",
-
-        "Cor",
-
-        "Diâmetro",
-
-        "Peso original",
-
-        "Peso restante",
-
-        "Valor pago",
-
-        "Custo por grama"
-
-    ];
-
-
-    const linhas =
-
-        estado.filamentos.map(
-
-            item => [
-
-                item.marca,
-
-                item.material,
-
-                item.cor,
-
-                item.diametro,
-
-                item.pesoOriginal,
-
-                item.pesoRestante,
-
-                item.valorPago,
-
-                custoPorGramaFilamento(
-                    item
-                )
-
-            ]
-
-            .map(campoCSV)
-
-            .join(";")
-
-        );
-
-
-    baixarArquivo(
-
-        "filamentos-criaitor3d.csv",
-
-        "\uFEFF" +
-
-        [
-
-            cabecalho
-
-                .map(campoCSV)
-
-                .join(";"),
-
-            ...linhas
-
-        ].join("\r\n"),
+        conteudo,
 
         "text/csv;charset=utf-8"
 
@@ -6472,46 +3688,30 @@ function exportarFilamentos() {
 
 function exportarBackup() {
 
-    const backup = {
-
-        empresa:
-
-            CONFIG.tituloEmpresa,
-
-        data:
-
-            agoraISO(),
-
-        versaoCatalogo:
-
-            estado.versao,
-
-        produtos:
-
-            estado.produtos,
-
-        pedidos:
-
-            estado.pedidos,
-
-        custos:
-
-            estado.custos,
-
-        filamentos:
-
-            estado.filamentos
-
-    };
-
-
     baixarArquivo(
 
         "backup-criaitor3d.json",
 
         JSON.stringify(
 
-            backup,
+            {
+
+                data:
+                    agoraISO(),
+
+                produtos:
+                    estado.produtos,
+
+                pedidos:
+                    estado.pedidos,
+
+                custos:
+                    estado.custos,
+
+                filamentos:
+                    estado.filamentos
+
+            },
 
             null,
 
@@ -6519,14 +3719,7 @@ function exportarBackup() {
 
         ),
 
-        "application/json;charset=utf-8"
-
-    );
-
-
-    avisar(
-
-        "Backup exportado."
+        "application/json"
 
     );
 
@@ -6534,13 +3727,10 @@ function exportarBackup() {
 
 
 async function restaurarBackup(
-
     evento
-
 ) {
 
     const arquivo =
-
         evento.target.files?.[0];
 
 
@@ -6553,8 +3743,7 @@ async function restaurarBackup(
 
     try {
 
-        const backup =
-
+        const dados =
             JSON.parse(
 
                 await arquivo.text()
@@ -6564,65 +3753,14 @@ async function restaurarBackup(
 
         if (
 
-            !Array.isArray(
-                backup.pedidos
-            )
-
-            &&
-
-            !Array.isArray(
-                backup.custos
-            )
-
-            &&
-
-            !Array.isArray(
-                backup.filamentos
-            )
-
-        ) {
-
-            throw new Error(
-
-                "Backup incompatível."
-
-            );
-
-        }
-
-
-        if (
-
-            !confirm(
-
-                "Restaurar pedidos, custos " +
-
-                "e filamentos? " +
-
-                "Os produtos do Supabase " +
-
-                "não serão alterados."
-
-            )
-
-        ) {
-
-            return;
-
-        }
-
-
-        if (
-
             Array.isArray(
-                backup.pedidos
+                dados.pedidos
             )
 
         ) {
 
             estado.pedidos =
-
-                backup.pedidos;
+                dados.pedidos;
 
         }
 
@@ -6630,14 +3768,13 @@ async function restaurarBackup(
         if (
 
             Array.isArray(
-                backup.custos
+                dados.custos
             )
 
         ) {
 
             estado.custos =
-
-                backup.custos;
+                dados.custos;
 
         }
 
@@ -6645,73 +3782,44 @@ async function restaurarBackup(
         if (
 
             Array.isArray(
-                backup.filamentos
+                dados.filamentos
             )
 
         ) {
 
             estado.filamentos =
-
-                backup.filamentos;
+                dados.filamentos;
 
         }
 
 
-        salvarListaLocal(
+        salvarPedidos();
 
-            "pedidos",
+        salvarCustos();
 
-            estado.pedidos
-
-        );
-
-
-        salvarListaLocal(
-
-            "custos",
-
-            estado.custos
-
-        );
-
-
-        salvarListaLocal(
-
-            "filamentos",
-
-            estado.filamentos
-
-        );
-
-
-        atualizarPainel();
+        salvarFilamentos();
 
 
         avisar(
-
             "Backup restaurado."
-
         );
 
 
-    } catch (erro) {
+    } catch {
 
         avisar(
 
-            "Erro no backup: " +
-
-            erro.message,
+            "Arquivo de backup inválido.",
 
             true
 
         );
 
-
-    } finally {
-
-        evento.target.value = "";
-
     }
+
+
+    evento.target.value =
+        "";
 
 }
 
@@ -6722,30 +3830,24 @@ async function restaurarBackup(
 
 function configurarEventos() {
 
-    /* MENU */
-
     document.addEventListener(
 
         "click",
 
         evento => {
 
-            const pagina =
+            const menu =
 
                 evento.target.closest(
                     "[data-pagina]"
                 );
 
 
-            if (pagina) {
+            if (menu) {
 
                 abrirPagina(
-
-                    pagina.dataset.pagina
-
+                    menu.dataset.pagina
                 );
-
-                return;
 
             }
 
@@ -6760,12 +3862,8 @@ function configurarEventos() {
             if (ir) {
 
                 abrirPagina(
-
                     ir.dataset.ir
-
                 );
-
-                return;
 
             }
 
@@ -6779,20 +3877,163 @@ function configurarEventos() {
 
             if (fechar) {
 
-                const modal =
-
-                    document.getElementById(
-
+                document
+                    .getElementById(
                         fechar.dataset.fechar
+                    )
+                    ?.close();
 
-                    );
+            }
 
 
-                if (modal?.open) {
+            const editarProdutoBotao =
 
-                    modal.close();
+                evento.target.closest(
+                    "[data-produto-editar]"
+                );
 
-                }
+
+            if (editarProdutoBotao) {
+
+                editarProduto(
+
+                    editarProdutoBotao.dataset
+                        .produtoEditar
+
+                );
+
+            }
+
+
+            const excluirProdutoBotao =
+
+                evento.target.closest(
+                    "[data-produto-excluir]"
+                );
+
+
+            if (excluirProdutoBotao) {
+
+                excluirProduto(
+
+                    excluirProdutoBotao.dataset
+                        .produtoExcluir
+
+                );
+
+            }
+
+
+            const editarPedidoBotao =
+
+                evento.target.closest(
+                    "[data-pedido-editar]"
+                );
+
+
+            if (editarPedidoBotao) {
+
+                editarPedido(
+
+                    editarPedidoBotao.dataset
+                        .pedidoEditar
+
+                );
+
+            }
+
+
+            const excluirPedidoBotao =
+
+                evento.target.closest(
+                    "[data-pedido-excluir]"
+                );
+
+
+            if (excluirPedidoBotao) {
+
+                excluirPedido(
+
+                    excluirPedidoBotao.dataset
+                        .pedidoExcluir
+
+                );
+
+            }
+
+
+            const editarCustoBotao =
+
+                evento.target.closest(
+                    "[data-custo-editar]"
+                );
+
+
+            if (editarCustoBotao) {
+
+                editarCusto(
+
+                    editarCustoBotao.dataset
+                        .custoEditar
+
+                );
+
+            }
+
+
+            const excluirCustoBotao =
+
+                evento.target.closest(
+                    "[data-custo-excluir]"
+                );
+
+
+            if (excluirCustoBotao) {
+
+                excluirCusto(
+
+                    excluirCustoBotao.dataset
+                        .custoExcluir
+
+                );
+
+            }
+
+
+            const editarFilamentoBotao =
+
+                evento.target.closest(
+                    "[data-filamento-editar]"
+                );
+
+
+            if (editarFilamentoBotao) {
+
+                editarFilamento(
+
+                    editarFilamentoBotao.dataset
+                        .filamentoEditar
+
+                );
+
+            }
+
+
+            const excluirFilamentoBotao =
+
+                evento.target.closest(
+                    "[data-filamento-excluir]"
+                );
+
+
+            if (excluirFilamentoBotao) {
+
+                excluirFilamento(
+
+                    excluirFilamentoBotao.dataset
+                        .filamentoExcluir
+
+                );
 
             }
 
@@ -6801,355 +4042,103 @@ function configurarEventos() {
     );
 
 
-    /* PRODUTOS */
-
     $("#novo-produto")
         ?.addEventListener(
-
             "click",
-
             abrirNovoProduto
-
         );
 
 
     $("#novo-produto-topo")
         ?.addEventListener(
-
             "click",
-
             abrirNovoProduto
+        );
 
+
+    $("#novo-pedido")
+        ?.addEventListener(
+            "click",
+            abrirNovoPedido
+        );
+
+
+    $("#novo-custo")
+        ?.addEventListener(
+            "click",
+            abrirNovoCusto
+        );
+
+
+    $("#novo-filamento")
+        ?.addEventListener(
+            "click",
+            abrirNovoFilamento
         );
 
 
     $("#form-produto")
         ?.addEventListener(
-
             "submit",
-
             salvarProduto
-
-        );
-
-
-    $("#buscar-produto")
-        ?.addEventListener(
-
-            "input",
-
-            renderizarProdutos
-
-        );
-
-
-    $("#tabela-produtos")
-        ?.addEventListener(
-
-            "click",
-
-            evento => {
-
-                const botao =
-
-                    evento.target.closest(
-                        "[data-acao-produto]"
-                    );
-
-
-                if (!botao) {
-
-                    return;
-
-                }
-
-
-                if (
-
-                    botao.dataset
-                        .acaoProduto ===
-                    "editar"
-
-                ) {
-
-                    editarProduto(
-
-                        botao.dataset.id
-
-                    );
-
-                } else {
-
-                    excluirProduto(
-
-                        botao.dataset.id
-
-                    );
-
-                }
-
-            }
-
-        );
-
-
-    /* PEDIDOS */
-
-    $("#novo-pedido")
-        ?.addEventListener(
-
-            "click",
-
-            abrirNovoPedido
-
         );
 
 
     $("#form-pedido")
         ?.addEventListener(
-
             "submit",
-
-            salvarPedido
-
-        );
-
-
-    $("#tabela-pedidos")
-        ?.addEventListener(
-
-            "click",
-
-            evento => {
-
-                const botao =
-
-                    evento.target.closest(
-                        "[data-acao-pedido]"
-                    );
-
-
-                if (!botao) {
-
-                    return;
-
-                }
-
-
-                if (
-
-                    botao.dataset
-                        .acaoPedido ===
-                    "editar"
-
-                ) {
-
-                    editarPedido(
-
-                        botao.dataset.id
-
-                    );
-
-                } else {
-
-                    excluirPedido(
-
-                        botao.dataset.id
-
-                    );
-
-                }
-
-            }
-
-        );
-
-
-    /* CUSTOS */
-
-    $("#novo-custo")
-        ?.addEventListener(
-
-            "click",
-
-            abrirNovoCusto
-
+            salvarPedidoEvento
         );
 
 
     $("#form-custo")
         ?.addEventListener(
-
             "submit",
-
-            salvarCusto
-
-        );
-
-
-    $("#buscar-custo")
-        ?.addEventListener(
-
-            "input",
-
-            renderizarCustos
-
-        );
-
-
-    $("#filtro-custo")
-        ?.addEventListener(
-
-            "change",
-
-            renderizarCustos
-
-        );
-
-
-    $("#tabela-custos")
-        ?.addEventListener(
-
-            "click",
-
-            evento => {
-
-                const botao =
-
-                    evento.target.closest(
-                        "[data-acao-custo]"
-                    );
-
-
-                if (!botao) {
-
-                    return;
-
-                }
-
-
-                if (
-
-                    botao.dataset
-                        .acaoCusto ===
-                    "editar"
-
-                ) {
-
-                    editarCusto(
-
-                        botao.dataset.id
-
-                    );
-
-                } else {
-
-                    excluirCusto(
-
-                        botao.dataset.id
-
-                    );
-
-                }
-
-            }
-
-        );
-
-
-    /* FILAMENTOS */
-
-    $("#novo-filamento")
-        ?.addEventListener(
-
-            "click",
-
-            abrirNovoFilamento
-
+            salvarCustoEvento
         );
 
 
     $("#form-filamento")
         ?.addEventListener(
-
             "submit",
+            salvarFilamentoEvento
+        );
 
-            salvarFilamento
 
+    $("#buscar-produto")
+        ?.addEventListener(
+            "input",
+            renderizarProdutos
+        );
+
+
+    $("#buscar-custo")
+        ?.addEventListener(
+            "input",
+            renderizarCustos
+        );
+
+
+    $("#filtro-custo")
+        ?.addEventListener(
+            "change",
+            renderizarCustos
         );
 
 
     $("#buscar-filamento")
         ?.addEventListener(
-
             "input",
-
             renderizarFilamentos
-
         );
 
 
     $("#filtro-material")
         ?.addEventListener(
-
             "change",
-
             renderizarFilamentos
-
         );
 
-
-    $("#tabela-filamentos")
-        ?.addEventListener(
-
-            "click",
-
-            evento => {
-
-                const botao =
-
-                    evento.target.closest(
-                        "[data-acao-filamento]"
-                    );
-
-
-                if (!botao) {
-
-                    return;
-
-                }
-
-
-                if (
-
-                    botao.dataset
-                        .acaoFilamento ===
-                    "editar"
-
-                ) {
-
-                    editarFilamento(
-
-                        botao.dataset.id
-
-                    );
-
-                } else {
-
-                    excluirFilamento(
-
-                        botao.dataset.id
-
-                    );
-
-                }
-
-            }
-
-        );
-
-
-    /* SIMULADOR */
 
     [
 
@@ -7193,24 +4182,56 @@ function configurarEventos() {
     );
 
 
-    /* EXPORTAÇÃO */
-
-    $("#exportar-catalogo")
-        ?.addEventListener(
-
-            "click",
-
-            exportarCatalogo
-
-        );
-
-
     $("#exportar-pedidos")
         ?.addEventListener(
 
             "click",
 
-            exportarPedidos
+            () => {
+
+                exportarCSV(
+
+                    "pedidos-criaitor3d.csv",
+
+                    [
+
+                        "Cliente",
+
+                        "Contato",
+
+                        "Produtos",
+
+                        "Valor",
+
+                        "Status",
+
+                        "Data"
+
+                    ],
+
+                    estado.pedidos.map(
+
+                        item => [
+
+                            item.cliente,
+
+                            item.contato,
+
+                            item.itens,
+
+                            item.valor,
+
+                            item.status,
+
+                            item.data
+
+                        ]
+
+                    )
+
+                );
+
+            }
 
         );
 
@@ -7220,7 +4241,47 @@ function configurarEventos() {
 
             "click",
 
-            exportarCustos
+            () => {
+
+                exportarCSV(
+
+                    "custos-criaitor3d.csv",
+
+                    [
+
+                        "Descrição",
+
+                        "Categoria",
+
+                        "Tipo",
+
+                        "Valor",
+
+                        "Data"
+
+                    ],
+
+                    estado.custos.map(
+
+                        item => [
+
+                            item.descricao,
+
+                            item.categoria,
+
+                            item.tipo,
+
+                            item.valor,
+
+                            item.data
+
+                        ]
+
+                    )
+
+                );
+
+            }
 
         );
 
@@ -7230,44 +4291,120 @@ function configurarEventos() {
 
             "click",
 
-            exportarFilamentos
+            () => {
+
+                exportarCSV(
+
+                    "filamentos-criaitor3d.csv",
+
+                    [
+
+                        "Marca",
+
+                        "Material",
+
+                        "Cor",
+
+                        "Peso original",
+
+                        "Peso restante",
+
+                        "Valor pago",
+
+                        "Custo por grama"
+
+                    ],
+
+                    estado.filamentos.map(
+
+                        item => [
+
+                            item.marca,
+
+                            item.material,
+
+                            item.cor,
+
+                            item.pesoOriginal,
+
+                            item.pesoRestante,
+
+                            item.valorPago,
+
+                            custoGrama(item)
+
+                        ]
+
+                    )
+
+                );
+
+            }
+
+        );
+
+
+    $("#exportar-catalogo")
+        ?.addEventListener(
+
+            "click",
+
+            () => {
+
+                baixarArquivo(
+
+                    "catalogo.js",
+
+                    "window.CRIAITOR_CATALOGO = " +
+
+                    JSON.stringify(
+
+                        estado.produtos,
+
+                        null,
+
+                        2
+
+                    )
+
+                    +
+
+                    ";\n",
+
+                    "text/javascript"
+
+                );
+
+            }
 
         );
 
 
     $("#baixar-backup")
         ?.addEventListener(
-
             "click",
-
             exportarBackup
-
         );
 
 
     $("#restaurar-backup")
         ?.addEventListener(
-
             "change",
-
             restaurarBackup
-
         );
 
 }
 
 
 /* =====================================================
-   VERIFICAR ATUALIZAÇÕES SUPABASE
+   VERIFICAR ALTERAÇÕES
 ===================================================== */
 
 async function verificarAtualizacoes() {
 
     if (
 
-        !estado.usuario ||
-
-        estado.salvando ||
+        estado.salvandoCatalogo ||
 
         $("#modal-produto")
             ?.open
@@ -7287,7 +4424,7 @@ async function verificarAtualizacoes() {
 
             error
 
-        } = await supabase
+        } = await sb
 
             .from(CONFIG.tabela)
 
@@ -7303,14 +4440,18 @@ async function verificarAtualizacoes() {
 
         if (error) {
 
-            throw error;
+            return;
 
         }
 
 
         if (
 
-            Number(data.versao) !==
+            numero(
+                data.versao
+            )
+
+            !==
 
             estado.versao
 
@@ -7321,15 +4462,9 @@ async function verificarAtualizacoes() {
         }
 
 
-    } catch (erro) {
+    } catch {
 
-        console.warn(
-
-            "Falha ao verificar atualizações:",
-
-            erro.message
-
-        );
+        /* mantém painel funcionando */
 
     }
 
@@ -7337,7 +4472,7 @@ async function verificarAtualizacoes() {
 
 
 /* =====================================================
-   API PARA OUTROS ARQUIVOS
+   API
 ===================================================== */
 
 window.CRIAITOR_ADMIN = {
@@ -7353,32 +4488,26 @@ window.CRIAITOR_ADMIN = {
     abrirNovoProduto,
 
     getProdutos:
-
         () => [
             ...estado.produtos
         ],
 
     getVersao:
-
-        () => estado.versao,
+        () =>
+            estado.versao,
 
     getUsuario:
-
-        () => estado.usuario,
+        () => null,
 
     getCustos:
-
         () => [
             ...estado.custos
         ],
 
     getFilamentos:
-
         () => [
             ...estado.filamentos
-        ],
-
-    custoPorGramaFilamento
+        ]
 
 };
 
@@ -7387,81 +4516,53 @@ window.CRIAITOR_ADMIN = {
    INICIALIZAÇÃO
 ===================================================== */
 
-async function iniciarPainel() {
+async function iniciar() {
 
     try {
 
-        criarTelaLogin();
+        verificarSupabase();
 
-        injetarEstilosExtras();
-
-        criarAreasExtras();
-
-        criarModaisExtras();
-
-        criarBotaoSair();
-
+        carregarDadosLocais();
 
         configurarEventos();
 
-
-        $("#form-login")
-            .addEventListener(
-
-                "submit",
-
-                realizarLogin
-
-            );
+        abrirPagina(
+            "dashboard"
+        );
 
 
-        verificarConfiguracao();
+        await carregarCatalogo();
 
 
-        const usuario =
-
-            await verificarSessao();
+        atualizarPainel();
 
 
-        if (usuario) {
+        setInterval(
 
-            await entrarPainel();
+            verificarAtualizacoes,
 
-        } else {
+            30000
 
-            mostrarLogin();
-
-        }
+        );
 
 
     } catch (erro) {
 
         console.error(
-
-            "Erro ao inicializar painel:",
-
             erro
+        );
+
+
+        avisar(
+
+            erro.message,
+
+            true
 
         );
 
 
-        criarTelaLogin();
-
-        mostrarLogin();
-
-
-        const mensagem =
-
-            $("#mensagem-login");
-
-
-        if (mensagem) {
-
-            mensagem.textContent =
-
-                erro.message;
-
-        }
+        atualizarPainel();
 
     }
 
@@ -7469,37 +4570,7 @@ async function iniciarPainel() {
 
 
 /* =====================================================
-   MONITORAR SESSÃO
-===================================================== */
-
-if (supabase) {
-
-    supabase.auth
-        .onAuthStateChange(
-
-            (
-
-                _evento,
-
-                sessao
-
-            ) => {
-
-                if (!sessao) {
-
-                    mostrarLogin();
-
-                }
-
-            }
-
-        );
-
-}
-
-
-/* =====================================================
-   INICIAR
+   START
 ===================================================== */
 
 if (
@@ -7513,33 +4584,18 @@ if (
 
         "DOMContentLoaded",
 
-        iniciarPainel,
+        iniciar,
 
         {
-
             once: true
-
         }
 
     );
 
 } else {
 
-    iniciarPainel();
+    iniciar();
 
 }
-
-
-/* =====================================================
-   VERIFICAÇÃO AUTOMÁTICA
-===================================================== */
-
-setInterval(
-
-    verificarAtualizacoes,
-
-    30000
-
-);
 
 })();
