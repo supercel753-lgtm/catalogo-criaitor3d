@@ -26,13 +26,13 @@
 
 
     <!-- =========================================
-         FAVICON / LOGO
+         LOGO
     ========================================== -->
 
     <link
         rel="icon"
         type="image/jpeg"
-        href="./assets/logo-criaitor3d.jpg"
+        href="./src/assets/logo-criaitor3d.jpg"
     >
 
 
@@ -58,20 +58,17 @@
 
 
     <!-- =========================================
-         CSS PRINCIPAL
+         CSS
     ========================================== -->
 
     <link
         rel="stylesheet"
-        href="./style.css"
+        href="./src/style.css"
     >
 
 
     <!-- =========================================
-         CSS DE EMERGÊNCIA
-
-         Evita tela branca caso o style.css
-         ainda não tenha carregado.
+         CSS DE SEGURANÇA VISUAL
     ========================================== -->
 
     <style>
@@ -85,42 +82,15 @@
 
             background: #100c15;
 
-            color: white;
+            color: #ffffff;
 
             font-family: Arial, sans-serif;
 
         }
 
-
         [hidden] {
 
             display: none !important;
-
-        }
-
-
-        .tela-login {
-
-            min-height: 100vh;
-
-            display: flex;
-
-            align-items: center;
-
-            justify-content: center;
-
-        }
-
-
-        .form-login {
-
-            width: min(420px, calc(100% - 30px));
-
-            padding: 30px;
-
-            background: #211829;
-
-            border-radius: 18px;
 
         }
 
@@ -142,7 +112,7 @@
     ========================================== -->
 
     <script
-        src="./supabase-config.js"
+        src="./src/supabase-config.js"
         defer
     ></script>
 
@@ -152,7 +122,7 @@
     ========================================== -->
 
     <script
-        src="./catalogo.js"
+        src="./src/catalogo.js"
         defer
     ></script>
 
@@ -162,17 +132,17 @@
     ========================================== -->
 
     <script
-        src="./admin.js"
+        src="./src/admin.js"
         defer
     ></script>
 
 
     <!-- =========================================
-         FOTOGRAFIAS
+         FOTOS DOS PRODUTOS
     ========================================== -->
 
     <script
-        src="./fotos-empresa.js"
+        src="./src/fotos-empresa.js"
         defer
     ></script>
 
@@ -182,7 +152,7 @@
     ========================================== -->
 
     <script
-        src="./sync-empresa.js"
+        src="./src/sync-empresa.js"
         defer
     ></script>
 
@@ -192,9 +162,9 @@
 <body data-area="empresa">
 
 
-    <!-- =========================================
+    <!-- =================================================
          LOGIN
-    ========================================== -->
+    ================================================== -->
 
     <section
         class="tela-login"
@@ -209,7 +179,7 @@
             <div class="login-marca">
 
                 <img
-                    src="./assets/logo-criaitor3d.jpg"
+                    src="./src/assets/logo-criaitor3d.jpg"
                     alt="CriAItor 3D"
                     class="logo-empresa"
                     draggable="false"
@@ -225,8 +195,8 @@
 
             <p>
 
-                Entre com sua conta para gerenciar
-                produtos, custos, filamentos e pedidos.
+                Acesso exclusivo à administração
+                da CriAItor 3D.
 
             </p>
 
@@ -242,6 +212,7 @@
                 type="email"
                 id="email-login"
                 autocomplete="username"
+                placeholder="criaitor3d@gmail.com"
                 required
             >
 
@@ -282,9 +253,9 @@
     </section>
 
 
-    <!-- =========================================
-         PAINEL PRINCIPAL
-    ========================================== -->
+    <!-- =================================================
+         SISTEMA
+    ================================================== -->
 
     <div
         class="app"
@@ -293,19 +264,17 @@
     >
 
 
-        <!-- =====================================
-             MENU LATERAL
-        ====================================== -->
+        <!-- =============================================
+             MENU
+        ============================================== -->
 
         <aside class="sidebar">
 
 
-            <!-- LOGO -->
-
             <div class="marca">
 
                 <img
-                    src="./assets/logo-criaitor3d.jpg"
+                    src="./src/assets/logo-criaitor3d.jpg"
                     alt="CriAItor 3D"
                     class="logo-empresa"
                     draggable="false"
@@ -406,8 +375,8 @@
 
                 <p>
 
-                    Produtos sincronizados
-                    pelo Supabase.
+                    Gestão de produção
+                    e catálogo.
 
                 </p>
 
@@ -417,14 +386,12 @@
         </aside>
 
 
-        <!-- =====================================
+        <!-- =============================================
              CONTEÚDO
-        ====================================== -->
+        ============================================== -->
 
         <div class="conteudo">
 
-
-            <!-- CABEÇALHO -->
 
             <header class="topbar">
 
@@ -437,6 +404,7 @@
 
                     </small>
 
+
                     <h2 id="titulo-pagina">
 
                         Visão geral
@@ -446,15 +414,32 @@
                 </div>
 
 
-                <button
-                    type="button"
-                    class="botao botao-laranja"
-                    id="novo-produto-topo"
-                >
+                <div class="grupo-botoes">
 
-                    + Novo produto
 
-                </button>
+                    <button
+                        type="button"
+                        class="botao botao-laranja"
+                        id="novo-produto-topo"
+                    >
+
+                        + Novo produto
+
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="botao botao-secundario"
+                        id="botao-sair"
+                    >
+
+                        Sair
+
+                    </button>
+
+
+                </div>
 
 
             </header>
@@ -463,24 +448,18 @@
             <main>
 
 
-                <!-- =================================
-                     AVISO
-                ================================== -->
-
                 <div class="aviso">
 
-                    Produtos e fotografias são
-                    armazenados no Supabase.
-
-                    Custos, filamentos e pedidos
-                    são administrados pelo painel.
+                    O catálogo de produtos é
+                    sincronizado com o site dos clientes
+                    através do Supabase.
 
                 </div>
 
 
-                <!-- =================================
+                <!-- =====================================
                      DASHBOARD
-                ================================== -->
+                ====================================== -->
 
                 <section
                     class="pagina ativa"
@@ -495,9 +474,10 @@
 
                             <span class="subtitulo">
 
-                                PAINEL DA EMPRESA
+                                PAINEL CRIAITOR 3D
 
                             </span>
+
 
                             <h1>
 
@@ -507,10 +487,12 @@
 
                             </h1>
 
+
                             <p>
 
-                                Gerencie produção,
-                                catálogo, estoque e custos.
+                                Produtos, pedidos,
+                                custos e matéria-prima
+                                em um único painel.
 
                             </p>
 
@@ -532,21 +514,15 @@
                         <div class="indicador">
 
                             <span>
-
-                                PRODUTOS CADASTRADOS
-
+                                PRODUTOS
                             </span>
 
                             <strong id="total-produtos">
-
                                 0
-
                             </strong>
 
                             <small>
-
-                                Produtos no catálogo
-
+                                Produtos cadastrados
                             </small>
 
                         </div>
@@ -555,21 +531,15 @@
                         <div class="indicador">
 
                             <span>
-
-                                PRODUTOS VISÍVEIS
-
+                                VISÍVEIS
                             </span>
 
                             <strong id="total-visiveis">
-
                                 0
-
                             </strong>
 
                             <small>
-
-                                Visíveis aos clientes
-
+                                Produtos na loja
                             </small>
 
                         </div>
@@ -578,21 +548,15 @@
                         <div class="indicador">
 
                             <span>
-
                                 ESTOQUE
-
                             </span>
 
                             <strong id="total-estoque">
-
                                 0
-
                             </strong>
 
                             <small>
-
                                 Unidades cadastradas
-
                             </small>
 
                         </div>
@@ -601,21 +565,15 @@
                         <div class="indicador">
 
                             <span>
-
                                 PEDIDOS ABERTOS
-
                             </span>
 
                             <strong id="total-pedidos">
-
                                 0
-
                             </strong>
 
                             <small>
-
-                                Pedidos pendentes
-
+                                Pedidos em andamento
                             </small>
 
                         </div>
@@ -629,9 +587,10 @@
 
                         <div class="painel-cabecalho">
 
+
                             <h2>
 
-                                Criações recentes
+                                Produtos recentes
 
                             </h2>
 
@@ -642,9 +601,10 @@
                                 data-ir="produtos"
                             >
 
-                                Ver produtos →
+                                Ver todos →
 
                             </button>
+
 
                         </div>
 
@@ -662,9 +622,9 @@
                 </section>
 
 
-                <!-- =================================
+                <!-- =====================================
                      PRODUTOS
-                ================================== -->
+                ====================================== -->
 
                 <section
                     class="pagina"
@@ -679,25 +639,15 @@
                         <div>
 
                             <span class="subtitulo">
-
                                 CATÁLOGO
-
                             </span>
 
                             <h1>
 
                                 Gerenciar
-
                                 <em>produtos.</em>
 
                             </h1>
-
-                            <p>
-
-                                Cadastre, edite e organize
-                                produtos do catálogo.
-
-                            </p>
 
                         </div>
 
@@ -795,9 +745,9 @@
                 </section>
 
 
-                <!-- =================================
+                <!-- =====================================
                      PEDIDOS
-                ================================== -->
+                ====================================== -->
 
                 <section
                     class="pagina"
@@ -812,15 +762,13 @@
                         <div>
 
                             <span class="subtitulo">
-
                                 VENDAS
-
                             </span>
+
 
                             <h1>
 
                                 Controle de
-
                                 <em>pedidos.</em>
 
                             </h1>
@@ -877,7 +825,7 @@
                                         </th>
 
                                         <th>
-                                            DESCRIÇÃO
+                                            PRODUTOS
                                         </th>
 
                                         <th>
@@ -918,9 +866,9 @@
                 </section>
 
 
-                <!-- =================================
+                <!-- =====================================
                      CUSTOS
-                ================================== -->
+                ====================================== -->
 
                 <section
                     class="pagina"
@@ -935,24 +883,22 @@
                         <div>
 
                             <span class="subtitulo">
-
                                 GESTÃO FINANCEIRA
-
                             </span>
+
 
                             <h1>
 
                                 Controle de
-
                                 <em>custos.</em>
 
                             </h1>
 
+
                             <p>
 
-                                Registre despesas
-                                e calcule custos
-                                das impressões.
+                                Registre despesas e
+                                simule custos de produção.
 
                             </p>
 
@@ -990,8 +936,6 @@
                     </div>
 
 
-                    <!-- RESUMOS -->
-
                     <div class="gestao-resumos">
 
 
@@ -1002,9 +946,7 @@
                             </span>
 
                             <strong id="custos-mes">
-
                                 R$ 0,00
-
                             </strong>
 
                         </div>
@@ -1013,13 +955,11 @@
                         <div class="gestao-card">
 
                             <span>
-                                CUSTOS FIXOS
+                                FIXOS
                             </span>
 
                             <strong id="custos-fixos">
-
                                 R$ 0,00
-
                             </strong>
 
                         </div>
@@ -1028,13 +968,11 @@
                         <div class="gestao-card">
 
                             <span>
-                                CUSTOS VARIÁVEIS
+                                VARIÁVEIS
                             </span>
 
                             <strong id="custos-variaveis">
-
                                 R$ 0,00
-
                             </strong>
 
                         </div>
@@ -1047,9 +985,7 @@
                             </span>
 
                             <strong id="total-custos">
-
                                 0
-
                             </strong>
 
                         </div>
@@ -1058,14 +994,12 @@
                     </div>
 
 
-                    <!-- SIMULADOR -->
-
                     <div class="painel">
 
 
                         <h2>
 
-                            Simulador de custo de impressão
+                            Simulador de impressão
 
                         </h2>
 
@@ -1081,7 +1015,7 @@
 
                                     <option value="">
 
-                                        Selecione um filamento
+                                        Selecione
 
                                     </option>
 
@@ -1092,7 +1026,7 @@
 
                             <label>
 
-                                Material usado (g)
+                                Material utilizado (g)
 
                                 <input
                                     type="number"
@@ -1136,7 +1070,7 @@
 
                             <label>
 
-                                Energia (R$/kWh)
+                                Energia R$/kWh
 
                                 <input
                                     type="number"
@@ -1178,9 +1112,7 @@
                                 <strong
                                     id="sim-custo-material"
                                 >
-
                                     R$ 0,00
-
                                 </strong>
 
                             </div>
@@ -1195,9 +1127,7 @@
                                 <strong
                                     id="sim-custo-energia"
                                 >
-
                                     R$ 0,00
-
                                 </strong>
 
                             </div>
@@ -1212,9 +1142,7 @@
                                 <strong
                                     id="sim-custo-direto"
                                 >
-
                                     R$ 0,00
-
                                 </strong>
 
                             </div>
@@ -1229,9 +1157,7 @@
                                 <strong
                                     id="sim-preco-sugerido"
                                 >
-
                                     R$ 0,00
-
                                 </strong>
 
                             </div>
@@ -1242,8 +1168,6 @@
 
                     </div>
 
-
-                    <!-- LISTA -->
 
                     <div class="painel">
 
@@ -1261,21 +1185,15 @@
                             <select id="filtro-custo">
 
                                 <option value="Todos">
-
-                                    Todos os tipos
-
+                                    Todos
                                 </option>
 
                                 <option value="Fixo">
-
                                     Fixo
-
                                 </option>
 
                                 <option value="Variável">
-
                                     Variável
-
                                 </option>
 
                             </select>
@@ -1340,9 +1258,9 @@
                 </section>
 
 
-                <!-- =================================
+                <!-- =====================================
                      FILAMENTOS
-                ================================== -->
+                ====================================== -->
 
                 <section
                     class="pagina"
@@ -1357,23 +1275,22 @@
                         <div>
 
                             <span class="subtitulo">
-
                                 MATÉRIA-PRIMA
-
                             </span>
+
 
                             <h1>
 
-                                Estoque de
-
+                                Controle de
                                 <em>filamentos.</em>
 
                             </h1>
 
+
                             <p>
 
-                                Controle material,
-                                cores, peso e custo.
+                                Estoque, peso,
+                                custo e cores.
 
                             </p>
 
@@ -1417,15 +1334,11 @@
                         <div class="gestao-card">
 
                             <span>
-                                ROLOS CADASTRADOS
+                                ROLOS
                             </span>
 
-                            <strong
-                                id="total-filamentos"
-                            >
-
+                            <strong id="total-filamentos">
                                 0
-
                             </strong>
 
                         </div>
@@ -1437,12 +1350,8 @@
                                 PESO DISPONÍVEL
                             </span>
 
-                            <strong
-                                id="peso-filamentos"
-                            >
-
+                            <strong id="peso-filamentos">
                                 0 kg
-
                             </strong>
 
                         </div>
@@ -1451,15 +1360,11 @@
                         <div class="gestao-card">
 
                             <span>
-                                VALOR DO ESTOQUE
+                                VALOR EM ESTOQUE
                             </span>
 
-                            <strong
-                                id="valor-filamentos"
-                            >
-
+                            <strong id="valor-filamentos">
                                 R$ 0,00
-
                             </strong>
 
                         </div>
@@ -1471,12 +1376,8 @@
                                 ESTOQUE BAIXO
                             </span>
 
-                            <strong
-                                id="filamentos-baixos"
-                            >
-
+                            <strong id="filamentos-baixos">
                                 0
-
                             </strong>
 
                         </div>
@@ -1494,7 +1395,7 @@
                             <input
                                 type="search"
                                 id="buscar-filamento"
-                                placeholder="Buscar marca, material ou cor..."
+                                placeholder="Buscar filamento..."
                             >
 
 
@@ -1572,9 +1473,9 @@
                 </section>
 
 
-                <!-- =================================
+                <!-- =====================================
                      SINCRONIZAÇÃO
-                ================================== -->
+                ====================================== -->
 
                 <section
                     class="pagina"
@@ -1589,15 +1490,13 @@
                         <div>
 
                             <span class="subtitulo">
-
                                 SUPABASE
-
                             </span>
+
 
                             <h1>
 
                                 Catálogo
-
                                 <em>sincronizado.</em>
 
                             </h1>
@@ -1610,22 +1509,20 @@
 
                     <div class="painel">
 
-
                         <h2>
 
-                            Sincronização com a loja
+                            Site dos clientes
 
                         </h2>
 
 
                         <p>
 
-                            Os produtos cadastrados
-                            neste painel são compartilhados
-                            com o site dos clientes.
+                            Alterações de produtos
+                            realizadas neste painel
+                            são gravadas no Supabase.
 
                         </p>
-
 
                     </div>
 
@@ -1687,7 +1584,7 @@
                                 <input
                                     type="file"
                                     id="restaurar-backup"
-                                    accept=".json,application/json"
+                                    accept=".json"
                                     hidden
                                 >
 
@@ -1712,9 +1609,9 @@
     </div>
 
 
-    <!-- =========================================
-         MODAL PRODUTO
-    ========================================== -->
+    <!-- =================================================
+         PRODUTO
+    ================================================== -->
 
     <dialog
         class="modal"
@@ -1754,7 +1651,7 @@
 
                 <label class="campo campo-inteiro">
 
-                    Nome do produto
+                    Nome
 
                     <input
                         type="text"
@@ -1780,7 +1677,7 @@
 
                 <label class="campo">
 
-                    Preço (R$)
+                    Preço
 
                     <input
                         type="number"
@@ -1811,7 +1708,7 @@
 
                 <label class="campo">
 
-                    Prazo de produção
+                    Prazo
 
                     <input
                         type="text"
@@ -1822,16 +1719,11 @@
                 </label>
 
 
-                <!--
-                    fotos-empresa.js cria
-                    o sistema de upload aqui.
-                -->
-
                 <label
                     class="campo campo-inteiro campo-url-legado"
                 >
 
-                    URL da fotografia
+                    Foto
 
                     <input
                         type="text"
@@ -1899,7 +1791,6 @@
                 <button
                     type="submit"
                     class="botao botao-laranja"
-                    id="salvar-produto"
                 >
 
                     Salvar produto
@@ -1916,9 +1807,9 @@
     </dialog>
 
 
-    <!-- =========================================
-         MODAL PEDIDO
-    ========================================== -->
+    <!-- =================================================
+         PEDIDO
+    ================================================== -->
 
     <dialog
         class="modal"
@@ -1934,7 +1825,7 @@
 
                 <h2>
 
-                    Registrar pedido
+                    Pedido
 
                 </h2>
 
@@ -2061,7 +1952,7 @@
                     class="botao botao-laranja"
                 >
 
-                    Salvar pedido
+                    Salvar
 
                 </button>
 
@@ -2075,9 +1966,9 @@
     </dialog>
 
 
-    <!-- =========================================
-         MODAL CUSTO
-    ========================================== -->
+    <!-- =================================================
+         CUSTO
+    ================================================== -->
 
     <dialog
         class="modal"
@@ -2135,7 +2026,6 @@
                     <input
                         type="text"
                         name="categoria"
-                        placeholder="Energia, embalagem..."
                         required
                     >
 
@@ -2223,7 +2113,7 @@
                     class="botao botao-laranja"
                 >
 
-                    Salvar custo
+                    Salvar
 
                 </button>
 
@@ -2237,9 +2127,9 @@
     </dialog>
 
 
-    <!-- =========================================
-         MODAL FILAMENTO
-    ========================================== -->
+    <!-- =================================================
+         FILAMENTO
+    ================================================== -->
 
     <dialog
         class="modal"
@@ -2319,7 +2209,7 @@
 
                 <label class="campo">
 
-                    Diâmetro
+                    Diâmetro (mm)
 
                     <input
                         type="number"
@@ -2362,7 +2252,7 @@
 
                 <label class="campo">
 
-                    Valor pago (R$)
+                    Valor pago
 
                     <input
                         type="number"
@@ -2377,14 +2267,13 @@
 
                 <label class="campo">
 
-                    Avisar abaixo de (g)
+                    Estoque baixo abaixo de (g)
 
                     <input
                         type="number"
                         name="limiteBaixo"
                         min="0"
                         value="200"
-                        required
                     >
 
                 </label>
@@ -2424,7 +2313,7 @@
                     class="botao botao-laranja"
                 >
 
-                    Salvar filamento
+                    Salvar
 
                 </button>
 
@@ -2438,9 +2327,9 @@
     </dialog>
 
 
-    <!-- =========================================
+    <!-- =================================================
          NOTIFICAÇÕES
-    ========================================== -->
+    ================================================== -->
 
     <div
         class="notificacao"
