@@ -1,8 +1,20 @@
+"use strict";
+
 const SUPABASE_URL =
     "https://odmshtzmvtgkuxnysqor.supabase.co";
 
 const SUPABASE_PUBLIC_KEY =
     "sb_publishable_iGeAejP8oNb0hUy7FhThIQ_MMbzZV2c";
+
+
+if (!window.supabase) {
+
+    throw new Error(
+        "Biblioteca do Supabase não carregada."
+    );
+
+}
+
 
 window.sb =
     window.supabase.createClient(
@@ -31,16 +43,16 @@ window.sb =
 window.CRIAITOR_SUPABASE_CONFIG =
     Object.freeze({
 
-        bucket:
-            "projetos",
-
-        pastaImagens:
-            "catalogo",
-
         tabelaCatalogo:
             "catalogo",
 
         registroCatalogo:
-            1
+            1,
+
+        bucket:
+            "projetos",
+
+        pastaImagens:
+            "catalogo"
 
     });
