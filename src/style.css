@@ -1,46 +1,26 @@
-
 /*
-====================================================
+=====================================================
 CRIAITOR 3D
-PAINEL ADMINISTRATIVO DA EMPRESA
-====================================================
-
-ARQUIVO: style.css
-
-IDENTIDADE VISUAL:
-Preto, roxo e laranja.
-
-LOGOTIPO:
-assets/logo-criaitor3d.jpg
-
-COMPATÍVEL COM:
-
-- index.html
-- admin.js
-- catalogo.js
-- supabase-config.js
-- sync-empresa.js
-- fotos-empresa.js
-
-====================================================
+PAINEL ADMINISTRATIVO
+=====================================================
 */
 
 
-/* ==================================================
-   1. CORES E VARIÁVEIS
-================================================== */
+/* ==========================================
+   VARIÁVEIS
+========================================== */
 
 :root {
 
     --fundo: #100c15;
 
-    --fundo-secundario: #17101f;
+    --fundo-2: #17101f;
 
     --sidebar: #160f1d;
 
     --painel: #211829;
 
-    --painel-claro: #2e2238;
+    --painel-2: #2e2238;
 
     --campo: #302438;
 
@@ -48,15 +28,13 @@ COMPATÍVEL COM:
 
     --roxo-claro: #d267ff;
 
-    --roxo-escuro: #54226c;
-
     --laranja: #ff8927;
 
     --laranja-claro: #ffb45e;
 
     --texto: #f7f0fa;
 
-    --texto-secundario: #b8a8c3;
+    --cinza: #b8a8c3;
 
     --borda: #493550;
 
@@ -64,16 +42,12 @@ COMPATÍVEL COM:
 
     --vermelho: #ff8e8e;
 
-    --sombra: 0 12px 35px rgba(0, 0, 0, 0.25);
-
-    --raio: 14px;
-
 }
 
 
-/* ==================================================
-   2. CONFIGURAÇÕES GERAIS
-================================================== */
+/* ==========================================
+   BASE
+========================================== */
 
 * {
 
@@ -99,11 +73,13 @@ body {
 
     color: var(--texto);
 
-    font-family: "DM Sans", Arial, sans-serif;
+    font-family:
+        "DM Sans",
+        Arial,
+        sans-serif;
 
-    font-size: 14px;
-
-    -webkit-font-smoothing: antialiased;
+    -webkit-font-smoothing:
+        antialiased;
 
 }
 
@@ -134,15 +110,6 @@ button:disabled {
 }
 
 
-a {
-
-    color: inherit;
-
-    text-decoration: none;
-
-}
-
-
 img {
 
     display: block;
@@ -154,10 +121,11 @@ img {
 
 h1,
 h2,
-h3,
-h4 {
+h3 {
 
-    font-family: "Space Grotesk", Arial, sans-serif;
+    font-family:
+        "Space Grotesk",
+        sans-serif;
 
 }
 
@@ -178,100 +146,54 @@ em {
 }
 
 
-[hidden],
-.app[hidden],
-.tela-login[hidden],
-.pagina[hidden],
-.preview-container[hidden] {
+[hidden] {
 
     display: none !important;
 
 }
 
 
-:focus-visible {
+/* ==========================================
+   LOGO
+========================================== */
 
-    outline: 2px solid var(--laranja);
+.logo-empresa {
 
-    outline-offset: 3px;
+    display: block;
 
-}
+    width: 185px;
 
+    height: 185px;
 
-/* ==================================================
-   3. ESTRUTURA PRINCIPAL DO PAINEL
-================================================== */
+    object-fit: contain;
 
-.app {
+    background: #000;
 
-    display: grid;
+    border-radius: 14px;
 
-    grid-template-columns: 250px minmax(0, 1fr);
+    user-select: none;
 
-    min-height: 100vh;
-
-}
-
-
-.conteudo {
-
-    min-width: 0;
-
-    background:
-
-        radial-gradient(
-            circle at 90% 0%,
-            rgba(177, 43, 255, 0.08),
-            transparent 35%
-        ),
-
-        var(--fundo);
+    -webkit-user-drag: none;
 
 }
 
 
-/* ==================================================
-   4. MENU LATERAL
-================================================== */
-
-.sidebar {
+.marca {
 
     display: flex;
 
-    flex-direction: column;
-
-    min-height: 100vh;
-
-    padding: 24px 15px;
-
-    background: var(--sidebar);
-
-    border-right: 1px solid var(--borda);
+    justify-content: center;
 
 }
 
 
-/* ==================================================
-   5. LOGOTIPO OFICIAL DA EMPRESA
-================================================== */
+/* ==========================================
+   LOGIN
+========================================== */
 
-/*
+.tela-login {
 
-A imagem é carregada pelo HTML:
-
-<img
-    src="assets/logo-criaitor3d.jpg"
-    class="logo-empresa"
-    alt="CriAItor 3D"
->
-
-Não é necessário utilizar o Supabase
-para carregar o logotipo.
-
-*/
-
-
-.sidebar .marca {
+    min-height: 100vh;
 
     display: flex;
 
@@ -279,61 +201,48 @@ para carregar o logotipo.
 
     justify-content: center;
 
-    width: 100%;
+    padding: 25px;
 
-    margin-bottom: 30px;
+    background:
 
-    padding: 10px 0;
+        radial-gradient(
+            circle at 50% 20%,
+            rgba(177, 43, 255, 0.18),
+            transparent 42%
+        ),
 
-    cursor: default;
-
-}
-
-
-/* LOGO JPG COMPLETA */
-
-.logo-empresa {
-
-    display: block;
-
-    width: 195px;
-
-    height: 195px;
-
-    max-width: 100%;
-
-    object-fit: contain;
-
-    object-position: center;
-
-    aspect-ratio: 1 / 1;
-
-    background: #000000;
-
-    border: none;
-
-    border-radius: 12px;
-
-    box-shadow: none;
-
-    user-select: none;
-
-    -webkit-user-select: none;
-
-    -webkit-user-drag: none;
-
-    cursor: default;
+        var(--fundo);
 
 }
 
 
-/* LOGO EXIBIDA NA TELA DE LOGIN */
+.form-login {
+
+    width: min(
+        440px,
+        100%
+    );
+
+    padding: 35px;
+
+    background: var(--painel);
+
+    border:
+        1px solid
+        #714188;
+
+    border-radius: 20px;
+
+    box-shadow:
+        0 25px 70px
+        rgba(0, 0, 0, 0.4);
+
+}
+
 
 .login-marca {
 
     display: flex;
-
-    align-items: center;
 
     justify-content: center;
 
@@ -342,28 +251,179 @@ para carregar o logotipo.
 }
 
 
-.login-marca .logo-empresa {
+.login-marca
+.logo-empresa {
 
-    width: 175px;
+    width: 150px;
 
-    height: 175px;
+    height: 150px;
 
 }
 
 
-/* ==================================================
-   6. MENU PRINCIPAL
-================================================== */
+.form-login h2 {
+
+    margin: 0 0 10px;
+
+    color: var(--laranja);
+
+    text-align: center;
+
+}
+
+
+.form-login p {
+
+    color: var(--cinza);
+
+    text-align: center;
+
+}
+
+
+.form-login label {
+
+    display: block;
+
+    margin:
+        15px 0 7px;
+
+    font-size: 12px;
+
+    font-weight: 800;
+
+}
+
+
+.form-login input {
+
+    width: 100%;
+
+    padding: 13px;
+
+    background: var(--campo);
+
+    color: white;
+
+    border:
+        1px solid
+        #6c5177;
+
+    border-radius: 9px;
+
+    outline: none;
+
+}
+
+
+.form-login input:focus {
+
+    border-color:
+        var(--laranja);
+
+}
+
+
+.form-login button {
+
+    width: 100%;
+
+    margin-top: 22px;
+
+    padding: 14px;
+
+    background:
+        var(--laranja);
+
+    color: #211025;
+
+    border: none;
+
+    border-radius: 10px;
+
+    font-weight: 900;
+
+}
+
+
+.form-login button:hover {
+
+    background:
+        var(--laranja-claro);
+
+}
+
+
+#mensagem-login {
+
+    min-height: 18px;
+
+    color:
+        var(--vermelho);
+
+    font-size: 12px;
+
+}
+
+
+/* ==========================================
+   APP
+========================================== */
+
+.app {
+
+    min-height: 100vh;
+
+    display: grid;
+
+    grid-template-columns:
+        250px
+        minmax(0, 1fr);
+
+}
+
+
+/* ==========================================
+   SIDEBAR
+========================================== */
+
+.sidebar {
+
+    min-height: 100vh;
+
+    display: flex;
+
+    flex-direction: column;
+
+    padding: 22px 15px;
+
+    background:
+        var(--sidebar);
+
+    border-right:
+        1px solid
+        var(--borda);
+
+}
+
+
+.sidebar .marca {
+
+    margin-bottom: 25px;
+
+}
+
 
 .menu-titulo {
 
-    margin: 10px 12px 15px;
+    margin:
+        10px 12px 15px;
 
-    color: #a48cb0;
+    color: #9f8aaa;
 
     font-size: 10px;
 
-    font-weight: 800;
+    font-weight: 900;
 
     letter-spacing: 2px;
 
@@ -376,44 +436,36 @@ para carregar o logotipo.
 
     flex-direction: column;
 
-    gap: 8px;
+    gap: 7px;
 
 }
 
 
 .menu-item {
 
-    display: flex;
-
-    align-items: center;
-
     width: 100%;
 
-    min-height: 48px;
+    min-height: 47px;
 
-    padding: 14px 16px;
+    padding:
+        12px 15px;
 
-    background: transparent;
+    background:
+        transparent;
 
-    color: #cab9d4;
+    color: #cbb9d5;
 
-    border: 1px solid transparent;
+    border:
+        1px solid
+        transparent;
 
-    border-radius: 11px;
-
-    font-size: 14px;
-
-    font-weight: 700;
+    border-radius: 10px;
 
     text-align: left;
 
-    transition:
+    font-size: 13px;
 
-        background 0.2s,
-
-        color 0.2s,
-
-        border-color 0.2s;
+    font-weight: 800;
 
 }
 
@@ -429,34 +481,37 @@ para carregar o logotipo.
 
 .menu-item.ativo {
 
-    background: linear-gradient(
-        90deg,
-        #54226c,
-        #342043
-    );
+    background:
+
+        linear-gradient(
+            90deg,
+            #54226c,
+            #342043
+        );
 
     color: white;
 
-    border-color: #82409a;
+    border-color:
+        #82409a;
 
-    box-shadow: inset 3px 0 0 var(--laranja);
+    box-shadow:
+        inset 3px 0 0
+        var(--laranja);
 
 }
 
-
-/* ==================================================
-   7. RODAPÉ DO MENU
-================================================== */
 
 .sidebar-rodape {
 
     margin-top: auto;
 
-    padding: 16px;
+    padding: 15px;
 
     background: #21172c;
 
-    border: 1px solid var(--borda);
+    border:
+        1px solid
+        var(--borda);
 
     border-radius: 12px;
 
@@ -465,84 +520,91 @@ para carregar o logotipo.
 
 .sidebar-rodape strong {
 
-    display: block;
-
-    margin-bottom: 8px;
-
     color: var(--verde);
-
-    font-size: 12px;
 
 }
 
 
 .sidebar-rodape p {
 
-    margin: 0;
+    margin-bottom: 0;
 
-    color: var(--texto-secundario);
+    color: var(--cinza);
 
     font-size: 11px;
 
 }
 
 
-/* ==================================================
-   8. CABEÇALHO SUPERIOR
-================================================== */
+/* ==========================================
+   CONTEÚDO
+========================================== */
+
+.conteudo {
+
+    min-width: 0;
+
+    background:
+
+        radial-gradient(
+            circle at 95% 0%,
+            rgba(177,43,255,0.08),
+            transparent 30%
+        ),
+
+        var(--fundo);
+
+}
+
 
 .topbar {
+
+    min-height: 88px;
 
     display: flex;
 
     align-items: center;
 
-    justify-content: space-between;
+    justify-content:
+        space-between;
 
     flex-wrap: wrap;
 
     gap: 15px;
 
-    min-height: 90px;
+    padding:
+        20px 30px;
 
-    padding: 20px 35px;
+    background:
+        rgba(22,15,29,0.96);
 
-    background: rgba(22, 15, 29, 0.96);
-
-    border-bottom: 1px solid var(--borda);
+    border-bottom:
+        1px solid
+        var(--borda);
 
 }
 
 
 .topbar small {
 
-    display: block;
-
-    margin-bottom: 5px;
-
-    color: #ab97b7;
+    color: #a995b5;
 
     font-size: 10px;
 
     font-weight: 800;
 
-    letter-spacing: 1.2px;
+    letter-spacing: 1px;
 
 }
 
 
 .topbar h2 {
 
-    margin: 0;
-
-    font-size: 22px;
+    margin:
+        5px 0 0;
 
 }
 
-
-/* ==================================================
-   9. CONTEÚDO PRINCIPAL
-================================================== */
 
 main {
 
@@ -550,46 +612,46 @@ main {
 
     max-width: 1500px;
 
-    margin: 0 auto;
+    margin: auto;
 
-    padding: 35px 35px 70px;
-
-}
-
-
-.pagina {
-
-    width: 100%;
+    padding:
+        30px 35px 70px;
 
 }
 
+
+/* ==========================================
+   AVISO
+========================================== */
 
 .aviso {
 
     margin-bottom: 30px;
 
-    padding: 18px 20px;
+    padding: 16px;
 
     background: #2d1f32;
 
-    color: #ebd5e6;
+    border:
+        1px solid
+        #74466d;
 
-    border: 1px solid #74466d;
-
-    border-left: 4px solid var(--laranja);
+    border-left:
+        4px solid
+        var(--laranja);
 
     border-radius: 12px;
 
-    font-size: 13px;
+    color: #ead7e6;
 
-    line-height: 1.8;
+    font-size: 12px;
 
 }
 
 
-/* ==================================================
-   10. TÍTULOS DAS PÁGINAS
-================================================== */
+/* ==========================================
+   CABEÇALHO DAS PÁGINAS
+========================================== */
 
 .cabecalho-pagina {
 
@@ -597,18 +659,22 @@ main {
 
     align-items: center;
 
-    justify-content: space-between;
+    justify-content:
+        space-between;
 
-    gap: 25px;
+    flex-wrap: wrap;
 
-    margin-bottom: 30px;
+    gap: 20px;
+
+    margin-bottom: 28px;
 
 }
 
 
 .subtitulo {
 
-    color: var(--roxo-claro);
+    color:
+        var(--roxo-claro);
 
     font-size: 10px;
 
@@ -621,54 +687,55 @@ main {
 
 .cabecalho-pagina h1 {
 
-    margin: 12px 0;
+    margin: 10px 0;
 
-    font-size: clamp(30px, 3.5vw, 46px);
+    font-size:
+        clamp(
+            30px,
+            3.5vw,
+            47px
+        );
 
-    line-height: 1.2;
-
-    letter-spacing: -1.5px;
+    line-height: 1.1;
 
 }
 
 
 .cabecalho-pagina p {
 
-    max-width: 650px;
-
-    margin: 0;
-
-    color: var(--texto-secundario);
-
-    font-size: 14px;
+    color: var(--cinza);
 
 }
 
 
 .data-atual {
 
-    padding: 12px 16px;
+    padding:
+        10px 14px;
 
-    background: var(--painel);
+    background:
+        var(--painel);
 
-    border: 1px solid var(--borda);
+    border:
+        1px solid
+        var(--borda);
 
-    border-radius: 10px;
+    border-radius: 9px;
 
-    color: var(--texto-secundario);
+    color: var(--cinza);
 
     font-size: 12px;
-
-    white-space: nowrap;
 
 }
 
 
-/* ==================================================
-   11. BOTÕES GERAIS
-================================================== */
+/* ==========================================
+   BOTÕES
+========================================== */
 
 .botao {
+
+    min-height: 43px;
 
     display: inline-flex;
 
@@ -676,13 +743,17 @@ main {
 
     justify-content: center;
 
-    gap: 8px;
+    padding:
+        11px 18px;
 
-    min-height: 43px;
+    background:
+        var(--painel-2);
 
-    padding: 12px 19px;
+    color: white;
 
-    border: 1px solid transparent;
+    border:
+        1px solid
+        #684b75;
 
     border-radius: 10px;
 
@@ -690,84 +761,49 @@ main {
 
     font-weight: 800;
 
-    text-align: center;
-
-    text-decoration: none;
-
-    transition:
-
-        background 0.2s,
-
-        border-color 0.2s,
-
-        transform 0.2s;
-
 }
 
 
-.botao:not(:disabled):hover {
+.botao:hover {
 
-    transform: translateY(-2px);
+    filter:
+        brightness(1.15);
 
 }
 
 
 .botao-laranja {
 
-    background: var(--laranja);
+    background:
+        var(--laranja);
 
     color: #211025;
 
-}
-
-
-.botao-laranja:not(:disabled):hover {
-
-    background: var(--laranja-claro);
+    border-color:
+        var(--laranja);
 
 }
 
 
 .botao-secundario {
 
-    background: #302438;
-
-    color: white;
-
-    border-color: #684b75;
-
-}
-
-
-.botao-secundario:not(:disabled):hover {
-
-    background: #453151;
-
-    border-color: var(--roxo);
+    background:
+        #302438;
 
 }
 
 
 .botao-link {
 
-    padding: 8px;
+    background:
+        transparent;
 
-    background: transparent;
-
-    color: var(--laranja);
+    color:
+        var(--laranja);
 
     border: none;
 
-    font-size: 13px;
-
-    font-weight: 800;
-
-}
-
-
-.botao-link:hover {
-
-    color: var(--laranja-claro);
+    font-weight: 900;
 
 }
 
@@ -776,8 +812,6 @@ main {
 
     display: flex;
 
-    align-items: center;
-
     flex-wrap: wrap;
 
     gap: 10px;
@@ -785,18 +819,21 @@ main {
 }
 
 
-/* ==================================================
-   12. INDICADORES DO DASHBOARD
-================================================== */
+/* ==========================================
+   DASHBOARD
+========================================== */
 
 .indicadores {
 
     display: grid;
 
     grid-template-columns:
-        repeat(4, minmax(0, 1fr));
+        repeat(
+            4,
+            minmax(0, 1fr)
+        );
 
-    gap: 16px;
+    gap: 15px;
 
     margin-bottom: 25px;
 
@@ -805,38 +842,23 @@ main {
 
 .indicador {
 
-    display: flex;
-
-    flex-direction: column;
-
     min-height: 155px;
 
-    padding: 23px;
+    padding: 22px;
 
-    background: linear-gradient(
-        155deg,
-        #30213b,
-        #201728
-    );
+    background:
 
-    border: 1px solid #543661;
+        linear-gradient(
+            155deg,
+            #30213b,
+            #201728
+        );
+
+    border:
+        1px solid
+        #543661;
 
     border-radius: 16px;
-
-    transition:
-
-        transform 0.2s,
-
-        border-color 0.2s;
-
-}
-
-
-.indicador:hover {
-
-    transform: translateY(-3px);
-
-    border-color: var(--roxo);
 
 }
 
@@ -858,70 +880,52 @@ main {
 
     display: block;
 
-    margin: 14px 0 5px;
+    margin: 14px 0;
 
-    color: white;
-
-    font-size: 42px;
-
-    line-height: 1.2;
+    font-size: 40px;
 
 }
 
 
 .indicador small {
 
-    margin-top: auto;
-
-    color: var(--texto-secundario);
-
-    font-size: 11px;
+    color: var(--cinza);
 
 }
 
 
-/* ==================================================
-   13. PAINÉIS
-================================================== */
+/* ==========================================
+   PAINÉIS
+========================================== */
 
 .painel {
 
-    margin-bottom: 20px;
+    margin-bottom: 22px;
 
-    padding: 25px;
+    padding: 24px;
 
-    background: var(--painel);
+    background:
+        var(--painel);
 
-    border: 1px solid var(--borda);
+    border:
+        1px solid
+        var(--borda);
 
     border-radius: 16px;
-
-    box-shadow: var(--sombra);
 
 }
 
 
 .painel h2 {
 
-    margin: 0 0 15px;
-
-    font-size: 21px;
-
-}
-
-
-.painel h3 {
-
-    font-size: 17px;
+    margin-top: 0;
 
 }
 
 
 .painel p {
 
-    color: var(--texto-secundario);
-
-    font-size: 14px;
+    color: var(--cinza);
 
 }
 
@@ -932,18 +936,17 @@ main {
 
     align-items: center;
 
-    justify-content: space-between;
+    justify-content:
+        space-between;
 
     gap: 15px;
-
-    margin-bottom: 20px;
 
 }
 
 
-/* ==================================================
-   14. PRODUTOS RECENTES
-================================================== */
+/* ==========================================
+   PRODUTOS RECENTES
+========================================== */
 
 .produto-recente {
 
@@ -951,35 +954,26 @@ main {
 
     align-items: center;
 
-    gap: 15px;
+    gap: 14px;
 
-    padding: 14px 0;
+    padding: 13px 0;
 
-    border-bottom: 1px solid var(--borda);
-
-}
-
-
-.produto-recente:last-child {
-
-    border-bottom: none;
+    border-bottom:
+        1px solid
+        var(--borda);
 
 }
 
 
 .produto-recente img {
 
-    width: 60px;
+    width: 58px;
 
-    height: 60px;
-
-    flex-shrink: 0;
+    height: 58px;
 
     object-fit: cover;
 
-    background: var(--painel-claro);
-
-    border-radius: 10px;
+    border-radius: 9px;
 
 }
 
@@ -988,8 +982,6 @@ main {
 
     flex: 1;
 
-    min-width: 0;
-
 }
 
 
@@ -997,16 +989,12 @@ main {
 
     display: block;
 
-    margin-bottom: 6px;
-
-    font-size: 14px;
-
 }
 
 
 .produto-recente-info span {
 
-    color: var(--texto-secundario);
+    color: var(--cinza);
 
     font-size: 12px;
 
@@ -1017,77 +1005,71 @@ main {
 
     color: var(--laranja);
 
-    font-size: 15px;
-
-    white-space: nowrap;
-
 }
 
 
-/* ==================================================
-   15. PESQUISA E TABELAS
-================================================== */
+/* ==========================================
+   BARRAS DE FERRAMENTAS
+========================================== */
 
-.barra-ferramentas {
+.barra-ferramentas,
+.gestao-toolbar {
 
     display: flex;
 
     align-items: center;
 
-    justify-content: space-between;
+    justify-content:
+        space-between;
 
     flex-wrap: wrap;
 
-    gap: 15px;
+    gap: 12px;
 
-    margin-bottom: 20px;
+    margin-bottom: 18px;
 
 }
 
 
-.barra-ferramentas input {
+.barra-ferramentas input,
+.gestao-toolbar input,
+.gestao-toolbar select {
 
-    width: min(350px, 100%);
+    min-height: 42px;
 
-    min-height: 43px;
+    padding:
+        10px 13px;
 
-    padding: 12px 15px;
-
-    background: var(--campo);
+    background:
+        var(--campo);
 
     color: white;
 
-    border: 1px solid var(--borda);
+    border:
+        1px solid
+        var(--borda);
 
-    border-radius: 10px;
+    border-radius: 9px;
 
     outline: none;
 
 }
 
 
-.barra-ferramentas input:focus {
+.barra-ferramentas input {
 
-    border-color: var(--roxo);
-
-}
-
-
-.barra-ferramentas input::placeholder {
-
-    color: #a692b1;
+    width:
+        min(
+            350px,
+            100%
+        );
 
 }
 
 
-.barra-ferramentas span {
-
-    color: var(--texto-secundario);
-
-    font-size: 12px;
-
-}
-
+/* ==========================================
+   TABELAS
+========================================== */
 
 .tabela-container {
 
@@ -1095,7 +1077,9 @@ main {
 
     overflow-x: auto;
 
-    border: 1px solid var(--borda);
+    border:
+        1px solid
+        var(--borda);
 
     border-radius: 10px;
 
@@ -1106,7 +1090,7 @@ table {
 
     width: 100%;
 
-    min-width: 700px;
+    min-width: 720px;
 
     border-collapse: collapse;
 
@@ -1115,55 +1099,44 @@ table {
 }
 
 
-thead {
-
-    background: var(--painel-claro);
-
-}
-
-
 th {
 
-    padding: 15px;
+    padding: 14px;
 
-    color: #c7b5d1;
+    background:
+        var(--painel-2);
+
+    color: #c8b5d2;
 
     font-size: 10px;
 
-    font-weight: 900;
-
     letter-spacing: 1px;
-
-    white-space: nowrap;
 
 }
 
 
 td {
 
-    padding: 15px;
+    padding: 14px;
 
-    border-top: 1px solid var(--borda);
+    border-top:
+        1px solid
+        var(--borda);
 
     font-size: 13px;
-
-    vertical-align: middle;
 
 }
 
 
 tbody tr:hover {
 
-    background: rgba(177, 43, 255, 0.045);
-
-}
-
-
-td strong {
-
-    display: block;
-
-    font-size: 13px;
+    background:
+        rgba(
+            177,
+            43,
+            255,
+            0.045
+        );
 
 }
 
@@ -1172,18 +1145,12 @@ td small {
 
     display: block;
 
-    margin-top: 5px;
+    margin-top: 4px;
 
-    color: var(--texto-secundario);
-
-    font-size: 11px;
+    color: var(--cinza);
 
 }
 
-
-/* ==================================================
-   16. PRODUTOS NA TABELA
-================================================== */
 
 .produto-celula {
 
@@ -1191,59 +1158,56 @@ td small {
 
     align-items: center;
 
-    gap: 12px;
-
-    min-width: 170px;
+    gap: 11px;
 
 }
 
 
 .produto-celula img {
 
-    width: 55px;
+    width: 52px;
 
-    height: 55px;
-
-    flex-shrink: 0;
+    height: 52px;
 
     object-fit: cover;
 
-    background: var(--painel-claro);
-
-    border-radius: 9px;
-
-}
-
-
-.produto-celula div {
-
-    min-width: 0;
-
-}
-
-
-.etiqueta {
-
-    display: inline-block;
-
-    padding: 7px 11px;
-
-    background: #3e294b;
-
-    color: #e0b4ee;
-
-    border: 1px solid #644276;
-
     border-radius: 8px;
+
+}
+
+
+.botao-pequeno {
+
+    padding:
+        7px 10px;
+
+    margin: 2px;
+
+    background:
+        #372741;
+
+    color: white;
+
+    border:
+        1px solid
+        #634972;
+
+    border-radius: 7px;
 
     font-size: 11px;
 
-    font-weight: 800;
+}
+
+
+.botao-excluir {
+
+    color: #ffb2b2;
 
 }
 
 
-.visivel {
+.visivel,
+.estoque-ok {
 
     color: var(--verde);
 
@@ -1252,7 +1216,8 @@ td small {
 }
 
 
-.oculto {
+.oculto,
+.estoque-baixo {
 
     color: var(--vermelho);
 
@@ -1261,69 +1226,256 @@ td small {
 }
 
 
-/* BOTÕES DAS TABELAS */
+.etiqueta {
 
-.botao-pequeno {
+    display: inline-block;
 
-    padding: 8px 10px;
+    padding:
+        6px 9px;
 
-    margin: 3px;
+    background:
+        #3e294b;
 
-    background: #372741;
+    border-radius: 7px;
+
+    font-size: 11px;
+
+}
+
+
+/* ==========================================
+   GESTÃO / CUSTOS / FILAMENTOS
+========================================== */
+
+.gestao-resumos {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(
+            4,
+            minmax(0, 1fr)
+        );
+
+    gap: 15px;
+
+    margin-bottom: 22px;
+
+}
+
+
+.gestao-card {
+
+    padding: 20px;
+
+    background:
+        var(--painel);
+
+    border:
+        1px solid
+        var(--borda);
+
+    border-radius: 15px;
+
+}
+
+
+.gestao-card span {
+
+    display: block;
+
+    color: var(--cinza);
+
+    font-size: 10px;
+
+    font-weight: 900;
+
+    letter-spacing: 1px;
+
+}
+
+
+.gestao-card strong {
+
+    display: block;
+
+    margin-top: 10px;
 
     color: white;
 
-    border: 1px solid #634972;
+    font-size: 25px;
 
-    border-radius: 8px;
+}
+
+
+/* ==========================================
+   SIMULADOR
+========================================== */
+
+.simulador-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(
+            3,
+            minmax(0, 1fr)
+        );
+
+    gap: 14px;
+
+}
+
+
+.simulador-grid label {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 7px;
+
+    color: #e8d7ee;
 
     font-size: 12px;
 
-    font-weight: 700;
-
-    white-space: nowrap;
+    font-weight: 800;
 
 }
 
 
-.botao-pequeno:hover {
+.simulador-grid input,
+.simulador-grid select {
 
-    background: #4b335a;
+    width: 100%;
 
-    border-color: var(--roxo);
+    min-height: 43px;
 
-}
+    padding: 11px;
 
+    background:
+        var(--campo);
 
-.botao-excluir {
+    color: white;
 
-    color: #ffb7b7;
+    border:
+        1px solid
+        #6c5177;
 
-}
-
-
-.botao-excluir:hover {
-
-    background: #512638;
-
-    border-color: var(--vermelho);
+    border-radius: 9px;
 
 }
 
 
-/* ==================================================
-   17. JANELAS DE CADASTRO
-================================================== */
+.resultado-custo {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(
+            4,
+            minmax(0, 1fr)
+        );
+
+    gap: 12px;
+
+    margin-top: 20px;
+
+}
+
+
+.resultado-custo > div {
+
+    padding: 15px;
+
+    background: #191221;
+
+    border:
+        1px solid
+        var(--borda);
+
+    border-radius: 10px;
+
+}
+
+
+.resultado-custo span {
+
+    display: block;
+
+    color: var(--cinza);
+
+    font-size: 10px;
+
+    font-weight: 800;
+
+}
+
+
+.resultado-custo strong {
+
+    display: block;
+
+    margin-top: 7px;
+
+    color:
+        var(--laranja);
+
+    font-size: 18px;
+
+}
+
+
+/* ==========================================
+   BARRA FILAMENTO
+========================================== */
+
+.barra-estoque {
+
+    width: 100%;
+
+    height: 7px;
+
+    margin-top: 7px;
+
+    overflow: hidden;
+
+    background: #34283c;
+
+    border-radius: 999px;
+
+}
+
+
+.barra-estoque span {
+
+    display: block;
+
+    height: 100%;
+
+    background:
+        var(--roxo);
+
+    border-radius: 999px;
+
+}
+
+
+/* ==========================================
+   MODAL
+========================================== */
 
 .modal {
 
-    width: min(650px, calc(100vw - 24px));
-
-    max-width: 100%;
+    width:
+        min(
+            650px,
+            calc(100vw - 24px)
+        );
 
     max-height: 90vh;
 
-    padding: 27px;
+    padding: 26px;
 
     overflow-y: auto;
 
@@ -1331,27 +1483,27 @@ td small {
 
     color: white;
 
-    border: 1px solid #7d4d91;
+    border:
+        1px solid
+        #7d4d91;
 
     border-radius: 18px;
-
-    box-shadow: 0 25px 80px rgba(0, 0, 0, 0.65);
-
-}
-
-
-.modal:not([open]) {
-
-    display: none;
 
 }
 
 
 .modal::backdrop {
 
-    background: rgba(0, 0, 0, 0.80);
+    background:
+        rgba(
+            0,
+            0,
+            0,
+            0.82
+        );
 
-    backdrop-filter: blur(5px);
+    backdrop-filter:
+        blur(4px);
 
 }
 
@@ -1362,15 +1514,12 @@ td small {
 
     align-items: center;
 
-    justify-content: space-between;
+    justify-content:
+        space-between;
 
     gap: 15px;
 
-    margin-bottom: 25px;
-
-    padding-bottom: 15px;
-
-    border-bottom: 1px solid var(--borda);
+    margin-bottom: 24px;
 
 }
 
@@ -1379,61 +1528,46 @@ td small {
 
     margin: 0;
 
-    color: white;
-
-    font-size: 22px;
-
 }
 
 
 .fechar-modal {
 
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
     width: 38px;
 
     height: 38px;
 
-    flex-shrink: 0;
-
-    background: #382641;
+    background:
+        #382641;
 
     color: white;
 
-    border: 1px solid var(--borda);
+    border:
+        1px solid
+        var(--borda);
 
     border-radius: 9px;
 
-    font-size: 25px;
-
-    line-height: 1;
+    font-size: 24px;
 
 }
 
 
-.fechar-modal:hover {
-
-    background: #543361;
-
-}
-
-
-/* ==================================================
-   18. CAMPOS DOS FORMULÁRIOS
-================================================== */
+/* ==========================================
+   FORMULÁRIOS
+========================================== */
 
 .campos {
 
     display: grid;
 
     grid-template-columns:
-        repeat(2, minmax(0, 1fr));
+        repeat(
+            2,
+            minmax(0, 1fr)
+        );
 
-    gap: 18px;
+    gap: 17px;
 
 }
 
@@ -1444,9 +1578,7 @@ td small {
 
     flex-direction: column;
 
-    gap: 8px;
-
-    min-width: 0;
+    gap: 7px;
 
     color: #e8d7ee;
 
@@ -1459,7 +1591,8 @@ td small {
 
 .campo-inteiro {
 
-    grid-column: 1 / -1;
+    grid-column:
+        1 / -1;
 
 }
 
@@ -1470,23 +1603,20 @@ td small {
 
     width: 100%;
 
-    min-height: 44px;
-
     padding: 12px;
 
-    background: var(--campo);
+    background:
+        var(--campo);
 
     color: white;
 
-    border: 1px solid #6c5177;
+    border:
+        1px solid
+        #6c5177;
 
     border-radius: 9px;
 
-    font-size: 13px;
-
     outline: none;
-
-    transition: border-color 0.2s;
 
 }
 
@@ -1504,86 +1634,46 @@ td small {
 .campo textarea:focus,
 .campo select:focus {
 
-    border-color: var(--laranja);
+    border-color:
+        var(--laranja);
 
 }
 
-
-.campo input::placeholder,
-.campo textarea::placeholder {
-
-    color: #aa97b5;
-
-}
-
-
-.campo select option {
-
-    background: var(--campo);
-
-    color: white;
-
-}
-
-
-/* CHECKBOXES */
 
 .checkbox-campo {
-
-    display: flex;
 
     flex-direction: row;
 
     align-items: center;
-
-    gap: 10px;
-
-    cursor: pointer;
 
 }
 
 
 .checkbox-campo input {
 
-    width: 18px;
+    width: auto;
 
-    height: 18px;
-
-    min-height: 0;
-
-    margin: 0;
-
-    accent-color: var(--roxo);
-
-    cursor: pointer;
+    accent-color:
+        var(--roxo);
 
 }
 
-
-/* BOTÕES DOS FORMULÁRIOS */
 
 .modal-acoes {
 
     display: flex;
 
-    align-items: center;
-
-    justify-content: flex-end;
+    justify-content:
+        flex-end;
 
     flex-wrap: wrap;
 
-    gap: 12px;
+    gap: 10px;
 
-    margin-top: 28px;
-
-    padding-top: 20px;
-
-    border-top: 1px solid var(--borda);
+    margin-top: 25px;
 
 }
 
-
-/* CAMPO INTERNO DA URL DA FOTOGRAFIA */
 
 .campo-url-legado {
 
@@ -1592,66 +1682,23 @@ td small {
 }
 
 
-/* ==================================================
-   19. UPLOAD DAS FOTOGRAFIAS DOS PRODUTOS
-================================================== */
-
-/*
-
-O fotos-empresa.js cria automaticamente
-a área de upload dentro do formulário.
-
-As imagens são enviadas para:
-
-Supabase Storage
-Bucket: projetos
-Pasta: catalogo
-
-*/
-
+/* ==========================================
+   UPLOAD FOTOGRAFIAS
+========================================== */
 
 .area-fotos-empresa {
 
-    grid-column: 1 / -1;
+    grid-column:
+        1 / -1;
 
-    display: block;
+}
+
+
+.zona-upload {
 
     width: 100%;
 
-    margin: 10px 0;
-
-}
-
-
-.area-fotos-empresa h3 {
-
-    margin: 0 0 8px;
-
-    color: white;
-
-    font-size: 18px;
-
-}
-
-
-.descricao-upload {
-
-    margin: 0 0 15px;
-
-    color: var(--texto-secundario);
-
-    font-size: 12px;
-
-    line-height: 1.6;
-
-}
-
-
-/* ==================================================
-   20. ÁREA PARA ARRASTAR E SOLTAR
-================================================== */
-
-.zona-upload {
+    min-height: 220px;
 
     display: flex;
 
@@ -1661,82 +1708,50 @@ Pasta: catalogo
 
     justify-content: center;
 
-    gap: 12px;
+    gap: 11px;
 
-    width: 100%;
-
-    min-height: 230px;
-
-    padding: 25px;
+    padding: 22px;
 
     background: #261b30;
 
-    color: white;
+    border:
+        2px dashed
+        #8950ab;
 
-    border: 2px dashed #8950ab;
-
-    border-radius: 16px;
+    border-radius: 15px;
 
     text-align: center;
 
     cursor: pointer;
 
-    transition:
-
-        background 0.2s,
-
-        border-color 0.2s,
-
-        transform 0.2s;
-
 }
 
 
-.zona-upload:hover {
-
-    background: #34233f;
-
-    border-color: var(--laranja);
-
-}
-
-
+.zona-upload:hover,
 .zona-upload.arrastando {
 
     background: #432352;
 
-    border-color: var(--laranja);
-
-    transform: scale(1.01);
-
-    box-shadow: 0 0 25px rgba(177, 43, 255, 0.15);
+    border-color:
+        var(--laranja);
 
 }
 
 
 .zona-upload.enviando {
 
-    opacity: 0.6;
+    opacity: 0.55;
 
     pointer-events: none;
 
-    cursor: wait;
-
 }
 
-
-.zona-upload:focus-visible {
-
-    outline: 3px solid var(--laranja);
-
-    outline-offset: 4px;
-
-}
-
-
-/* ÍCONE DO UPLOAD */
 
 .icone-upload {
+
+    width: 62px;
+
+    height: 62px;
 
     display: flex;
 
@@ -1744,128 +1759,64 @@ Pasta: catalogo
 
     justify-content: center;
 
-    width: 65px;
-
-    height: 65px;
-
     background: #4c2b61;
 
     color: var(--laranja);
 
     border-radius: 50%;
 
-    font-size: 35px;
-
-    font-weight: 900;
+    font-size: 32px;
 
 }
 
-
-/* TEXTOS DO UPLOAD */
-
-.zona-upload strong {
-
-    color: white;
-
-    font-size: 15px;
-
-    font-weight: 800;
-
-}
-
-
-.zona-upload span {
-
-    color: #d8c4e8;
-
-    font-size: 12px;
-
-}
-
-
-.zona-upload small {
-
-    color: #aa95b8;
-
-    font-size: 11px;
-
-}
-
-
-/* BOTÃO VISUAL DE SELECIONAR FOTOGRAFIA */
 
 .botao-escolher-foto {
 
-    display: inline-flex;
+    padding:
+        10px 17px;
 
-    align-items: center;
-
-    justify-content: center;
-
-    min-height: 42px;
-
-    padding: 12px 20px;
-
-    background: var(--laranja);
+    background:
+        var(--laranja);
 
     color: #211025;
 
-    border: none;
-
-    border-radius: 10px;
-
-    font-size: 13px;
+    border-radius: 9px;
 
     font-weight: 900;
 
-    pointer-events: none;
-
 }
 
-
-/* ==================================================
-   21. PRÉ-VISUALIZAÇÃO DA FOTOGRAFIA
-================================================== */
 
 .preview-container {
 
-    margin-top: 20px;
+    margin-top: 18px;
 
-    padding: 15px;
+    padding: 14px;
 
-    background: #1b1323;
+    background: #191221;
 
-    border: 1px solid #63466d;
+    border:
+        1px solid
+        var(--borda);
 
-    border-radius: 13px;
-
-}
-
-
-.preview-container[hidden] {
-
-    display: none !important;
+    border-radius: 12px;
 
 }
 
 
 #preview-foto {
 
-    display: block;
-
     width: 100%;
 
-    max-width: 350px;
+    max-width: 340px;
 
-    max-height: 350px;
+    max-height: 340px;
 
-    margin: 0 auto;
+    margin: auto;
 
     object-fit: contain;
 
-    background: #100c15;
-
-    border-radius: 10px;
+    border-radius: 9px;
 
 }
 
@@ -1876,374 +1827,119 @@ Pasta: catalogo
 
     align-items: center;
 
-    justify-content: space-between;
+    justify-content:
+        space-between;
 
-    flex-wrap: wrap;
+    gap: 10px;
 
-    gap: 12px;
-
-    margin-top: 15px;
-
-}
-
-
-#nome-arquivo {
-
-    flex: 1;
-
-    min-width: 0;
-
-    color: #d8c4e8;
-
-    font-size: 12px;
-
-    overflow-wrap: anywhere;
+    margin-top: 13px;
 
 }
 
-
-/* BOTÃO TROCAR FOTOGRAFIA */
 
 .botao-trocar-foto {
 
-    padding: 10px 15px;
+    padding:
+        9px 13px;
 
     background: #3b2849;
 
     color: white;
 
-    border: 1px solid #8950ab;
+    border:
+        1px solid
+        #8950ab;
 
-    border-radius: 9px;
-
-    font-size: 12px;
-
-    font-weight: 800;
+    border-radius: 8px;
 
 }
 
-
-.botao-trocar-foto:hover {
-
-    background: #4e3560;
-
-}
-
-
-/* ==================================================
-   22. MENSAGENS DO UPLOAD
-================================================== */
 
 .status-foto {
-
-    min-height: 18px;
-
-    margin-top: 12px;
 
     color: var(--verde);
 
     font-size: 12px;
-
-    font-weight: 700;
-
-    overflow-wrap: anywhere;
 
 }
 
 
 .status-foto.erro {
 
-    color: var(--vermelho);
+    color:
+        var(--vermelho);
 
 }
 
 
-/* ==================================================
-   23. TELA DE LOGIN
-================================================== */
-
-/*
-
-A tela de login é criada pelo admin.js.
-
-Ela utiliza:
-
-#tela-login
-.form-login
-.login-marca
-#form-login
-
-*/
-
-
-.tela-login {
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    min-height: 100vh;
-
-    padding: 24px;
-
-    background:
-
-        radial-gradient(
-            circle at 50% 25%,
-            rgba(177, 43, 255, 0.16),
-            transparent 45%
-        ),
-
-        var(--fundo);
-
-}
-
-
-.form-login {
-
-    width: min(440px, 100%);
-
-    padding: 35px;
-
-    background: var(--painel);
-
-    border: 1px solid #714188;
-
-    border-radius: 20px;
-
-    box-shadow: 0 25px 70px rgba(0, 0, 0, 0.40);
-
-}
-
-
-.form-login h2 {
-
-    margin: 0 0 12px;
-
-    color: var(--laranja);
-
-    font-size: 25px;
-
-    text-align: center;
-
-}
-
-
-.form-login p {
-
-    margin-bottom: 25px;
-
-    color: var(--texto-secundario);
-
-    font-size: 13px;
-
-    text-align: center;
-
-}
-
-
-.form-login label {
-
-    display: block;
-
-    margin: 15px 0 7px;
-
-    color: #e8d7ee;
-
-    font-size: 12px;
-
-    font-weight: 800;
-
-}
-
-
-.form-login input {
-
-    display: block;
-
-    width: 100%;
-
-    min-height: 46px;
-
-    padding: 13px 15px;
-
-    background: var(--campo);
-
-    color: white;
-
-    border: 1px solid #6c5177;
-
-    border-radius: 10px;
-
-    outline: none;
-
-}
-
-
-.form-login input:focus {
-
-    border-color: var(--laranja);
-
-}
-
-
-.form-login input::placeholder {
-
-    color: #aa97b5;
-
-}
-
-
-.form-login button {
-
-    width: 100%;
-
-    min-height: 47px;
-
-    margin-top: 22px;
-
-    padding: 14px;
-
-    background: var(--laranja);
-
-    color: #211025;
-
-    border: none;
-
-    border-radius: 10px;
-
-    font-size: 14px;
-
-    font-weight: 900;
-
-}
-
-
-.form-login button:not(:disabled):hover {
-
-    background: var(--laranja-claro);
-
-}
-
-
-#mensagem-login {
-
-    margin: 15px 0 0;
-
-    color: var(--vermelho);
-
-    font-size: 12px;
-
-    text-align: center;
-
-    overflow-wrap: anywhere;
-
-}
-
-
-/* ==================================================
-   24. SINCRONIZAÇÃO COM SUPABASE
-================================================== */
+/* ==========================================
+   SYNC
+========================================== */
 
 .sync-empresa {
 
-    margin-top: 25px;
+    margin-top: 20px;
 
-    padding: 20px;
+    padding: 18px;
 
     background: #191221;
 
-    border: 1px solid var(--borda);
+    border:
+        1px solid
+        var(--borda);
 
     border-radius: 12px;
 
 }
 
 
-.sync-empresa h3 {
-
-    margin-top: 0;
-
-    color: white;
-
-    font-size: 18px;
-
-}
-
-
-.sync-empresa p {
-
-    margin: 10px 0;
-
-    color: var(--texto-secundario);
-
-    font-size: 13px;
-
-}
-
-
-.sync-empresa strong {
-
-    color: white;
-
-}
-
-
 #status-sync {
 
-    padding: 12px 14px;
+    padding: 10px;
 
     background: #252032;
 
-    color: var(--verde);
+    border:
+        1px solid
+        #4e3a58;
 
-    border: 1px solid #4e3a58;
-
-    border-radius: 9px;
-
-    font-weight: 700;
+    border-radius: 8px;
 
 }
 
 
-#botao-recarregar-sync {
-
-    margin-top: 12px;
-
-}
-
-
-/* ==================================================
-   25. NOTIFICAÇÕES DO SISTEMA
-================================================== */
+/* ==========================================
+   NOTIFICAÇÕES
+========================================== */
 
 .notificacao {
 
     position: fixed;
 
-    bottom: 25px;
+    z-index: 999;
 
     left: 50%;
 
-    z-index: 999;
+    bottom: 25px;
 
-    max-width: min(500px, calc(100vw - 30px));
+    max-width:
+        calc(
+            100vw - 30px
+        );
 
-    padding: 15px 22px;
+    padding:
+        14px 20px;
 
-    background: var(--laranja);
+    background:
+        var(--laranja);
 
     color: #261429;
 
-    border-radius: 11px;
+    border-radius: 10px;
 
-    box-shadow: var(--sombra);
+    font-size: 12px;
 
-    font-size: 13px;
-
-    font-weight: 800;
+    font-weight: 900;
 
     text-align: center;
 
@@ -2251,13 +1947,13 @@ Ela utiliza:
 
     pointer-events: none;
 
-    transform: translate(-50%, 100px);
+    transform:
+        translate(
+            -50%,
+            80px
+        );
 
-    transition:
-
-        opacity 0.3s,
-
-        transform 0.3s;
+    transition: 0.3s;
 
 }
 
@@ -2266,7 +1962,11 @@ Ela utiliza:
 
     opacity: 1;
 
-    transform: translate(-50%, 0);
+    transform:
+        translate(
+            -50%,
+            0
+        );
 
 }
 
@@ -2280,65 +1980,59 @@ Ela utiliza:
 }
 
 
-/* ==================================================
-   26. RESPONSIVIDADE — NOTEBOOK E TABLET
-================================================== */
+/* ==========================================
+   RESPONSIVO
+========================================== */
 
-@media (max-width: 1100px) {
+@media
+(max-width: 1100px) {
 
     .app {
 
         grid-template-columns:
-            205px minmax(0, 1fr);
-
-    }
-
-
-    .sidebar {
-
-        padding: 20px 12px;
+            205px
+            minmax(0, 1fr);
 
     }
 
 
     .sidebar .logo-empresa {
 
-        width: 160px;
+        width: 155px;
 
-        height: 160px;
+        height: 155px;
 
     }
 
 
-    .indicadores {
+    .indicadores,
+    .gestao-resumos,
+    .resultado-custo {
 
         grid-template-columns:
-            repeat(2, minmax(0, 1fr));
+            repeat(
+                2,
+                minmax(0, 1fr)
+            );
 
     }
 
 
-    .topbar {
+    .simulador-grid {
 
-        padding: 20px 25px;
-
-    }
-
-
-    main {
-
-        padding: 25px;
+        grid-template-columns:
+            repeat(
+                2,
+                minmax(0, 1fr)
+            );
 
     }
 
 }
 
 
-/* ==================================================
-   27. RESPONSIVIDADE — CELULARES
-================================================== */
-
-@media (max-width: 720px) {
+@media
+(max-width: 720px) {
 
     .app {
 
@@ -2347,13 +2041,9 @@ Ela utiliza:
     }
 
 
-    /* MENU SUPERIOR NO CELULAR */
-
     .sidebar {
 
         min-height: auto;
-
-        padding: 15px;
 
     }
 
@@ -2362,16 +2052,14 @@ Ela utiliza:
 
         margin-bottom: 15px;
 
-        padding: 0;
-
     }
 
 
     .sidebar .logo-empresa {
 
-        width: 120px;
+        width: 115px;
 
-        height: 120px;
+        height: 115px;
 
     }
 
@@ -2388,11 +2076,7 @@ Ela utiliza:
 
         flex-direction: row;
 
-        gap: 8px;
-
         overflow-x: auto;
-
-        padding-bottom: 5px;
 
     }
 
@@ -2401,199 +2085,59 @@ Ela utiliza:
 
         min-width: max-content;
 
-        min-height: 42px;
-
-        padding: 11px 14px;
-
-        font-size: 12px;
-
         white-space: nowrap;
 
     }
 
 
-    /* CABEÇALHO */
-
     .topbar {
-
-        min-height: 75px;
 
         padding: 15px;
 
     }
 
 
-    .topbar h2 {
-
-        font-size: 19px;
-
-    }
-
-
-    .topbar .botao {
-
-        padding: 10px 12px;
-
-        font-size: 12px;
-
-    }
-
-
-    /* CONTEÚDO */
-
     main {
 
-        padding: 20px 15px 50px;
-
-    }
-
-
-    .aviso {
-
-        padding: 14px;
-
-        font-size: 11px;
+        padding:
+            20px 15px 50px;
 
     }
 
 
     .cabecalho-pagina {
 
-        flex-direction: column;
-
-        align-items: flex-start;
-
-        gap: 15px;
+        align-items:
+            flex-start;
 
     }
 
 
-    .cabecalho-pagina h1 {
-
-        font-size: 32px;
-
-    }
-
-
-    .cabecalho-pagina p {
-
-        font-size: 13px;
-
-    }
-
-
-    /* INDICADORES */
-
-    .indicadores {
+    .indicadores,
+    .gestao-resumos {
 
         grid-template-columns:
-            repeat(2, minmax(0, 1fr));
-
-        gap: 10px;
-
-    }
-
-
-    .indicador {
-
-        min-height: 130px;
-
-        padding: 15px;
+            repeat(
+                2,
+                minmax(0, 1fr)
+            );
 
     }
 
 
-    .indicador strong {
+    .simulador-grid,
+    .resultado-custo {
 
-        font-size: 34px;
-
-    }
-
-
-    .indicador span {
-
-        font-size: 9px;
-
-    }
-
-
-    /* PAINÉIS */
-
-    .painel {
-
-        padding: 16px;
-
-    }
-
-
-    .painel h2 {
-
-        font-size: 19px;
-
-    }
-
-
-    /* PRODUTOS RECENTES */
-
-    .produto-recente {
-
-        gap: 10px;
-
-    }
-
-
-    .produto-recente img {
-
-        width: 48px;
-
-        height: 48px;
-
-    }
-
-
-    .produto-recente b {
-
-        font-size: 12px;
-
-    }
-
-
-    /* TABELAS */
-
-    .barra-ferramentas {
-
-        align-items: stretch;
-
-        flex-direction: column;
-
-    }
-
-
-    .barra-ferramentas input {
-
-        width: 100%;
-
-    }
-
-
-    /* MODAIS */
-
-    .modal {
-
-        width: calc(100vw - 20px);
-
-        max-height: 90dvh;
-
-        padding: 18px;
+        grid-template-columns:
+            1fr;
 
     }
 
 
     .campos {
 
-        grid-template-columns: 1fr;
-
-        gap: 15px;
+        grid-template-columns:
+            1fr;
 
     }
 
@@ -2601,134 +2145,74 @@ Ela utiliza:
     .campo-inteiro,
     .area-fotos-empresa {
 
-        grid-column: 1 / -1;
+        grid-column:
+            1 / -1;
+
+    }
+
+
+    .modal {
+
+        padding: 17px;
 
     }
 
 
     .modal-acoes {
 
-        flex-direction: column-reverse;
+        flex-direction:
+            column-reverse;
 
     }
 
 
-    .modal-acoes .botao {
+    .modal-acoes
+    .botao {
 
         width: 100%;
 
     }
 
 
-    /* UPLOAD DE FOTOS */
+    .gestao-toolbar {
 
-    .zona-upload {
+        align-items:
+            stretch;
 
-        min-height: 190px;
-
-        padding: 18px;
-
-    }
-
-
-    .zona-upload strong {
-
-        font-size: 13px;
+        flex-direction:
+            column;
 
     }
 
 
-    .preview-informacoes {
-
-        flex-direction: column;
-
-        align-items: stretch;
-
-    }
-
-
-    .botao-trocar-foto {
+    .gestao-toolbar input,
+    .gestao-toolbar select {
 
         width: 100%;
-
-    }
-
-
-    /* LOGIN */
-
-    .form-login {
-
-        padding: 25px;
-
-    }
-
-
-    .login-marca .logo-empresa {
-
-        width: 145px;
-
-        height: 145px;
 
     }
 
 }
 
 
-/* ==================================================
-   28. TELAS MUITO PEQUENAS
-================================================== */
+@media
+(max-width: 420px) {
 
-@media (max-width: 400px) {
+    .indicadores,
+    .gestao-resumos {
 
-    .sidebar .logo-empresa {
-
-        width: 100px;
-
-        height: 100px;
-
-    }
-
-
-    .topbar {
-
-        gap: 12px;
-
-    }
-
-
-    .topbar .botao {
-
-        font-size: 11px;
-
-    }
-
-
-    .indicadores {
-
-        grid-template-columns: 1fr 1fr;
-
-    }
-
-
-    .indicador {
-
-        padding: 12px;
-
-    }
-
-
-    .indicador strong {
-
-        font-size: 30px;
+        grid-template-columns:
+            1fr;
 
     }
 
 
     .grupo-botoes {
 
-        flex-direction: column;
+        width: 100%;
 
-        align-items: stretch;
+        flex-direction:
+            column;
 
     }
 
@@ -2739,48 +2223,4 @@ Ela utiliza:
 
     }
 
-
-    .modal {
-
-        padding: 15px;
-
-    }
-
-
-    .zona-upload {
-
-        padding: 15px;
-
-    }
-
 }
-
-
-/* ==================================================
-   29. ACESSIBILIDADE
-================================================== */
-
-@media (prefers-reduced-motion: reduce) {
-
-    html {
-
-        scroll-behavior: auto;
-
-    }
-
-
-    * {
-
-        animation-duration: 0.01ms !important;
-
-        transition-duration: 0.01ms !important;
-
-    }
-
-}
-
-
-/* ==================================================
-   FIM DO ARQUIVO
-   CRIAITOR 3D - PAINEL ADMINISTRATIVO
-================================================== */
